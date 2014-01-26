@@ -1,14 +1,19 @@
 require 'open3'
 require 'uri'
 require 'fileutils'
+require 'escape'
 
 class Git
+  class CommandError < RuntimeError; end
+
   class Utils
     class << self
       def execute *args
         command = Escape.shell_command(args)
         begin
           stdin, stdout, stderr, status = Open3.popen3 command
+          stdin.close
+
           return true if status.value == 0
 
           Application.logger <<-ERROR
@@ -17,9 +22,9 @@ Status: #{status.value}
 Stdout: #{stdout.gets(nil)}
 Stderr: #{stderr.gets(nil)}
           ERROR
-          false
+          raise CommandError.new command
         ensure
-          [stdin, stdout, stderr].each {|io| io.close if io && !io.closed? }
+          [stdout, stderr].each {|io| io.close if io && !io.closed? }
         end
       end
 
