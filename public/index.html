@@ -54,7 +54,7 @@
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="javascript:void(0)" class="glyphicon glyphicon-wrench"></a></li>
+                        <li><a href="javascript:void(0)" class="glyphicon glyphicon-wrench" data-toggle="modal" data-target="#project-config"></a></li>
                     </ul>
                 </div><!-- /.nav-collapse -->
             </div><!-- /.container -->
@@ -121,6 +121,33 @@
                 </div><!--/span-->
             </div><!--/row-->
         </div><!--/.container-->
+
+        <div class="modal fade" id="project-config">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">New Project</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST">
+                            <div class="input-group project-config-text-input">
+                                <span class="input-group-addon">Project</span>
+                                <input type="text" class="form-control" name="project_name" placeholder="e.g. Bifrost" />
+                            </div>
+                            <div class="input-group project-config-text-input">
+                                <span class="input-group-addon">Git</span>
+                                <input type="text" class="form-control" name="git_url" placeholder="e.g. ssh://user@gerrit.dechocorp.com/bifrost" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>

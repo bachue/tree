@@ -303,6 +303,21 @@ textarea {
     }
 }
 
+/*
+ * Mainframe
+ */
+
 .main-container {
     margin-top: 70px; /* TODO: Fix the bug in other way */
+}
+
+/*
+ * Project config dialog
+ */
+.project-config-text-input {
+    margin-bottom: 10px;
+}
+
+.project-config-text-input > .input-group-addon {
+    min-width: 70px;
 }
