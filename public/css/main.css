@@ -302,3 +302,7 @@ textarea {
         page-break-after: avoid;
     }
 }
+
+.main-container {
+    margin-top: 70px; /* TODO: Fix the bug in other way */
+}
