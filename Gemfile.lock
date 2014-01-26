@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/bachue/rack-contrib.git
+  revision: f5f4ffebc20277903f6013adfb0429d12b4a3050
+  specs:
+    rack-contrib (1.2.0)
+      rack (>= 0.9.1)
+
+GIT
   remote: git://github.com/igrigorik/em-synchrony.git
   revision: 9eb4a81903d7df400d7be4173a2faf5662794abb
   specs:
@@ -94,12 +101,10 @@ GEM
     pry-doc (0.5.1)
       pry (>= 0.9)
       yard (>= 0.8)
-    rack (1.4.5)
+    rack (1.5.2)
     rack-accept (0.4.5)
       rack (>= 0.4)
     rack-accept-media-types (0.9)
-    rack-contrib (1.1.0)
-      rack (>= 0.9.1)
     rack-fiber_pool (0.9.3)
     rack-mount (0.8.3)
       rack (>= 1.0.0)
@@ -133,6 +138,6 @@ DEPENDENCIES
   pry
   pry-byebug
   pry-doc
-  rack (= 1.4.5)
+  rack-contrib!
   rack-fiber_pool
   sqlite3
