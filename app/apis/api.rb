@@ -1,4 +1,4 @@
-class Posts < Grape::API
+class API < Grape::API
   format :json
   
   desc 'Only for test'
