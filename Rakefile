@@ -7,6 +7,21 @@ require 'erb'
 
 APP_ENV = ENV['APP_ENV'] || 'development'
 
+desc "runs a console to operate your environment"
+task :console do
+  require 'pry'
+  require 'grape'
+
+  ActiveRecord::Base.configurations = db_conf
+  ActiveRecord::Base.establish_connection db_conf[APP_ENV]
+
+  $: << File.expand_path(File.dirname(__FILE__))
+
+  Dir['app/models/**/*.rb', 'app/entities/**/*.rb', 'lib/**/*.rb'].each {|f| require f }
+
+  pry
+end
+
 desc "runs a console to operate your database"
 task :db do
   exec "sqlite3 -line #{db_conf[APP_ENV]['database']}"

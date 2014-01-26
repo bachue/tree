@@ -1,5 +1,6 @@
 $: << File.expand_path(File.dirname(__FILE__) + '/app/apis')
 $: << File.expand_path(File.dirname(__FILE__) + '/app/models')
+$: << File.expand_path(File.dirname(__FILE__) + '/app/entities')
 $: << File.expand_path(File.dirname(__FILE__) + '/lib')
 
 require "rubygems"
@@ -10,9 +11,6 @@ require 'rack/contrib/try_static'
 require 'pathname'
 require 'grape'
 
-require 'git'
-require 'api_logger'
-
 require 'api'
 
 class Application < Goliath::API
@@ -22,7 +20,17 @@ class Application < Goliath::API
   use Rack::TryStatic,
                 root: File.expand_path(File.dirname(__FILE__) + '/public'),
                 urls: %w[/], try: ['.html', 'index.html', '/index.html']
+
   def response(env)
-    ::API.call(env)
+    request = Rack::Request.new env
+    case request.path_info
+    when %r{^/+api/}
+      ::API.call(env)
+    else
+      [404, {}, '']
+    end
   end
 end
+
+require 'git'
+require 'app_logger'
