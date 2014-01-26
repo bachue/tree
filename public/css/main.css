@@ -320,7 +320,7 @@ textarea {
 }
 
 .project-config-text-input > .input-group-addon {
-    width: 70px;
+    min-width: 70px;
 }
 
 /*
