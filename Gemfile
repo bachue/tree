@@ -8,6 +8,7 @@ gem 'grape'
 gem 'goliath'
 gem 'foreman', :require => nil
 gem 'activerecord'
+gem 'escape'
 
 group :development, :test do
   gem 'pry'

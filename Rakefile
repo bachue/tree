@@ -5,11 +5,11 @@ require 'em-synchrony/activerecord'
 require 'yaml'
 require 'erb'
 
-RAILS_ENV = ENV['RAILS_ENV'] || 'development'
+APP_ENV = ENV['APP_ENV'] || 'development'
 
 desc "runs a console to operate your database"
 task :db do
-  exec "sqlite3 -line #{db_conf[RAILS_ENV]['database']}"
+  exec "sqlite3 -line #{db_conf[APP_ENV]['database']}"
 end
 
 namespace :db do
@@ -18,7 +18,7 @@ namespace :db do
     ActiveRecord::Base.configurations = db_conf
     
     # drop and create need to be performed with a connection to the 'postgres' (system) database
-    ActiveRecord::Base.establish_connection db_conf[RAILS_ENV]
+    ActiveRecord::Base.establish_connection db_conf[APP_ENV]
   end
   
   desc "creates and migrates your database"
@@ -29,7 +29,7 @@ namespace :db do
   
   desc "migrate your database"
   task :migrate do
-    ActiveRecord::Base.establish_connection db_conf[RAILS_ENV]
+    ActiveRecord::Base.establish_connection db_conf[APP_ENV]
 
     ActiveRecord::Migrator.migrate(
       ActiveRecord::Migrator.migrations_paths, 
@@ -39,12 +39,12 @@ namespace :db do
   
   desc 'Drops the database'
   task :drop => :load_config do
-    FileUtils.rm db_conf[RAILS_ENV]['database']
+    FileUtils.rm db_conf[APP_ENV]['database']
   end
   
   desc 'Creates the database'
   task :create => :load_config do
-    FileUtils.touch db_conf[RAILS_ENV]['database']
+    FileUtils.touch db_conf[APP_ENV]['database']
   end
   
 end
