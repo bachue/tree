@@ -367,6 +367,12 @@ ul.sidebar-doc-level-1 {
     border-radius: 5px;
 }
 
+@media (max-width: 767px) {
+    #sidebar {
+        width: 100%;
+    }
+}
+
 /* TODO: We shouldn't write a long list, will replace them by inline style */
 ul.sidebar-doc-level-1 > li > a {
     padding-left: 20px;
