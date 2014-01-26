@@ -17,7 +17,6 @@ namespace :db do
   task :load_config do
     ActiveRecord::Base.configurations = db_conf
     
-    # drop and create need to be performed with a connection to the 'postgres' (system) database
     ActiveRecord::Base.establish_connection db_conf[APP_ENV]
   end
   
