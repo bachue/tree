@@ -26,7 +26,7 @@ class API < Grape::API
       project = Project.find_by id: params[:id]
       error! 'Project not found', 404 unless project
 
-      project.tree.to_json
+      project.tree
     end
 
     desc 'Create a project'

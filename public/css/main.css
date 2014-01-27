@@ -327,39 +327,7 @@ textarea {
  * Sidebar
  */
 
-#sidebar ul {
-    padding-left: 0;
-    margin-top: 0;
-}
-
-#sidebar ul li {
-    list-style: none;
-}
-
-#sidebar ul li a {
-    display: block;
-    color: #777;
-    text-decoration: none;
-    padding-top: 5px;
-    padding-bottom: 5px;
-}
-
-#sidebar ul li a:hover,
-#sidebar ul li a:focus {
-    background-color: #e7e7e7;
-    border-right: 1px solid #aaa;
-}
-
-#sidebar ul li.active > a,
-#sidebar ul li.active > a:hover,
-#sidebar ul li.active > a:focus {
-    font-weight: bold;
-    color: #666;
-    background-color: transparent;
-    border-right: 1px solid #979797;
-}
-
-ul.sidebar-doc-level-1 {
+.sidebar {
     background-color: #eee;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -367,46 +335,42 @@ ul.sidebar-doc-level-1 {
     border-radius: 5px;
 }
 
-@media (max-width: 767px) {
-    #sidebar {
-        width: 100%;
-    }
+.sidebar ul {
+    padding-left: 0;
+    margin-top: 0;
 }
 
-/* TODO: We shouldn't write a long list, will replace them by inline style */
-ul.sidebar-doc-level-1 > li > a {
-    padding-left: 20px;
+.sidebar ul li {
+    list-style: none;
 }
-ul.sidebar-doc-level-2 > li > a {
-    padding-left: 30px;
+
+.sidebar ul li a {
+    display: block;
+    color: #777;
+    text-decoration: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 0;
+    overflow-y: scroll;
 }
-ul.sidebar-doc-level-3 > li > a {
-    padding-left: 40px;
+
+.sidebar ul li a:hover,
+.sidebar ul li a:focus {
+    background-color: #e7e7e7;
+    border-right: 1px solid #aaa;
 }
-ul.sidebar-doc-level-4 > li > a {
-    padding-left: 50px;
+
+.sidebar ul li.active > a,
+.sidebar ul li.active > a:hover,
+.sidebar ul li.active > a:focus {
+    font-weight: bold;
+    color: #666;
+    background-color: transparent;
+    border-right: 1px solid #979797;
 }
-ul.sidebar-doc-level-5 > li > a {
-    padding-left: 60px;
-}
-ul.sidebar-doc-level-6 > li > a {
-    padding-left: 70px;
-}
-ul.sidebar-doc-level-7 > li > a {
-    padding-left: 80px;
-}
-ul.sidebar-doc-level-8 > li > a {
-    padding-left: 90px;
-}
-ul.sidebar-doc-level-9 > li > a {
-    padding-left: 100px;
-}
-ul.sidebar-doc-level-10 > li > a {
-    padding-left: 110px;
-}
-ul.sidebar-doc-level-11 > li > a {
-    padding-left: 120px;
-}
-ul.sidebar-doc-level-12 > li > a {
-    padding-left: 130px;
+
+@media (max-width: 767px) {
+    .sidebar {
+        width: 100%;
+    }
 }

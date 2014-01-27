@@ -1,50 +1,16 @@
 <div class="row">
-    <div class="col-xs-6 col-sm-3" id="sidebar" role="navigation">
-        <ul class="sidebar-doc-level-1">
-            <li class="active">
-                <a href="javascript:void(0)">auth</a>
-                <ul class="nav sidebar-doc-level-2">
-                    <li class="active"><a href="javascript:void(0)">exchange</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:void(0)">accounts</a>
-                <ul class="nav sidebar-doc-level-2">
-                    <li>
-                        <a href="javascript:void(0)">auth_policy</a>
-                        <ul class="nav sidebar-doc-level-3">
-                            <li>
-                                <a href="javascript:void(0)">&lt;partner_id&gt;</a>
-                                <ul class="nav sidebar-doc-level-4">
-                                    <li>
-                                        <a href="javascript:void(0)">schedule</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li><a href="javascript:void(0)">partners</a></li>
-                    <li><a href="javascript:void(0)">users</a></li>
-                    <li><a href="javascript:void(0)">user_sync_detail</a></li>
-                    <li><a href="javascript:void(0)">user_groups</a></li>
-                    <li><a href="javascript:void(0)">machines</a></li>
-                    <li><a href="javascript:void(0)">containers</a></li>
-                    <li><a href="javascript:void(0)">restores</a></li>
-                    <li><a href="javascript:void(0)">admins</a></li>
-                    <li><a href="javascript:void(0)">licenses</a></li>
-                    <li><a href="javascript:void(0)">quota</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:void(0)">fedid</a>
-                <ul class="nav">
-                    <li><a href="javascript:void(0)">syncjobs</a></li>
-                    <li><a href="javascript:void(0)">client_config</a></li>
-                    <li><a href="javascript:void(0)">sync_config</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div><!--/span-->
+    <div class="col-xs-6 col-sm-3" role="navigation">
+        <div class="sidebar">
+            <abn-tree
+                      data-tree-data="current.project.directory"
+                      data-icon-leaf="glyphicon glyphicon-file"
+                      data-icon-expand="glyphicon glyphicon-plus"
+                      data-icon-collapse="glyphicon glyphicon-minus"
+                      data-expand-level="0"
+                      data-ng-if="current.project.directory">
+            </abn-tree>
+        </div>
+    </div>
 
     <div class="col-xs-12 col-sm-9">
         <p class="pull-right visible-xs">

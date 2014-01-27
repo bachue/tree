@@ -14,6 +14,12 @@ var shim = {
     },
     restangular: {
         deps: ['angular', 'underscore']
+    },
+    angular_animate: {
+        deps: ['angular']
+    },
+    abn_tree_directive: {
+        deps: ['angular', 'angular_animate']
     }
 }
 
@@ -25,7 +31,9 @@ require.config({
         angular: 'vendor/angular',
         angular_ui_router: 'vendor/angular-ui-router',
         bootstrap: 'vendor/bootstrap',
-        restangular: 'vendor/restangular'
+        restangular: 'vendor/restangular',
+        angular_animate: 'vendor/angular-animate',
+        abn_tree_directive: 'vendor/abn_tree_directive'
     },
     shim: shim
 });
