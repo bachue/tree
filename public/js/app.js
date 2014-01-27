@@ -1,3 +1,3 @@
-define(['angular', 'controllers', 'directives', 'filters', 'angular_ui_router'], function(angular) {
-    angular.module('TreeApp', ['controllers', 'directives', 'filters', 'ui.router']);
+define(['angular', 'controllers', 'directives', 'filters', 'angular_ui_router', 'restangular'], function(angular) {
+    return angular.module('TreeApp', ['controllers', 'directives', 'filters', 'ui.router', 'restangular']);
 });
