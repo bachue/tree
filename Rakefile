@@ -11,6 +11,7 @@ desc "runs a console to operate your environment"
 task :console do
   require 'pry'
   require 'grape'
+  require 'grape-entity'
 
   ActiveRecord::Base.configurations = db_conf
   ActiveRecord::Base.establish_connection db_conf[APP_ENV]

@@ -18,6 +18,17 @@ class API < Grape::API
       present Project.all, with: ProjectEntity
     end
 
+    desc 'Get project directory tree'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+    end
+    get '/:id' do
+      project = Project.find_by id: params[:id]
+      error! 'Project not found', 404 unless project
+
+      project.tree.to_json
+    end
+
     desc 'Create a project'
     params do
       requires :name, type: String, desc: 'Project name', regexp: /^[\w\-]+$/
@@ -26,7 +37,7 @@ class API < Grape::API
     end
     post do
       project = Project.new name: params[:name], url: params[:url], branch: params[:branch]
-      project.path = Application::ROOT.join('repos', params[:name]).to_s # We don't have validate path here because name is limited
+      project.path = Application::REPO.join(params[:name]).to_s # We don't have validate path here because name is limited
 
       error! 'ArgumentError', 400 unless project.valid?
       begin

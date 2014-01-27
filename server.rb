@@ -22,6 +22,7 @@ require 'api'
 class Application < Goliath::API
   ROOT = Pathname File.expand_path(File.dirname(__FILE__)) unless defined?(ROOT)
   APP_ENV = ENV['APP_ENV'] || 'development' unless defined?(APP_ENV)
+  REPO = ROOT.join 'repos'
 
   use Rack::TryStatic,
                 root: File.expand_path(File.dirname(__FILE__) + '/public'),
@@ -40,3 +41,4 @@ end
 
 require 'git'
 require 'app_logger'
+require 'renderer'
