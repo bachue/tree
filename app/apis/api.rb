@@ -50,5 +50,18 @@ class API < Grape::API
         error! 'Failed to fetch project data', 400
       end
     end
+
+    desc 'Get a rendered document from the project'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+    end
+    get '/:id/*path', anchor: false do
+      project = Project.find_by id: params[:id]
+      error! 'Project not found', 404 unless project
+
+      result = project.render params[:path]
+      error! 'Document not found', 404 unless result
+      result
+    end
   end
 end

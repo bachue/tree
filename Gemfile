@@ -12,6 +12,7 @@ gem 'foreman', require: nil
 gem 'activerecord'
 gem 'builder', '~> 3.1.0'
 gem 'escape'
+gem 'github-markdown'
 
 group :development, :test do
   gem 'pry'

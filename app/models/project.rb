@@ -1,5 +1,3 @@
-require 'pathname'
-
 class Project < ActiveRecord::Base
   validates :name, :url, :branch, :path, presence: true
   validates :name, :branch, length: {maximum: 30}
@@ -8,14 +6,28 @@ class Project < ActiveRecord::Base
 
   def tree
     root = []
-    paths = Dir[path + "/**/*.{#{Renderer.available.map(&:ext).flatten.join(',')}}"]
-    paths.each do |path|
-      insert_into root, Pathname(path).each_filename.to_a
+    files.each do |path|
+      insert_into root, path.split('/')
     end
     root
   end
 
+  def render file
+    file = path + '/' + file
+    if File.file?(file) && renderer = Renderers.choose_for(file)
+      renderer.render File.read(file)
+    elsif File.directory?(file)
+      ''
+    else
+      false
+    end
+  end
+
   private
+    def files
+      Dir[path + "/**/*.{#{Renderers.available_ext.join(',')}}"].select {|f| File.file? f }.map {|f| f[(path.size + 1)..-1]}
+    end
+
     def insert_into root, names
       if names.size == 1
         root << {label: names.first}

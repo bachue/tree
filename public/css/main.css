@@ -333,6 +333,7 @@ textarea {
     padding-bottom: 10px;
     text-shadow: 0 1px 0 #fff;
     border-radius: 5px;
+    overflow-x: scroll;
 }
 
 .sidebar ul {

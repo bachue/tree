@@ -1,26 +1,45 @@
-class Renderer
-  def self.register renderer
-    @renderers ||= []
-    @renderers << renderer
-  end
+require 'github/markdown'
 
-  def self.available
-    @renderers ||= []
+class Renderers
+  class << self
+    def register renderer
+      @renderers ||= []
+      @renderers << renderer
+    end
+
+    def available
+      @renderers ||= []
+    end
+
+    def available_ext
+      available.map(&:ext).flatten
+    end
+
+    def choose_for file
+      available.detect {|renderer| Array(renderer.ext).any? {|ext| file.end_with? ext }}
+    end
   end
 end
 
 class MarkDownRenderer
   def self.ext
-    'md'
+    %w[md mkd mkdn mdown markdown]
+  end
+
+  def self.render content
+    GitHub::Markdown.render_gfm content
   end
 end
-
-Renderer.register MarkDownRenderer
 
 class HTMLRender
   def self.ext
-    ['html', 'htm']
+    %w[html htm]
+  end
+
+  def self.render content
+    content
   end
 end
 
-Renderer.register HTMLRender
+Renderers.register MarkDownRenderer
+Renderers.register HTMLRender
