@@ -3,6 +3,7 @@ define(['controllers'], function(controllers) {
         $scope.current = {};
 
         Restangular.all('projects').getList().then(function(projects) {
+            if(projects['error']) throw projects['error'];
             $timeout(function() {
                 $scope.projects = projects;
                 $state.go('application.project');

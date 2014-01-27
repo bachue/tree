@@ -39,7 +39,7 @@ require.config({
 });
 
 require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular',
-         'controllers/application', 'controllers/project'], function(angular, app, domReady, $) {
+         'controllers/application', 'controllers/project', 'controllers/doc'], function(angular, app, domReady, $) {
     app.config(function($stateProvider, $urlRouterProvider, RestangularProvider) {
         $stateProvider.
            state('application', {
@@ -50,6 +50,10 @@ require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular',
             url: '/:project_name',
             controller: 'Project',
             templateUrl: 'templates/project.html'
+        }).state('application.project.doc', {
+            url: '/:document_path',
+            controller: 'Doc',
+            templateUrl: 'templates/doc.html'
         });
         $urlRouterProvider.otherwise('');
         RestangularProvider.setBaseUrl('/api/');

@@ -60,8 +60,13 @@ class API < Grape::API
       error! 'Project not found', 404 unless project
 
       result = project.render params[:path]
-      error! 'Document not found', 404 unless result
-      result
+      if result.empty?
+        {dir: true}
+      elsif result
+        {doc: result}
+      else
+        error! 'Document not found', 404
+      end
     end
   end
 end
