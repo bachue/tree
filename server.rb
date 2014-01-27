@@ -1,3 +1,8 @@
+if `which git`.empty?
+  STDERR.puts 'Tree can\'t run without git!'
+  exit(-1)
+end
+
 $: << File.expand_path(File.dirname(__FILE__) + '/app/apis')
 $: << File.expand_path(File.dirname(__FILE__) + '/app/models')
 $: << File.expand_path(File.dirname(__FILE__) + '/app/entities')
