@@ -13,7 +13,6 @@ var shim = {
         deps: ['jquery']
     },
     restangular: {
-        exports: 'Restangular',
         deps: ['angular', 'underscore']
     }
 }
@@ -24,19 +23,25 @@ require.config({
         jquery: 'vendor/jquery',
         underscore: 'vendor/underscore',
         angular: 'vendor/angular',
-        angular_ui_router: 'vendor/angular-ui-router.min',
+        angular_ui_router: 'vendor/angular-ui-router',
         bootstrap: 'vendor/bootstrap',
         restangular: 'vendor/restangular'
     },
     shim: shim
 });
 
-require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', 'controllers/application'], function(angular, app, domReady, $) {
+require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular',
+         'controllers/application', 'controllers/project'], function(angular, app, domReady, $) {
     app.config(function($stateProvider, $urlRouterProvider, RestangularProvider) {
-        $stateProvider.state('application', {
+        $stateProvider.
+           state('application', {
             url: '',
             templateUrl: 'templates/application.html',
             controller: 'Application'
+        }).state('application.project', {
+            url: '/:project_name',
+            controller: 'Project',
+            templateUrl: 'templates/project.html'
         });
         $urlRouterProvider.otherwise('');
         RestangularProvider.setBaseUrl('/api/');
