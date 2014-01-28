@@ -12,7 +12,7 @@ module.directive('abnTree', function($timeout) {
       initialSelection: '='
     },
     link: function(scope, element, attrs) {
-      var expand_level, for_each_branch, on_treeData_change, select_branch, selected_branch;
+      var expand_level, for_each_branch, on_treeData_change, select_branch, selected_branch, select_branches;
       if (attrs.iconExpand == null) {
         attrs.iconExpand = 'icon-plus';
       }
@@ -189,14 +189,44 @@ module.directive('abnTree', function($timeout) {
         }
         return _results;
       };
-      if (attrs.initialSelection != null) {
-        for_each_branch(function(b) {
-          if (b.label === attrs.initialSelection) {
-            return select_branch(b);
+      select_branches = function(initialSelection) {
+        if (initialSelection != null) {
+          if (initialSelection.indexOf('/') == -1) {
+            for_each_branch(function(b) {
+              if (b.label === initialSelection) {
+                return select_branch(b);
+              }
+            });
+          } else {
+            var selections = initialSelection.split('/');
+            var do_f = function(children, selections) {
+              $timeout(function() {
+                for (var i = 0, len = children.length; i < len; i++) {
+                  if (children[i].label === selections[0]) {
+                    select_branch(children[i]);
+                    if (children[i].children) {
+                      children[i].expanded = true;
+                      for (var _i = 0, _len = children[i].children.length; _i < _len; _i++) {
+                        var row = _.find(scope.tree_rows, function(row) { return row.branch == children[i].children[_i] });
+                        row.visible = true;
+                      }
+                      do_f(children[i].children, selections.slice(1));
+                    }
+                    break;
+                  }
+                }
+              });
+            }
+            do_f(scope.treeData, selections);
           }
-        });
+        }
       }
-      return scope.$watch('treeData', on_treeData_change, true);
+      select_branches(attrs.initialSelection);
+      scope.$watch('treeData', on_treeData_change, true);
+      scope.$on('toSelectBranches', function(event, selection) {
+        select_branches(selection);
+      });
+      scope.$emit('treeInitialized');
     }
   };
 });

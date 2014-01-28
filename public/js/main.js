@@ -33,7 +33,8 @@ require.config({
         bootstrap: 'vendor/bootstrap',
         restangular: 'vendor/restangular',
         angular_animate: 'vendor/angular-animate',
-        abn_tree_directive: 'vendor/abn_tree_directive'
+        abn_tree_directive: 'vendor/abn_tree_directive',
+        promise: 'vendor/requirejs-promise'
     },
     shim: shim
 });

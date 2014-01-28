@@ -1,12 +1,7 @@
 define(['controllers/project'], function(project) {
     return project.controller('Doc', function($scope, $state, $sce, Restangular) {
-        if (!$scope.projects) {
-            return $state.go('application');
-        };
-
         if (!$state.params.document_path && $scope.current.document_path)
             return $state.go('application.project.doc', {document_path: $scope.current.document_path});
-
 
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;
