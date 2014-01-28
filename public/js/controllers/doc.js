@@ -5,7 +5,6 @@ define(['controllers/project', 'highlight'], function(project, hljs) {
 
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;
-            highlight();
             Restangular.one('projects', $scope.current.project.id).getList($state.params.document_path).then(function(doc) {
                 if(doc['error']) {
                     throw doc['error'];
@@ -15,6 +14,8 @@ define(['controllers/project', 'highlight'], function(project, hljs) {
                 }
             });
         }
+        
+        highlight();
 
         function highlight() {
             $timeout(function() {

@@ -1,2 +1,12 @@
 <div id="current_document" data-ng-if="current.document" data-ng-bind-html="current.document"></div>
-<div data-ng-if="!current.document">Not found</div>
+<div id="current_document" data-ng-if="!current.document">
+    <h3>To edit wiki for this project, please:</h3>
+    <pre lang="sh">
+<code>git clone <span data-ng-bind="current.project.url"></span>
+git checkout <span data-ng-bind="current.project.branch"></span>
+# Edit something in your faviorite editor ...
+git add --all .
+git commit
+git push origin <span data-ng-bind="current.project.branch"></span>
+# Refresh current page and you will see the change!</code></pre>
+</div>
