@@ -29,7 +29,7 @@ Stderr: #{stderr.gets(nil)}
       end
 
       def valid_git_repo?(url)
-        %w(ssh https http git).include? URI(url).scheme
+        %w(ssh https http).include? URI(url).scheme
       end
     end
   end
