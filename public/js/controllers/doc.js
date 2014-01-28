@@ -9,6 +9,7 @@ define(['controllers/project'], function(project) {
 
 
         if ($state.params.document_path) {
+            $scope.current.document_path = $state.params.document_path;
             Restangular.one('projects', $scope.current.project.id).getList($state.params.document_path).then(function(doc) {
                 if(doc['error']) {
                     throw doc['error'];

@@ -19,7 +19,7 @@ var shim = {
         deps: ['angular']
     },
     abn_tree_directive: {
-        deps: ['angular', 'angular_animate']
+        deps: ['angular', 'angular_animate', 'underscore']
     }
 }
 
@@ -51,11 +51,11 @@ require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular',
             controller: 'Project',
             templateUrl: 'templates/project.html'
         }).state('application.project.doc', {
-            url: '/:document_path',
+            url: '/*document_path',
             controller: 'Doc',
             templateUrl: 'templates/doc.html'
         });
-        $urlRouterProvider.otherwise('');
+        $urlRouterProvider.otherwise('/');
         RestangularProvider.setBaseUrl('/api/');
     });
 

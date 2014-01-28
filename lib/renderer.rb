@@ -1,4 +1,5 @@
 require 'github/markdown'
+require 'nokogiri'
 
 class Renderers
   class << self
@@ -37,7 +38,12 @@ class HTMLRender
   end
 
   def self.render content
-    content
+    html = Nokogiri::HTML content
+    if body = html.css('body')
+      body[0].inner_html
+    else
+      content
+    end
   end
 end
 

@@ -125,6 +125,32 @@ module.directive('abnTree', function($timeout) {
         });
         add_branch_to_list = function(level, branch, visible) {
           var child, child_visible, tree_icon, _i, _len, _ref, _results;
+          branch.parent = function() {
+            var result;
+            for_each_branch(function(br) {
+              var children = br.children, i, len;
+              if (children) {
+                for (i = 0, len = br.children.length; i < len; i++) {
+                  if (_.isEqual(children[i], branch)) {
+                    result = br;
+                    break;
+                  };
+                }
+              }
+            });
+            return result;
+          };
+          branch.parents = function() {
+            var current = branch, results = [];
+            while (true) {
+              if (current = current.parent())
+                results.unshift(current);
+              else
+                break;
+            }
+            return results;
+          }
+
           if (branch.expanded == null) {
             branch.expanded = false;
           }

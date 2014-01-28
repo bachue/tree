@@ -92,6 +92,7 @@ GEM
     minitest (4.7.5)
     multi_json (1.8.4)
     multi_xml (0.5.5)
+    nokogiri (1.5.6)
     pry (0.9.12.4)
       coderay (~> 1.0)
       method_source (~> 0.8)
@@ -137,6 +138,7 @@ DEPENDENCIES
   goliath
   grape
   grape-entity
+  nokogiri
   pry
   pry-byebug
   pry-doc

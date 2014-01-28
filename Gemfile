@@ -13,6 +13,7 @@ gem 'activerecord'
 gem 'builder', '~> 3.1.0'
 gem 'escape'
 gem 'github-markdown'
+gem 'nokogiri'
 
 group :development, :test do
   gem 'pry'
