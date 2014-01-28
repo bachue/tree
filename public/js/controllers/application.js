@@ -17,15 +17,15 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                             $('#project-config').modal('hide');
                         });
                     }, function() {
-                        // Error handling
+                        // TODO: Error handling
                         $('#project-config').modal('hide');
                     });
                 } else {
-                    // Error handling
+                    // TODO: Error handling
                     $('#project-config').modal('hide');
                 };
             }, function() {
-                // Error handling
+                // TODO: Error handling
                 $('#project-config').modal('hide');
             });
         };

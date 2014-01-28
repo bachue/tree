@@ -13,8 +13,7 @@ task :console do
   require 'grape'
   require 'grape-entity'
 
-  ActiveRecord::Base.configurations = db_conf
-  ActiveRecord::Base.establish_connection db_conf[APP_ENV]
+  init_db
 
   $: << File.expand_path(File.dirname(__FILE__))
 
@@ -29,15 +28,8 @@ task :db do
 end
 
 namespace :db do
-  desc 'loads database configuration in for other tasks to run'
-  task :load_config do
-    ActiveRecord::Base.configurations = db_conf
-    
-    ActiveRecord::Base.establish_connection db_conf[APP_ENV]
-  end
-  
   desc 'creates and migrates your database'
-  task :setup => :load_config do
+  task :setup do
     Rake::Task['db:create'].invoke
     Rake::Task['db:migrate'].invoke
   end
@@ -53,12 +45,12 @@ namespace :db do
   end
   
   desc 'Drops the database'
-  task :drop => :load_config do
+  task :drop do
     FileUtils.rm db_conf[APP_ENV]['database']
   end
   
   desc 'Creates the database'
-  task :create => :load_config do
+  task :create do
     FileUtils.touch db_conf[APP_ENV]['database']
   end
 end
@@ -67,11 +59,28 @@ desc 'clean all environment, this command cannot run in production mode'
 task :clean do
   fail 'This command cannot run in production mode.' if APP_ENV == 'production'
   Rake::Task['db:drop'].invoke
-  Rake::Task['db:create'].invoke
-  Rake::Task['db:migrate'].invoke
+  Rake::Task['db:setup'].invoke
   FileUtils.rm_rf Dir['repos/*']
+end
+
+desc 'delete one project from both database and repo'
+task :delete, :name do |t, args|
+  init_db
+  $: << File.expand_path(File.dirname(__FILE__))
+  Dir['app/models/**/*.rb'].each {|f| require f }
+
+  project = Project.find_by name: args[:name]
+  fail "Project \"#{args[:name]}\" cannot found" unless project
+  project.destroy
+  FileUtils.rm_rf project.path
+  puts "Project \"#{args[:name]}\" has gone"
 end
 
 def db_conf
   config = YAML.load(ERB.new(File.read('config/database.yml')).result)
+end
+
+def init_db
+  ActiveRecord::Base.configurations = db_conf
+  ActiveRecord::Base.establish_connection db_conf[APP_ENV]
 end
