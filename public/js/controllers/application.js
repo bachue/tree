@@ -19,6 +19,12 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
             });
         };
 
+        $scope.set_current_project = function(name) {
+            delete $scope.current.document;
+            delete $scope.current.document_path;
+            $state.go('application.project', {project_name: name, document_path: null});
+        };
+
         $scope.projects = projects;
         $state.go('application.project');
     });

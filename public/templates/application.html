@@ -15,7 +15,7 @@
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><span data-ng-bind="current.project.name"></span>&nbsp;<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li data-ng-repeat="project in projects">
-                            <a href="javascript:void(0)" data-ng-bind="project.name"></a>
+                            <a href="javascript:void(0)" data-ng-click="set_current_project(project.name)" data-ng-bind="project.name"></a>
                         </li>
                     </ul>
                 </li>
