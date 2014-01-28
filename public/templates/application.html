@@ -44,8 +44,9 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">New Project</h4>
             </div>
-            <form method="POST" name="project_config" data-ng-if="!current.config_dialog.cloning">
+            <form method="POST" name="project_config">
                 <div class="modal-body">
+                    <div data-ng-if="!current.config_dialog.cloning">
                         <div class="input-group project-config-text-input">
                             <span class="input-group-addon">Project</span>
                             <input type="text" class="form-control" name="project_name" data-uniq-project data-ng-model="current.config_dialog.name" data-required data-ng-maxlength="30" placeholder="e.g. Bifrost" />
@@ -56,6 +57,7 @@
                             <span class="input-group-addon">Git</span>
                             <input type="text" class="form-control" name="git_url" data-ng-model="current.config_dialog.url" data-required placeholder="e.g. ssh://user@gerrit.dechocorp.com/bifrost" data-ng-maxlength="255" data-ng-pattern="/^(?:http|https|ssh):\/\/[^\/]+\/.+/" />
                         </div>
+                    </div>
                     <div class="progress progress-striped active" data-ng-if="current.config_dialog.cloning">
                         <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
                             <span class="sr-only">Git cloning...</span>

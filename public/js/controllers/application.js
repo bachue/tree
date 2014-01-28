@@ -12,14 +12,26 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                         $timeout(function() {
                             $scope.projects = projects;
                             $scope.current.config_dialog = {branch: 'master'};
+                            if ($scope.projects.length == 1)
+                                $state.go('application.project', {project_name: projects[0].name});
                             $('#project-config').modal('hide');
                         });
+                    }, function() {
+                        // Error handling
+                        $('#project-config').modal('hide');
                     });
+                } else {
+                    // Error handling
+                    $('#project-config').modal('hide');
                 };
+            }, function() {
+                // Error handling
+                $('#project-config').modal('hide');
             });
         };
 
         $scope.set_current_project = function(name) {
+            if ($scope.current.project.name === name) return;
             delete $scope.current.document;
             delete $scope.current.document_path;
             $state.go('application.project', {project_name: name, document_path: null});
