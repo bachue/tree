@@ -323,6 +323,10 @@ textarea {
     min-width: 70px;
 }
 
+.project-config-text-input input.ng-invalid {
+    color: red;
+}
+
 /*
  * Sidebar
  */

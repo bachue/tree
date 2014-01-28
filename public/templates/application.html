@@ -44,29 +44,29 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">New Project</h4>
             </div>
-            <div class="modal-body">
-                <form method="POST" data-ng-if="!current.config_dialog.cloning">
-                    <div class="input-group project-config-text-input">
-                        <span class="input-group-addon">Project</span>
-                        <input type="text" class="form-control" name="project_name" data-ng-model="current.config_dialog.name" placeholder="e.g. Bifrost" />
-                        <span class="input-group-addon">Branch</span>
-                        <input type="text" class="form-control" name="branch_name" data-ng-model="current.config_dialog.branch" placeholder="e.g. master" />
-                    </div>
-                    <div class="input-group project-config-text-input">
-                        <span class="input-group-addon">Git</span>
-                        <input type="text" class="form-control" name="git_url" data-ng-model="current.config_dialog.url" placeholder="e.g. ssh://user@gerrit.dechocorp.com/bifrost" />
-                    </div>
-                </form>
-                <div class="progress progress-striped active" data-ng-if="current.config_dialog.cloning">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                        <span class="sr-only">Git cloning...</span>
+            <form method="POST" name="project_config" data-ng-if="!current.config_dialog.cloning">
+                <div class="modal-body">
+                        <div class="input-group project-config-text-input">
+                            <span class="input-group-addon">Project</span>
+                            <input type="text" class="form-control" name="project_name" data-ng-model="current.config_dialog.name" data-required data-ng-maxlength="30" placeholder="e.g. Bifrost" />
+                            <span class="input-group-addon">Branch</span>
+                            <input type="text" class="form-control" name="branch_name" data-ng-model="current.config_dialog.branch" data-required data-ng-maxlength="30" placeholder="e.g. master" />
+                        </div>
+                        <div class="input-group project-config-text-input">
+                            <span class="input-group-addon">Git</span>
+                            <input type="text" class="form-control" name="git_url" data-ng-model="current.config_dialog.url" data-required placeholder="e.g. ssh://user@gerrit.dechocorp.com/bifrost" data-ng-maxlength="255" data-ng-pattern="/^(?:http|https|ssh):\/\/[^\/]+\/.+/" />
+                        </div>
+                    <div class="progress progress-striped active" data-ng-if="current.config_dialog.cloning">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                            <span class="sr-only">Git cloning...</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-ng-disabled="current.config_dialog.cloning" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-ng-disabled="current.config_dialog.cloning" data-ng-click="submit_config()">Save changes</button>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-ng-disabled="current.config_dialog.cloning" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-ng-disabled="current.config_dialog.cloning || project_config.$invalid" data-ng-click="submit_config()">Save changes</button>
+                </div>
+            </form>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
