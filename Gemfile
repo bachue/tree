@@ -14,6 +14,7 @@ gem 'builder', '~> 3.1.0'
 gem 'escape'
 gem 'github-markdown'
 gem 'nokogiri'
+gem 'RedCloth'
 
 group :development, :test do
   gem 'pry'

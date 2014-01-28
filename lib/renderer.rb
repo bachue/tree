@@ -1,5 +1,6 @@
 require 'github/markdown'
 require 'nokogiri'
+require 'redcloth'
 
 class Renderers
   class << self
@@ -47,5 +48,16 @@ class HTMLRender
   end
 end
 
+class TextileRenderer
+  def self.ext
+    'textile'
+  end
+
+  def self.render content
+    RedCloth.new(content).to_html
+  end
+end
+
 Renderers.register MarkDownRenderer
 Renderers.register HTMLRender
+Renderers.register TextileRenderer
