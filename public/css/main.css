@@ -381,9 +381,13 @@ textarea {
 }
 
 /*
- * hljs
+ * Document
  */
 
 #current_document .hljs {
     background-color: transparent;
+}
+
+#current_document table td {
+    border: solid 1px #bbb;
 }
