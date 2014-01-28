@@ -379,3 +379,11 @@ textarea {
         width: 100%;
     }
 }
+
+/*
+ * hljs
+ */
+
+#current_document .hljs {
+    background-color: transparent;
+}

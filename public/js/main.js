@@ -20,6 +20,9 @@ var shim = {
     },
     abn_tree_directive: {
         deps: ['angular', 'angular_animate', 'underscore']
+    },
+    highlight: {
+        exports: 'hljs'
     }
 }
 
@@ -34,7 +37,8 @@ require.config({
         restangular: 'vendor/restangular',
         angular_animate: 'vendor/angular-animate',
         abn_tree_directive: 'vendor/abn_tree_directive',
-        promise: 'vendor/requirejs-promise'
+        promise: 'vendor/requirejs-promise',
+        highlight: 'vendor/highlight.min'
     },
     shim: shim
 });
