@@ -7,11 +7,13 @@ define(['controllers/project', 'highlight'], function(project, hljs) {
             $scope.current.document_path = $state.params.document_path;
             Restangular.one('projects', $scope.current.project.id).getList($state.params.document_path).then(function(doc) {
                 if(doc['error']) {
-                    throw doc['error'];
+                    // TODO: Error handling
                 } else if(doc['doc']) {
                     $scope.current.document = $sce.trustAsHtml(doc['doc']);
                     highlight();
                 }
+            }, function(){
+                // TODO: Error handling
             });
         }
         
