@@ -38,7 +38,7 @@ class Application < Goliath::API
         base_url = (request.scheme ? request.scheme : 'http') + request.base_url
         path = request.query_string.empty? ? request.path_info : "#{request.path_info}?#{request.query_string}"
         url = "#{base_url}/\##{path}"
-        [301, {location: url}, '']
+        [301, {'Location' => url}, '']
       else
         [404, {}, '']
       end
