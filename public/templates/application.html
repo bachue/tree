@@ -27,7 +27,17 @@
                         <li><a href="javascript:void(0)">v1.1</a></li>
                     </ul>
                 </li>
- -->            </ul>
+ -->            
+
+                <li class="dropdown" data-ng-if="current.sections && current.sections.length > 1">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Sections <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li data-ng-class="'section-level-'+section.level" data-ng-repeat="section in current.sections">
+                            <a data-ng-href="#section-{{section.id}}" data-ng-bind="section.text"></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="javascript:void(0)" class="glyphicon glyphicon-wrench" data-toggle="modal" data-target="#project-config"></a></li>
             </ul>
