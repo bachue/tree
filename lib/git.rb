@@ -8,10 +8,10 @@ class Git
 
   class Utils
     class << self
-      def execute *args
-        command = Escape.shell_command(args)
+      def execute *multi_args
+        commands = multi_args.map {|args| Escape.shell_command args }
         begin
-          stdin, stdout, stderr, status = Open3.popen3 command
+          stdin, stdout, stderr, status = Open3.popen3 commands.join(' && ')
           stdin.close
 
           return true if status.value == 0
@@ -37,7 +37,11 @@ Stderr: #{stderr.gets(nil)}
   class << self
     def clone source, target, branch = 'master'
       FileUtils.rm_rf target
-      Utils.execute 'git', 'clone', '--quiet', '--branch', branch, Escape.uri_path(source), target
+      Utils.execute ['git', 'clone', '--quiet', '--branch', branch, Escape.uri_path(source), target]
+    end
+
+    def pull target, branch = 'master'
+      Utils.execute ['cd', target], ['git', 'pull', '--quiet', 'origin', branch]
     end
   end
 end

@@ -43,12 +43,27 @@ class API < Grape::API
       begin
         Project.transaction do
           project.save!
-          Git.clone(project.url, project.path, project.branch)
+          Git.clone project.url, project.path, project.branch
         end
         true
       rescue
         error! 'Failed to fetch project data', 400
       end
+    end
+
+    desc 'Tell tree which project has update'
+    params do
+      requires :name, type: String, desc: 'Project name'
+      requires :branch, type: String, desc: 'Branch name'
+    end
+    patch '/:name/:branch' do
+      project = Project.find_by name: params[:name]
+      error! 'Project not found', 404 unless project
+
+      return false if params[:branch] != project.branch
+
+      Git.pull project.path, project.branch
+      true
     end
 
     desc 'Get a rendered document from the project'
