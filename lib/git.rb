@@ -14,13 +14,14 @@ class Git
           command = commands.join ' && '
           stdin, stdout, stderr, status = Open3.popen3 command
           stdin.close
+          output = stdout.gets(nil)
 
-          return stdout.gets(nil) if status.value == 0
+          return output if status.value == 0
 
           Application.logger.error <<-ERROR
 Shell command failed: #{command}
 Status: #{status.value}
-Stdout: #{stdout.gets(nil)}
+Stdout: #{output}
 Stderr: #{stderr.gets(nil)}
           ERROR
           raise CommandError.new command
