@@ -19,11 +19,11 @@
                         </li>
                     </ul>
                 </li>
-                <li class="dropdown" data-ng-if="current.tag_name && current.project.tags.length > 1">
+                <li class="dropdown" data-ng-if="current.tag_name && current.project.tags.length > 0">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><span data-ng-bind="current.tag_name"></span>&nbsp;<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li data-ng-repeat="tag in ['HEAD'].concat(current.project.tags)">
-                            <a href="javascript:void(0)" data-ng-bind="tag"></a>
+                            <a href="javascript:void(0)" data-ng-click="set_current_tag(tag)" data-ng-bind="tag"></a>
                         </li>
                     </ul>
                 </li>

@@ -69,24 +69,27 @@ module.directive('abnTree', function($timeout) {
         return b.expanded = b.level < expand_level;
       });
       selected_branch = null;
-      select_branch = function(branch) {
+      select_branch = function(branch, not_trigger) {
         if (branch !== selected_branch) {
           if (selected_branch != null) {
             selected_branch.selected = false;
           }
           branch.selected = true;
           selected_branch = branch;
-          if (branch.onSelect != null) {
-            return $timeout(function() {
-              return branch.onSelect(branch);
-            });
-          } else {
-            if (scope.onSelect != null) {
+
+          if (!not_trigger) {
+            if (branch.onSelect != null) {
               return $timeout(function() {
-                return scope.onSelect({
-                  branch: branch
-                });
+                return branch.onSelect(branch);
               });
+            } else {
+              if (scope.onSelect != null) {
+                return $timeout(function() {
+                  return scope.onSelect({
+                    branch: branch
+                  });
+                });
+              }
             }
           }
         }
@@ -116,11 +119,6 @@ module.directive('abnTree', function($timeout) {
             }
           } else {
             return branch.children = [];
-          }
-        });
-        for_each_branch(function(b, level) {
-          if (!b.uid) {
-            return b.uid = "" + Math.random();
           }
         });
         add_branch_to_list = function(level, branch, visible) {
@@ -203,7 +201,7 @@ module.directive('abnTree', function($timeout) {
               $timeout(function() {
                 for (var i = 0, len = children.length; i < len; i++) {
                   if (children[i].label === selections[0]) {
-                    select_branch(children[i]);
+                    select_branch(children[i], true);
                     if (children[i].children) {
                       children[i].expanded = true;
                       for (var _i = 0, _len = children[i].children.length; _i < _len; _i++) {

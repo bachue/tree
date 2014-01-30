@@ -1,5 +1,5 @@
 define(['controllers', 'promise!loaders/projects'], function(controllers, projects) {
-    return controllers.controller('Application', function($scope, $state, $timeout, Restangular) {
+    return controllers.controller('Application', function($scope, $state, Restangular) {
         $scope.current = {};
         $scope.current.config_dialog = {branch: 'master'};
 
@@ -32,6 +32,11 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
             // We don't specify tag_name in this project, so it'll be set to default value 'HEAD'
             $state.go('application.project', {project_name: name, tag_name: 'HEAD', document_path: null});
         };
+
+        $scope.set_current_tag = function(tag_name) {
+            if ($scope.current.tag === tag_name) return;
+            $state.go('application.project.tag.doc', {tag_name: tag_name});
+        }
 
         $scope.projects = projects;
         $state.go('application.project');
