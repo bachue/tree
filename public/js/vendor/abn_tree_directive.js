@@ -206,7 +206,7 @@ module.directive('abnTree', function($timeout) {
                       children[i].expanded = true;
                       for (var _i = 0, _len = children[i].children.length; _i < _len; _i++) {
                         var row = _.find(scope.tree_rows, function(row) { return row.branch == children[i].children[_i] });
-                        row.visible = true;
+                        if(row) row.visible = true;
                       }
                       do_f(children[i].children, selections.slice(1));
                     }
@@ -222,7 +222,9 @@ module.directive('abnTree', function($timeout) {
       select_branches(attrs.initialSelection);
       scope.$watch('treeData', on_treeData_change, true);
       scope.$on('toSelectBranches', function(event, selection) {
-        select_branches(selection);
+        $timeout(function() {
+          select_branches(selection);
+        }, 200);
       });
       scope.$emit('treeInitialized');
     }
