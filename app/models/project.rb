@@ -42,7 +42,7 @@ class Project < ActiveRecord::Base
     end
 
     def files tag
-      Git.ls_tree path, tag
+      Git.ls_tree(path, tag).select {|path| Renderers.available_ext.detect {|ext| path.end_with?(ext) }}
     end
 
     def insert_into root, names

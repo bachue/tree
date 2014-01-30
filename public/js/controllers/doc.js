@@ -1,19 +1,21 @@
-define(['controllers/project', 'highlight'], function(project, hljs) {
-    return project.controller('Doc', function($scope, $state, $sce, $timeout, Restangular) {
+define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
+    return tag_controller.controller('Doc', function($scope, $state, $sce, $timeout, Restangular) {
         if (!$state.params.document_path && $scope.current.document_path)
-            return $state.go('application.project.doc', {document_path: $scope.current.document_path});
+            return $state.go('application.project.tag.doc', {document_path: $scope.current.document_path});
 
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;
-            Restangular.one('projects', $scope.current.project.id).getList($state.params.document_path).then(function(doc) {
+            Restangular.one('projects', $scope.current.project.id).getList($state.params.tag_name + '/' + $state.params.document_path).then(function(doc) {
                 if(doc['error']) {
                     // TODO: Error handling
+                    throw doc['error'];
                 } else if(doc['doc']) {
                     $scope.current.document = $sce.trustAsHtml(doc['doc']);
                     highlight();
                 }
-            }, function(){
+            }, function(error){
                 // TODO: Error handling
+                throw error;
             });
         }
         

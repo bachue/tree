@@ -19,16 +19,14 @@
                         </li>
                     </ul>
                 </li>
-<!--                 <li class="dropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Current <b class="caret"></b></a>
+                <li class="dropdown" data-ng-if="current.tag_name && current.project.tags.length > 1">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><span data-ng-bind="current.tag_name"></span>&nbsp;<b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)">Current</a></li>
-                        <li><a href="javascript:void(0)">v1.0</a></li>
-                        <li><a href="javascript:void(0)">v1.1</a></li>
+                        <li data-ng-repeat="tag in ['HEAD'].concat(current.project.tags)">
+                            <a href="javascript:void(0)" data-ng-bind="tag"></a>
+                        </li>
                     </ul>
                 </li>
- -->            
-
                 <li class="dropdown" data-ng-if="current.sections && current.sections.length > 1">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Sections <b class="caret"></b></a>
                     <ul class="dropdown-menu">

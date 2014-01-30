@@ -44,7 +44,7 @@ require.config({
 });
 
 require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular',
-         'controllers/application', 'controllers/project', 'controllers/doc',
+         'controllers/application', 'controllers/project', 'controllers/tag', 'controllers/doc',
          'directives/application', 'directives/doc'], function(angular, app, domReady, $) {
     app.config(function($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {
         $stateProvider.
@@ -55,8 +55,12 @@ require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular',
         }).state('application.project', {
             url: '/:project_name',
             controller: 'Project',
-            templateUrl: '/templates/project.html'
-        }).state('application.project.doc', {
+            template: '<ui-view />'
+        }).state('application.project.tag', {
+            url: '/:tag_name',
+            controller: 'Tag',
+            templateUrl: '/templates/tag.html'
+        }).state('application.project.tag.doc', {
             url: '/*document_path',
             controller: 'Doc',
             templateUrl: '/templates/doc.html'
