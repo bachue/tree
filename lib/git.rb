@@ -43,7 +43,7 @@ Stderr: #{stderr.gets(nil)}
     end
 
     def pull target, branch = 'master'
-      Utils.execute ['cd', target], ['git', 'pull', '--quiet', 'origin', branch]
+      Utils.execute ['cd', target], ['git', 'fetch'], ['git', 'pull', '--quiet', 'origin', branch]
     end
 
     def ls_tree target, tag = 'HEAD'

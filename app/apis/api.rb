@@ -24,12 +24,13 @@ class API < Grape::API
     desc 'Get project directory tree'
     params do
       requires :id, type: Integer, desc: 'Project id'
+      requires :tag_name, type: String, desc: 'Tag name'
     end
-    get '/:id' do
+    get '/:id/:tag_name' do
       project = Project.find_by id: params[:id]
       error! 'Project not found', 404 unless project
 
-      project.tree
+      project.tree params[:tag_name]
     end
 
     desc 'Create a project'
@@ -48,7 +49,7 @@ class API < Grape::API
           project.save!
           Git.clone project.url, project.path, project.branch
         end
-        true
+        present project
       rescue
         error! 'Failed to fetch project data', 400
       end
@@ -72,12 +73,13 @@ class API < Grape::API
     desc 'Get a rendered document from the project'
     params do
       requires :id, type: Integer, desc: 'Project id'
+      requires :tag_name, type: String, desc: 'Tag name'
     end
-    get '/:id/*path', anchor: false do
+    get '/:id/:tag_name/*path', anchor: false do
       project = Project.find_by id: params[:id]
       error! 'Project not found', 404 unless project
 
-      result = project.render params[:path]
+      result = project.render params[:path], params[:tag_name]
       if !result 
         error! 'Document not found', 404
       elsif result.empty?
@@ -85,6 +87,19 @@ class API < Grape::API
       else
         {doc: result}
       end
+    end
+
+    desc 'Create a tag in the project'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+      requires :tag_name, type: String, desc: 'Tag name'
+    end
+    put '/:id/:tag_name' do
+      project = Project.find_by id: params[:id]
+      error! 'Project not found', 404 unless project
+
+      project.add_tag params[:tag_name]
+      present project
     end
   end
 end

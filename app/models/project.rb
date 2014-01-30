@@ -28,7 +28,7 @@ class Project < ActiveRecord::Base
     Git.pull path, branch
   end
 
-  def tag
+  def tags
     Git.tag path
   end
 
