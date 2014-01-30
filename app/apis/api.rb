@@ -6,6 +6,9 @@ require 'validators/git_repo_url'
 class API < Grape::API
   version 'api', using: :path
   format :json
+
+  rescue_from :all
+  error_formatter :json, ->(message, backtrace, options, env) { {error: 'error'}.to_json }
   
   desc 'Only for test, to make sure server works'
   get '/ping' do
