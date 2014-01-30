@@ -2,11 +2,11 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
     return controllers.controller('Application', function($scope, $state, Restangular) {
         $scope.current = {};
         $scope.current.config_dialog = {branch: 'master'};
+        $scope.current.new_tag_dialog = {};
 
         $scope.submit_config = function() {
-            var loader = Restangular.all('projects');
             $scope.current.config_dialog.cloning = true;
-            loader.post($scope.current.config_dialog).then(function(result) {
+            Restangular.all('projects').post($scope.current.config_dialog).then(function(result) {
                 if (!result['error']) {
                     $scope.projects.push(result);
                     $scope.current.config_dialog = {branch: 'master'};
@@ -36,6 +36,28 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         $scope.set_current_tag = function(tag_name) {
             if ($scope.current.tag === tag_name) return;
             $state.go('application.project.tag.doc', {tag_name: tag_name});
+        }
+
+        $scope.open_new_tag_dialog = function() {
+            $('#new-tag-dialog').modal('show');
+        }
+
+        $scope.add_tag = function() {
+            $scope.current.new_tag_dialog.pushing = true;
+            Restangular.one('projects', $scope.current.project.id).
+                customPUT(null, $scope.current.new_tag_dialog.tag_name).then(function(project) {
+                    if (project['error']) {
+                        // TODO: Error handling
+                        throw project['error'];
+                    }
+                    $scope.current.new_tag_dialog = {};
+                    $scope.current.project.tags = project.tags;
+                    $('#new-tag-dialog').modal('hide');
+            }, function(error) {
+                // TODO: Error handling
+                $('#new-tag-dialog').modal('hide');
+                throw error;
+            });
         }
 
         $scope.projects = projects;

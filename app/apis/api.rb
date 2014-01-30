@@ -99,7 +99,7 @@ class API < Grape::API
       error! 'Project not found', 404 unless project
 
       project.add_tag params[:tag_name]
-      present project
+      present project, with: ProjectEntity
     end
   end
 end
