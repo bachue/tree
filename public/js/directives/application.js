@@ -10,4 +10,15 @@ define(['directives'], function(directives) {
             }
         };
     });
+
+    directives.directive('uniqTag', function() {
+        return {
+            require: '?ngModel',
+            link: function(scope, element, attrs, ngModel) {
+                scope.$watch('current.new_tag_dialog.tag_name', function(value) {
+                    ngModel.$setValidity('uniq', !_.contains(scope.current.project.tags, value));
+                });
+            }
+        };
+    });
 });
