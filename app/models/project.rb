@@ -4,28 +4,45 @@ class Project < ActiveRecord::Base
   validates :url, :path, length: {maximum: 255}
   validates :name, uniqueness: true
 
-  def tree
+  def tree tag
     root = []
-    files.each do |path|
+    files(tag).each do |path|
       insert_into root, path.split('/')
     end
     root
   end
 
-  def render file
-    file = path + '/' + file
-    if File.file?(file) && renderer = Renderers.choose_for(file)
-      renderer.render File.read(file)
-    elsif File.directory?(file)
-      ''
-    else
+  def render file, tag
+    begin
+      if files(tag).include?(file) && renderer = Renderers.choose_for(file)
+        renderer.render cat_file(file, tag)
+      elsif cat_file(file, tag)
+        ''
+      end
+    rescue
       false
     end
   end
 
+  def pull
+    Git.pull path, branch
+  end
+
+  def tag
+    Git.tag path
+  end
+
+  def add_tag tag_name
+    Git.tag path, :add, tag_name, "Add tag #{tag_name.inspect}"
+  end
+
   private
-    def files
-      Dir[path + "/**/*.{#{Renderers.available_ext.join(',')}}"].select {|f| File.file? f }.map {|f| f[(path.size + 1)..-1]}
+    def cat_file file, tag
+      Git.cat_file path, file, tag
+    end
+
+    def files tag
+      Git.ls_tree path, tag
     end
 
     def insert_into root, names

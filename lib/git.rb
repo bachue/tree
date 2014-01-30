@@ -47,7 +47,7 @@ Stderr: #{stderr.gets(nil)}
     end
 
     def ls_tree target, tag = 'HEAD'
-      Utils.execute(['cd', target], ['git', 'ls-tree', '-r', '--name-only', tag]).split("\n")
+      Utils.execute(['cd', target], ['git', 'ls-tree', '-r', '--name-only', tag]).try(:split, "\n")
     end
 
     def cat_file target, file_path, tag = 'HEAD'
@@ -56,7 +56,7 @@ Stderr: #{stderr.gets(nil)}
 
     def tag target, *args
       if args.empty? # Git.tag <target>
-        Utils.execute(['cd', target], ['git', 'tag']).split("\n")
+        Utils.execute(['cd', target], ['git', 'tag']).try(:split, "\n")
       elsif args.first == :add # Git.tag <target>, :add, tag_name, tag_message
         Utils.execute ['cd', target], ['git', 'tag', '-am', args[2], args[1]], ['git', 'push', '-q', '--tags']
       end

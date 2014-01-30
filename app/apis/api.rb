@@ -62,7 +62,7 @@ class API < Grape::API
 
       return false if params[:branch] != project.branch
 
-      Git.pull project.path, project.branch
+      project.pull
       true
     end
 
