@@ -49,7 +49,7 @@ class API < Grape::API
           project.save!
           Git.clone project.url, project.path, project.branch
         end
-        present project
+        present project, with: ProjectEntity
       rescue
         error! 'Failed to fetch project data', 400
       end
