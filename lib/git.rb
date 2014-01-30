@@ -11,12 +11,13 @@ class Git
       def execute *multi_args
         commands = multi_args.map {|args| Escape.shell_command args }
         begin
-          stdin, stdout, stderr, status = Open3.popen3 commands.join(' && ')
+          command = commands.join ' && '
+          stdin, stdout, stderr, status = Open3.popen3 command
           stdin.close
 
-          return true if status.value == 0
+          return stdout.gets(nil) if status.value == 0
 
-          Application.logger <<-ERROR
+          Application.logger.error <<-ERROR
 Shell command failed: #{command}
 Status: #{status.value}
 Stdout: #{stdout.gets(nil)}
@@ -42,6 +43,22 @@ Stderr: #{stderr.gets(nil)}
 
     def pull target, branch = 'master'
       Utils.execute ['cd', target], ['git', 'pull', '--quiet', 'origin', branch]
+    end
+
+    def ls_tree target, tag = 'HEAD'
+      Utils.execute(['cd', target], ['git', 'ls-tree', '-r', '--name-only', tag]).split("\n")
+    end
+
+    def cat_file target, file_path, tag = 'HEAD'
+      Utils.execute ['cd', target], ['git', 'show', "#{tag}:#{file_path}"]
+    end
+
+    def tag target, *args
+      if args.empty? # Git.tag <target>
+        Utils.execute(['cd', target], ['git', 'tag']).split("\n")
+      elsif args.first == :add # Git.tag <target>, :add, tag_name, tag_message
+        Utils.execute ['cd', target], ['git', 'tag', '-am', args[2], args[1]], ['git', 'push', '-q', '--tags']
+      end
     end
   end
 end
