@@ -119,7 +119,7 @@
       <div class="modal-body" data-ng-if="!current.searchbar.searching">
         <form role="search">
             <div class="input-group">
-              <input type="text" autofocus class="form-control query-text" placeholder="Search ..." data-ng-model="current.searchbar.query" data-ng-keypress="keypress_in_query($event)">
+              <input type="text" autofocus class="form-control query-text" placeholder="Search ..." data-ng-model="current.searchbar.query" data-ng-keypress="keypress_in_query($event)" name="query_text">
               <span class="input-group-addon"><a href="javascript:void(0)" data-ng-click="search()" class="glyphicon glyphicon-search"></a></span>
             </div>
         </form>

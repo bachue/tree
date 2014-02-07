@@ -94,6 +94,18 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
             $scope.current.opening_modal--;
         });
 
+        $('#project-search').on('shown.bs.modal', function() {
+            $('#project-search input[name=query_text]').focus();
+        });
+
+        $('#project-config').on('shown.bs.modal', function() {
+            $('#project-config input[name=project_name]').focus();
+        });
+
+        $('#new-tag-dialog').on('shown.bs.modal', function() {
+            $('#new-tag-dialog input[name=tag_name]').focus();
+        });
+
         $('body').keypress(function(e) {
             if (e.which == 47 && $scope.current.opening_modal === 0)
                 $('#project-search').modal('show');
