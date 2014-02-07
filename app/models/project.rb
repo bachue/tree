@@ -39,7 +39,10 @@ class Project < ActiveRecord::Base
   end
 
   def grep text, tag_name
-    Git.grep path, text, tag_name
+    result = Git.grep(path, text, tag_name)
+    result[:filenames].select! {|path| Renderers.available_ext.detect {|ext| path.end_with?(ext) }}
+    result[ :content ].select! {|path| Renderers.available_ext.detect {|ext| path.end_with?(ext) }}
+    result
   end
 
   private

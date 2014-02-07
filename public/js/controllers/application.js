@@ -1,9 +1,9 @@
 define(['controllers', 'promise!loaders/projects'], function(controllers, projects) {
-    return controllers.controller('Application', function($scope, $state, Restangular) {
+    return controllers.controller('Application', function($scope, $state, $location, Restangular) {
         $scope.current = {};
         $scope.current.config_dialog = {branch: 'master'};
         $scope.current.new_tag_dialog = {};
-        $scope.current.search = {};
+        $scope.current.searchbar = {};
 
         $scope.submit_config = function() {
             $scope.current.config_dialog.cloning = true;
@@ -49,6 +49,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                 customPUT(null, $scope.current.new_tag_dialog.tag_name).then(function(project) {
                     if (project['error']) {
                         // TODO: Error handling
+                        $('#new-tag-dialog').modal('hide');
                         throw project['error'];
                     }
                     $scope.current.new_tag_dialog = {};
@@ -59,6 +60,29 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                 $('#new-tag-dialog').modal('hide');
                 throw error;
             });
+        }
+
+        $scope.search = function() {
+            if (!$scope.current.searchbar.query) return;
+            $scope.current.searchbar.searching = true;
+            Restangular.one('projects', $scope.current.project.id).
+                getList($scope.current.tag_name + '/_search', {q: $scope.current.searchbar.query}).
+                then(function(results) {
+                    if (results['error']) {
+                        delete $scope.current.searchbar.searching;
+                        throw results['error'];
+                    }
+                    $scope.current.searchbar.results = results;
+                    delete $scope.current.searchbar.searching;
+            }, function(error) {
+                delete $scope.current.searchbar.searching;
+                throw error;
+            });
+        };
+
+        $scope.open_path = function(path) {
+            $state.go('application.project.tag.doc', {document_path: path});
+            $('#project-search').modal('hide');
         }
 
         $scope.projects = projects;

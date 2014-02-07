@@ -41,7 +41,7 @@
                         </li>
                     </ul>
                 </li>
-                <li><a title="Search in current project" href="javascript:void(0)" class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#project-config"></a></li>
+                <li data-ng-if="current.project && current.tag_name"><a title="Search in current project" href="javascript:void(0)" class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#project-config"></a></li>
             </ul>
         </div><!-- /.nav-collapse -->
     </div><!-- /.container -->
@@ -116,21 +116,25 @@
 <div class="modal fade" id="project-search">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-body">
+      <div class="modal-body" data-ng-if="!current.searchbar.searching">
         <form role="search">
             <div class="input-group">
-              <input type="text" class="form-control" placeholder="Search ...">
-              <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+              <input type="text" autofocus class="form-control" placeholder="Search ..." data-ng-model="current.searchbar.query">
+              <span class="input-group-addon"><a href="javascript:void(0)" data-ng-click="search()" class="glyphicon glyphicon-search"></a></span>
             </div>
         </form>
         <div class="list-group">
-          <a href="#" class="list-group-item active">
-            Cras justo odio
-          </a>
-          <a href="#" class="list-group-item">Dapibus ac facilisis in</a>
-          <a href="#" class="list-group-item">Morbi leo risus</a>
-          <a href="#" class="list-group-item">Porta ac consectetur ac</a>
-          <a href="#" class="list-group-item">Vestibulum at eros</a>
+            <a href="javascript:void(0)" class="list-group-item" data-ng-bind="result" data-ng-repeat="result in current.searchbar.results.filenames" data-ng-click="open_path(result)"></a>
+        </div>
+        <div class="list-group">
+            <a href="javascript:void(0)" class="list-group-item" data-ng-bind="result" data-ng-repeat="result in current.searchbar.results.content" data-ng-click="open_path(result)"></a>
+        </div>
+      </div>
+      <div class="modal-body" data-ng-if="current.searchbar.searching">
+        <div class="progress progress-striped active">
+            <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span class="sr-only">Searching...</span>
+            </div>
         </div>
       </div>
     </div><!-- /.modal-content -->
