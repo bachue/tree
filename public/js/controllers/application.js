@@ -3,6 +3,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         $scope.current = {};
         $scope.current.config_dialog = {branch: 'master'};
         $scope.current.new_tag_dialog = {};
+        $scope.current.search = {};
 
         $scope.submit_config = function() {
             $scope.current.config_dialog.cloning = true;
