@@ -82,7 +82,7 @@ class API < Grape::API
       result, renderer = project.render params[:path], params[:tag_name]
       if !result 
         error! 'Document not found', 404
-      elsif result.empty?
+      elsif renderer == false
         {empty: true}
       elsif renderer # Have rendered?
         {doc: result}

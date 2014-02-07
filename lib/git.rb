@@ -14,7 +14,7 @@ class Git
           command = commands.join ' && '
           stdin, stdout, stderr, status = Open3.popen3 command
           stdin.close
-          output = stdout.gets(nil)
+          output = stdout.gets(nil) || ''
 
           return output if status.value == 0
 

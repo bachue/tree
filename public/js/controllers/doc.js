@@ -3,13 +3,17 @@ define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
         if (!$state.params.document_path && $scope.current.document_path)
             return $state.go('application.project.tag.doc', {document_path: $scope.current.document_path});
 
+        $scope.has_document = function() {
+            return !_.isUndefined($scope.current.document);
+        };
+
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;
             Restangular.one('projects', $scope.current.project.id).getList($state.params.tag_name + '/' + $state.params.document_path).then(function(doc) {
                 if(doc['error']) {
                     // TODO: Error handling
                     throw doc['error'];
-                } else if(doc['doc']) {
+                } else if(!_.isUndefined(doc['doc'])) {
                     $scope.current.document = $sce.trustAsHtml(doc['doc']);
                     handle();
                 }
