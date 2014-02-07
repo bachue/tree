@@ -15,12 +15,14 @@ class Project < ActiveRecord::Base
   def render file, tag
     begin
       if files(tag).include?(file) && renderer = Renderers.choose_for(file)
-        renderer.render cat_file(file, tag)
+        [renderer.render(cat_file(file, tag)), renderer]
+      elsif all_files(tag).include?(file)
+        [cat_file(file, tag), nil]
       elsif cat_file(file, tag)
-        ''
+        ['', false]
       end
     rescue
-      false
+      [false, false]
     end
   end
 
@@ -41,8 +43,12 @@ class Project < ActiveRecord::Base
       Git.cat_file path, file, tag
     end
 
+    def all_files tag
+      Git.ls_tree(path, tag)
+    end
+
     def files tag
-      Git.ls_tree(path, tag).select {|path| Renderers.available_ext.detect {|ext| path.end_with?(ext) }}
+      all_files(tag).select {|path| Renderers.available_ext.detect {|ext| path.end_with?(ext) }}
     end
 
     def insert_into root, names

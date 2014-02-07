@@ -11,7 +11,7 @@ define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
                     throw doc['error'];
                 } else if(doc['doc']) {
                     $scope.current.document = $sce.trustAsHtml(doc['doc']);
-                    highlight();
+                    handle();
                 }
             }, function(error){
                 // TODO: Error handling
@@ -19,13 +19,17 @@ define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
             });
         }
         
-        highlight();
+        handle();
 
-        function highlight() {
+        function handle() {
             $timeout(function() {
                 $('#current_document pre code').each(function(i, e) { 
                     $(e).addClass($(e).parent('pre').attr('lang'));
                     hljs.highlightBlock(e);
+                });
+
+                $('#current_document a[href]').each(function(i, e) { // Important for ui-router
+                    $(e).attr('target', '_self');
                 });
             });
         }

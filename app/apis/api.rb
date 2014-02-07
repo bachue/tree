@@ -79,13 +79,17 @@ class API < Grape::API
       project = Project.find_by id: params[:id]
       error! 'Project not found', 404 unless project
 
-      result = project.render params[:path], params[:tag_name]
+      result, renderer = project.render params[:path], params[:tag_name]
       if !result 
         error! 'Document not found', 404
       elsif result.empty?
         {empty: true}
-      else
+      elsif renderer # Have rendered?
         {doc: result}
+      elsif # Static file, must be an attachment
+        content_type "application/x-download"
+        env['api.format'] = :binary
+        body result
       end
     end
 
