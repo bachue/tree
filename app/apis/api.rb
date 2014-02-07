@@ -33,6 +33,21 @@ class API < Grape::API
       project.tree params[:tag_name]
     end
 
+    desc 'Search in project'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+      requires :tag_name, type: String, desc: 'Tag name'
+      optional :q, type: String, desc: 'Query text'
+    end
+    get '/:id/:tag_name/_search' do
+      error! 'No query text', 400 unless params[:q]
+
+      project = Project.find_by id: params[:id]
+      error! 'Project not found', 404 unless project
+
+      project.grep params[:q], params[:tag_name]
+    end
+
     desc 'Create a project'
     params do
       requires :name, type: String, desc: 'Project name', regexp: /^[\w\-]+$/

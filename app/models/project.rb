@@ -38,6 +38,10 @@ class Project < ActiveRecord::Base
     Git.tag path, :add, tag_name, "Add tag #{tag_name.inspect}"
   end
 
+  def grep text, tag_name
+    Git.grep path, text, tag_name
+  end
+
   private
     def cat_file file, tag
       Git.cat_file path, file, tag
