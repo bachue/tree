@@ -4,6 +4,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         $scope.current.config_dialog = {branch: 'master'};
         $scope.current.new_tag_dialog = {};
         $scope.current.searchbar = {};
+        $scope.current.opening_modal = 0;
 
         $scope.submit_config = function() {
             $scope.current.config_dialog.cloning = true;
@@ -84,6 +85,23 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
             $state.go('application.project.tag.doc', {document_path: path});
             $('#project-search').modal('hide');
         }
+
+        $('.modal').on('show.bs.modal', function() {
+            $scope.current.opening_modal++;
+        });
+
+        $('.modal').on('hide.bs.modal', function() {
+            $scope.current.opening_modal--;
+        });
+
+        $('body').keypress(function(e) {
+            if (e.which == 47 && $scope.current.opening_modal === 0)
+                $('#project-search').modal('show');
+        });
+
+        $scope.keypress_in_query = function(e) {
+            if (e.which === 13) $scope.search();
+        };
 
         $scope.projects = projects;
         $state.go('application.project');

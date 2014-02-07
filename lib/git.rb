@@ -9,20 +9,26 @@ class Git
   class Utils
     class << self
       def execute *multi_args
+        options = multi_args.extract_options!
         commands = multi_args.map {|args| Escape.shell_command args }
         begin
           command = commands.join ' && '
           stdin, stdout, stderr, status = Open3.popen3 command
           stdin.close
           output = stdout.gets(nil) || ''
+          errput  = stderr.gets(nil)
 
-          return output if status.value == 0
+          if options[:ignore_status]
+            return output unless errput
+          else
+            return output if status.value == 0
+          end
 
           Application.logger.error <<-ERROR
 Shell command failed: #{command}
 Status: #{status.value}
 Stdout: #{output}
-Stderr: #{stderr.gets(nil)}
+Stderr: #{errput}
           ERROR
           raise CommandError.new command
         ensure
@@ -76,7 +82,7 @@ Stderr: #{stderr.gets(nil)}
 
       def grep_in_content target, text, tag = 'HEAD'
         # TODO: support searching in all tags
-        Utils.execute(['cd', target], ['git', 'grep', '-l', '-I', text, tag]).try(:split, "\n").map {|line| line.sub "#{tag}:", '' }
+        Utils.execute(['cd', target], ['git', 'grep', '-l', '-I', text, tag], ignore_status: true).try(:split, "\n").map {|line| line.sub "#{tag}:", '' }
       end
   end
 end
