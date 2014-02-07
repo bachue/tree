@@ -61,5 +61,22 @@ Stderr: #{stderr.gets(nil)}
         Utils.execute ['cd', target], ['git', 'tag', '-am', args[2], args[1]], ['git', 'push', '-q', '--tags']
       end
     end
+
+    def grep target, text, tag = 'HEAD'
+      {
+        filenames: grep_in_filenames(target, text, tag),
+        content: grep_in_content(target, text, tag)
+      }
+    end
+
+    private
+      def grep_in_filenames target, text, tag = 'HEAD'
+        ls_tree(target, tag).select { |name| name.include?(text) }
+      end
+
+      def grep_in_content target, text, tag = 'HEAD'
+        # TODO: support searching in all tags
+        Utils.execute(['cd', target], ['git', 'grep', '-l', '-I', text, tag]).try(:split, "\n").map {|line| line.sub "#{tag}:", '' }
+      end
   end
 end
