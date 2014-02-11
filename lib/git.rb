@@ -82,7 +82,7 @@ Stderr: #{errput}
 
       def grep_in_content target, text, tag = 'HEAD'
         # TODO: support searching in all tags
-        Utils.execute(['cd', target], ['git', 'grep', '-l', '-I', text, tag], ignore_status: true).try(:split, "\n").map {|line| line.sub "#{tag}:", '' }
+        Utils.execute(['cd', target], ['git', 'grep', '-l', '-i', '-I', text, tag], ignore_status: true).try(:split, "\n").map {|line| line.sub "#{tag}:", '' }
       end
   end
 end
