@@ -31,12 +31,14 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
             delete $scope.current.tag_name;
             delete $scope.current.document;
             delete $scope.current.document_path;
+            $scope.current.searchbar = {};
             // We don't specify tag_name in this project, so it'll be set to default value 'HEAD'
             $state.go('application.project', {project_name: name, tag_name: 'HEAD', document_path: null});
         };
 
         $scope.set_current_tag = function(tag_name) {
             if ($scope.current.tag === tag_name) return;
+            $scope.current.searchbar = {};
             $state.go('application.project.tag.doc', {tag_name: tag_name});
         }
 
