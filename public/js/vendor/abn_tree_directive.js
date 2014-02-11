@@ -147,7 +147,7 @@ module.directive('abnTree', function($timeout) {
                 break;
             }
             return results;
-          }
+          };
 
           if (branch.expanded == null) {
             branch.expanded = false;
@@ -198,27 +198,25 @@ module.directive('abnTree', function($timeout) {
           } else {
             var selections = initialSelection.split('/');
             var do_f = function(children, selections) {
-              $timeout(function() {
-                for (var i = 0, len = children.length; i < len; i++) {
-                  if (children[i].label === selections[0]) {
-                    select_branch(children[i], true);
-                    if (children[i].children) {
-                      children[i].expanded = true;
-                      for (var _i = 0, _len = children[i].children.length; _i < _len; _i++) {
-                        var row = _.find(scope.tree_rows, function(row) { return row.branch == children[i].children[_i] });
-                        if(row) row.visible = true;
-                      }
-                      do_f(children[i].children, selections.slice(1));
+              for (var i = 0, len = children.length; i < len; i++) {
+                if (children[i].label === selections[0]) {
+                  select_branch(children[i], true);
+                  if (children[i].children) {
+                    children[i].expanded = true;
+                    for (var _i = 0, _len = children[i].children.length; _i < _len; _i++) {
+                      var row = _.find(scope.tree_rows, function(row) { return row.branch == children[i].children[_i] });
+                      if(row) row.visible = true;
                     }
-                    break;
+                    do_f(children[i].children, selections.slice(1));
                   }
+                  break;
                 }
-              });
-            }
+              }
+            };
             do_f(scope.treeData, selections);
           }
         }
-      }
+      };
       select_branches(attrs.initialSelection);
       scope.$watch('treeData', on_treeData_change, true);
       scope.$on('toSelectBranches', function(event, selection) {
