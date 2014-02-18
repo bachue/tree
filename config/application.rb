@@ -1,5 +1,5 @@
+require 'active_record'
 require 'uri'
-require 'em-synchrony/activerecord'
 require 'yaml'
 require 'erb'
 

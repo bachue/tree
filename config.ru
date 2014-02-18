@@ -3,6 +3,7 @@ if `which git`.empty?
   exit(-1)
 end
 
+$: << File.expand_path(File.dirname(__FILE__))
 $: << File.expand_path(File.dirname(__FILE__) + '/app/apis')
 $: << File.expand_path(File.dirname(__FILE__) + '/app/models')
 $: << File.expand_path(File.dirname(__FILE__) + '/app/entities')
@@ -10,28 +11,24 @@ $: << File.expand_path(File.dirname(__FILE__) + '/lib')
 
 require "rubygems"
 require "bundler/setup"
-require 'goliath'
-require 'em-synchrony/activerecord'
+require 'rack/accept_media_types'
 require 'rack/contrib/try_static'
 require 'pathname'
 require 'grape'
 require 'grape-entity'
 
+require 'config/application'
 require 'api'
 require 'static'
 
-class Application < Goliath::API
+class Application
   ROOT = Pathname File.expand_path(File.dirname(__FILE__)) unless defined?(ROOT)
   APP_ENV = ENV['APP_ENV'] || 'development' unless defined?(APP_ENV)
   REPO = ROOT.join 'repos'
 
   require 'pry' if APP_ENV != 'production'
 
-  use Rack::TryStatic,
-                root: File.expand_path(File.dirname(__FILE__) + '/public'),
-                urls: %w[/], try: ['.html', 'index.html', '/index.html']
-
-  def response(env)
+  def self.call(env)
     request = Rack::Request.new env
     case request.path_info
     when %r{^/+api/}
@@ -44,15 +41,14 @@ class Application < Goliath::API
 
         # Not static file, it could be a directory or a markdown/markup file
         # Convert path to hashbang for angular-ui-router HTML5mode
-        base_url = (request.scheme ? request.scheme : 'http') + request.base_url
         path = request.query_string.empty? ? request.path_info : "#{request.path_info}?#{request.query_string}"
-        url = "#{base_url}/\##{path}"
-        [301, {'Location' => url}, '']
+        url = "#{request.base_url}/\##{path}"
+        [301, {'Location' => url}, []]
       elsif request.accept_media_types.select {|type| type.start_with?('image/') || type.start_with?('audio/') || type.start_with?('video/') }.present?
         # Static file in repos, it can handle image, audio, video files. More types could be added here
         ::Static.call env
       else
-        [404, {}, '']
+        [404, {}, []]
       end
     end
   end
@@ -61,3 +57,9 @@ end
 require 'git'
 require 'app_logger'
 require 'renderer'
+
+use ActiveRecord::ConnectionAdapters::ConnectionManagement
+use Rack::TryStatic,
+              root: File.expand_path(File.dirname(__FILE__) + '/public'),
+              urls: %w[/], try: ['.html', 'index.html', '/index.html']
+run Application

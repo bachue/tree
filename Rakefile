@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'fileutils'
 require 'bundler/setup'
-require 'em-synchrony/activerecord'
+require 'active_record'
 require 'yaml'
 require 'erb'
 
