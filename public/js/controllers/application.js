@@ -5,6 +5,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         $scope.current.new_tag_dialog = {};
         $scope.current.searchbar = {};
         $scope.current.opening_modal = 0;
+        $scope.current.loading = 0;
 
         $scope.submit_config = function() {
             $scope.current.config_dialog.cloning = true;
