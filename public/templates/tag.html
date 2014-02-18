@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col-xs-6 col-sm-3" role="navigation">
+        <div class="sidebar">
+            <abn-tree
+                      data-tree-data="current.project.directory"
+                      data-icon-leaf="glyphicon glyphicon-file"
+                      data-icon-expand="glyphicon glyphicon-plus"
+                      data-icon-collapse="glyphicon glyphicon-minus"
+                      data-expand-level="0"
+                      data-on-select="tree_selected_callback(branch)"
+                      data-ng-if="current.project.directory">
+            </abn-tree>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-9" data-ui-view></div>
+</div>
