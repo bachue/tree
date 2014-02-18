@@ -2,9 +2,9 @@ source 'https://rubygems.org'
 
 gem 'sqlite3'
 gem 'rack-fiber_pool',  require: 'rack/fiber_pool'
-gem 'em-synchrony', git: 'git://github.com/igrigorik/em-synchrony.git',
+gem 'em-synchrony', git: 'https://github.com/igrigorik/em-synchrony.git',
                     require: ['em-synchrony', 'em-synchrony/activerecord']
-gem 'rack-contrib', git: 'git://github.com/bachue/rack-contrib.git'
+gem 'rack-contrib', git: 'https://github.com/bachue/rack-contrib.git'
 gem 'grape'
 gem 'grape-entity'
 gem 'goliath'
