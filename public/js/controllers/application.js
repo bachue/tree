@@ -16,11 +16,13 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                     $('#project-config').modal('hide');
                 } else {
                     // TODO: Error handling
+                    delete $scope.current.config_dialog.cloning;
                     $('#project-config').modal('hide');
                     throw result['error'];
                 }
             }, function(error) {
                 // TODO: Error handling
+                delete $scope.current.config_dialog.cloning;
                 $('#project-config').modal('hide');
                 throw result['error'];
             });
@@ -54,6 +56,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                 customPUT(null, $scope.current.new_tag_dialog.tag_name).then(function(project) {
                     if (!project || project['error']) {
                         // TODO: Error handling
+                        delete $scope.current.new_tag_dialog.pushing;
                         $('#new-tag-dialog').modal('hide');
                         throw project['error'];
                     }
@@ -62,6 +65,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                     $('#new-tag-dialog').modal('hide');
             }, function(error) {
                 // TODO: Error handling
+                delete $scope.current.new_tag_dialog.pushing;
                 $('#new-tag-dialog').modal('hide');
                 throw error;
             });
