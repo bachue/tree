@@ -13,17 +13,17 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                     $scope.projects.push(result);
                     $scope.current.config_dialog = {branch: 'master'};
                     $state.go('application.project', {project_name: result.name});
-                    $('#project-config').modal('hide');
+                    hide_project_config_dialog();
                 } else {
                     // TODO: Error handling
                     delete $scope.current.config_dialog.cloning;
-                    $('#project-config').modal('hide');
+                    hide_project_config_dialog();
                     throw result['error'];
                 }
             }, function(error) {
                 // TODO: Error handling
                 delete $scope.current.config_dialog.cloning;
-                $('#project-config').modal('hide');
+                hide_project_config_dialog();
                 throw result['error'];
             });
         };
@@ -57,16 +57,16 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                     if (!project || project['error']) {
                         // TODO: Error handling
                         delete $scope.current.new_tag_dialog.pushing;
-                        $('#new-tag-dialog').modal('hide');
+                        hide_new_tag_dialog();
                         throw project['error'];
                     }
                     $scope.current.new_tag_dialog = {};
                     $scope.current.project.tags = project.tags;
-                    $('#new-tag-dialog').modal('hide');
+                    hide_new_tag_dialog();
             }, function(error) {
                 // TODO: Error handling
                 delete $scope.current.new_tag_dialog.pushing;
-                $('#new-tag-dialog').modal('hide');
+                hide_new_tag_dialog();
                 throw error;
             });
         };
@@ -121,5 +121,13 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
 
         $scope.projects = projects;
         $state.go('application.project');
+
+        function hide_project_config_dialog() {
+            $('#project-config').modal('hide');
+        }
+
+        function hide_new_tag_dialog() {
+            $('#new-tag-dialog').modal('hide');
+        }
     });
 });

@@ -9,7 +9,9 @@ define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
 
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;
+            $scope.current.loading = true;
             Restangular.one('projects', $scope.current.project.id).getList($state.params.tag_name + '/' + $state.params.document_path).then(function(doc) {
+                delete $scope.current.loading;
                 if(!doc || doc['error']) {
                     // TODO: Error handling
                     throw doc['error'];
@@ -19,6 +21,7 @@ define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
                 }
             }, function(error) {
                 // TODO: Error handling
+                delete $scope.current.loading;
                 throw error;
             });
         }

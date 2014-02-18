@@ -21,7 +21,9 @@ define(['controllers/project', 'underscore'], function(project_controller, _) {
             $state.go('application.project.tag.doc', {document_path: labels.join('/')});
         };
 
+        $scope.current.loading = true;
         Restangular.one('projects', $scope.current.project.id).getList($scope.current.tag_name).then(function(tree) {
+            delete $scope.current.loading;
             if(!tree || tree['error']) {
                 // TODO: Error handling
                 throw tree['error'];
@@ -30,6 +32,7 @@ define(['controllers/project', 'underscore'], function(project_controller, _) {
             $state.go('application.project.tag.doc');
         }, function(error) {
             // TODO: Error handling
+            delete $scope.current.loading;
             throw error;
         });
     });
