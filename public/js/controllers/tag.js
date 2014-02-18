@@ -22,7 +22,7 @@ define(['controllers/project', 'underscore'], function(project_controller, _) {
         };
 
         Restangular.one('projects', $scope.current.project.id).getList($scope.current.tag_name).then(function(tree) {
-            if(tree['error']) {
+            if(!tree || tree['error']) {
                 // TODO: Error handling
                 throw tree['error'];
             }

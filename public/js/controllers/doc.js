@@ -10,7 +10,7 @@ define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;
             Restangular.one('projects', $scope.current.project.id).getList($state.params.tag_name + '/' + $state.params.document_path).then(function(doc) {
-                if(doc['error']) {
+                if(!doc || doc['error']) {
                     // TODO: Error handling
                     throw doc['error'];
                 } else if(!_.isUndefined(doc['doc'])) {

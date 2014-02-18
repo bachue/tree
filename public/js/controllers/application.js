@@ -9,7 +9,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         $scope.submit_config = function() {
             $scope.current.config_dialog.cloning = true;
             Restangular.all('projects').post($scope.current.config_dialog).then(function(result) {
-                if (!result['error']) {
+                if (result && !result['error']) {
                     $scope.projects.push(result);
                     $scope.current.config_dialog = {branch: 'master'};
                     $state.go('application.project', {project_name: result.name});
@@ -52,7 +52,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
             $scope.current.new_tag_dialog.pushing = true;
             Restangular.one('projects', $scope.current.project.id).
                 customPUT(null, $scope.current.new_tag_dialog.tag_name).then(function(project) {
-                    if (project['error']) {
+                    if (!project || project['error']) {
                         // TODO: Error handling
                         $('#new-tag-dialog').modal('hide');
                         throw project['error'];
@@ -73,16 +73,18 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
             Restangular.one('projects', $scope.current.project.id).
                 getList($scope.current.tag_name + '/_search', {q: $scope.current.searchbar.query}).
                 then(function(results) {
-                    if (results['error']) {
+                    if (!results || results['error']) {
+                        // TODO: Error handling
                         delete $scope.current.searchbar.searching;
                         throw results['error'];
                     }
                     $scope.current.searchbar.results = results;
                     delete $scope.current.searchbar.searching;
-            }, function(error) {
-                delete $scope.current.searchbar.searching;
-                throw error;
-            });
+                }, function(error) {
+                    // TODO: Error handling
+                    delete $scope.current.searchbar.searching;
+                    throw error;
+                });
         };
 
         $scope.open_path = function(path) {
