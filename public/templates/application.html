@@ -30,7 +30,7 @@
                         </li>
                     </ul>
                 </li>
-                <li><a href="javascript:void(0)" class="glyphicon glyphicon-search" data-toggle="modal" data-target="#project-search"></a></li>
+                <li data-ng-if="current.project && current.tag_name"><a  title="Search in current project" href="javascript:void(0)" class="glyphicon glyphicon-search" data-toggle="modal" data-target="#project-search"></a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown" data-ng-if="current.project">
@@ -41,7 +41,7 @@
                         </li>
                     </ul>
                 </li>
-                <li data-ng-if="current.project && current.tag_name"><a title="Search in current project" href="javascript:void(0)" class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#project-config"></a></li>
+                <li><a title="Add new project" href="javascript:void(0)" class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#project-config"></a></li>
             </ul>
         </div><!-- /.nav-collapse -->
     </div><!-- /.container -->

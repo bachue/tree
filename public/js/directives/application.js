@@ -15,9 +15,11 @@ define(['directives'], function(directives) {
         return {
             require: '?ngModel',
             link: function(scope, element, attrs, ngModel) {
-                scope.$watch('current.new_tag_dialog.tag_name', function(value) {
-                    ngModel.$setValidity('uniq', !_.contains(scope.current.project.tags, value));
-                });
+                if (scope.current && scope.current.project) {
+                    scope.$watch('current.new_tag_dialog.tag_name', function(value) {
+                        ngModel.$setValidity('uniq', !_.contains(scope.current.project.tags, value));
+                    });
+                }
             }
         };
     });
