@@ -18,7 +18,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                     // TODO: Error handling
                     $('#project-config').modal('hide');
                     throw result['error'];
-                };
+                }
             }, function(error) {
                 // TODO: Error handling
                 $('#project-config').modal('hide');
@@ -42,11 +42,11 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
             delete $scope.current.sections;
             $scope.current.searchbar = {};
             $state.go('application.project.tag.doc', {tag_name: tag_name});
-        }
+        };
 
         $scope.open_new_tag_dialog = function() {
             $('#new-tag-dialog').modal('show');
-        }
+        };
 
         $scope.add_tag = function() {
             $scope.current.new_tag_dialog.pushing = true;
@@ -65,7 +65,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                 $('#new-tag-dialog').modal('hide');
                 throw error;
             });
-        }
+        };
 
         $scope.search = function() {
             if (!$scope.current.searchbar.query) return;
@@ -88,7 +88,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         $scope.open_path = function(path) {
             $state.go('application.project.tag.doc', {document_path: path});
             $('#project-search').modal('hide');
-        }
+        };
 
         $('.modal').on('show.bs.modal', function() {
             $scope.current.opening_modal++;
