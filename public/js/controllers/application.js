@@ -29,6 +29,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         $scope.set_current_project = function(name) {
             if ($scope.current.project.name === name) return;
             delete $scope.current.tag_name;
+            delete $scope.current.sections;
             delete $scope.current.document;
             delete $scope.current.document_path;
             $scope.current.searchbar = {};
@@ -38,6 +39,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
 
         $scope.set_current_tag = function(tag_name) {
             if ($scope.current.tag === tag_name) return;
+            delete $scope.current.sections;
             $scope.current.searchbar = {};
             $state.go('application.project.tag.doc', {tag_name: tag_name});
         }

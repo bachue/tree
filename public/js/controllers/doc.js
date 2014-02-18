@@ -17,7 +17,7 @@ define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
                     $scope.current.document = $sce.trustAsHtml(doc['doc']);
                     handle();
                 }
-            }, function(error){
+            }, function(error) {
                 // TODO: Error handling
                 throw error;
             });
@@ -27,7 +27,7 @@ define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
 
         function handle() {
             $timeout(function() {
-                $('#current_document pre code').each(function(i, e) { 
+                $('#current_document pre code').each(function(i, e) {
                     $(e).addClass($(e).parent('pre').attr('lang'));
                     hljs.highlightBlock(e);
                 });
