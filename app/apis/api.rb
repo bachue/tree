@@ -34,7 +34,9 @@ class API < Grape::API
       project = Project.find_by id: params[:id]
       error! 'Project not found', 404 unless project
 
-      project.tree params[:tag_name]
+      project.lock_as_reader do
+        project.tree params[:tag_name]
+      end
     end
 
     desc 'Search in project'
@@ -49,7 +51,9 @@ class API < Grape::API
       project = Project.find_by id: params[:id]
       error! 'Project not found', 404 unless project
 
-      project.grep params[:q], params[:tag_name]
+      project.lock_as_reader do
+        project.grep params[:q], params[:tag_name]
+      end
     end
 
     desc 'Create a project'
@@ -66,11 +70,13 @@ class API < Grape::API
       begin
         Project.transaction do
           project.save!
-          Git.clone project.url, project.path, project.branch
+          project.lock_as_writer do
+            Git.clone project.url, project.path, project.branch
+          end
         end
         present project, with: ProjectEntity
       rescue
-        error! 'Failed to fetch project data', 400
+        error! 'Failed to fetch project data: ' + $!.message, 400
       end
     end
 
@@ -85,7 +91,9 @@ class API < Grape::API
 
       return false if params[:branch] != project.branch
 
-      project.pull
+      project.lock_as_writer do
+        project.pull
+      end
       true
     end
 
@@ -98,7 +106,9 @@ class API < Grape::API
       project = Project.find_by id: params[:id]
       error! 'Project not found', 404 unless project
 
-      result, renderer = project.render params[:path], params[:tag_name]
+      result, renderer =  project.lock_as_reader do
+                            project.render params[:path], params[:tag_name]
+                          end 
       if !result 
         error! 'Document not found', 404
       elsif renderer == false
@@ -121,7 +131,9 @@ class API < Grape::API
       project = Project.find_by id: params[:id]
       error! 'Project not found', 404 unless project
 
-      project.add_tag params[:tag_name]
+      project.lock_as_writer do
+        project.add_tag params[:tag_name]
+      end
       present project, with: ProjectEntity
     end
   end
