@@ -1,21 +1,17 @@
 require 'rubygems'
 require 'fileutils'
 require 'bundler/setup'
-require 'active_record'
 require 'yaml'
 require 'erb'
 
-APP_ENV = ENV['APP_ENV'] || 'development'
+$: << File.expand_path(File.dirname(__FILE__))
+require 'config/application'
 
 desc 'runs a console to operate your environment'
 task :console do
   require 'pry'
   require 'grape'
   require 'grape-entity'
-
-  init_db
-
-  $: << File.expand_path(File.dirname(__FILE__))
 
   Dir['app/models/**/*.rb', 'app/entities/**/*.rb', 'lib/**/*.rb'].each {|f| require f }
 
@@ -24,7 +20,7 @@ end
 
 desc 'runs a console to operate your database'
 task :db do
-  exec "sqlite3 -line #{db_conf[APP_ENV]['database']}"
+  exec "sqlite3 -line #{Application::DBCONFIG['database']}"
 end
 
 namespace :db do
@@ -36,8 +32,6 @@ namespace :db do
   
   desc 'migrate your database'
   task :migrate do
-    ActiveRecord::Base.establish_connection db_conf[APP_ENV]
-
     ActiveRecord::Migrator.migrate(
       ActiveRecord::Migrator.migrations_paths, 
       ENV['VERSION'] ? ENV['VERSION'].to_i : nil
@@ -46,18 +40,18 @@ namespace :db do
   
   desc 'Drops the database'
   task :drop do
-    FileUtils.rm db_conf[APP_ENV]['database']
+    FileUtils.rm Application::DBCONFIG['database']
   end
   
   desc 'Creates the database'
   task :create do
-    FileUtils.touch db_conf[APP_ENV]['database']
+    FileUtils.touch Application::DBCONFIG['database']
   end
 end
 
 desc 'clean all environment, this command cannot run in production mode'
 task :clean do
-  fail 'This command cannot run in production mode.' if APP_ENV == 'production'
+  fail 'This command cannot run in production mode.' if Application::RACK_ENV == 'production'
   Rake::Task['db:drop'].invoke
   Rake::Task['db:setup'].invoke
   FileUtils.rm_rf Dir['repos/*']
@@ -65,7 +59,6 @@ end
 
 desc 'delete one project from both database and repo'
 task :delete, :name do |t, args|
-  init_db
   $: << File.expand_path(File.dirname(__FILE__))
   Dir['app/models/**/*.rb'].each {|f| require f }
 
@@ -74,13 +67,4 @@ task :delete, :name do |t, args|
   project.destroy
   FileUtils.rm_rf project.path
   puts "Project \"#{args[:name]}\" has gone"
-end
-
-def db_conf
-  YAML.load(ERB.new(File.read('config/database.yml')).result)
-end
-
-def init_db
-  ActiveRecord::Base.configurations = db_conf
-  ActiveRecord::Base.establish_connection db_conf[APP_ENV]
 end

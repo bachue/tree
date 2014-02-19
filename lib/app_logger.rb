@@ -15,3 +15,6 @@ class Application
     self.class.logger
   end
 end
+
+require 'grape'
+Grape::API.logger Application.logger

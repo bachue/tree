@@ -17,13 +17,9 @@ require 'pathname'
 require 'grape'
 require 'grape-entity'
 
+require 'config/application'
+
 class Application
-  ROOT = Pathname File.expand_path(File.dirname(__FILE__)) unless defined?(ROOT)
-  RACK_ENV = ENV['RACK_ENV'] || 'development' unless defined?(RACK_ENV)
-  REPO = ROOT.join 'repos'
-
-  require 'pry' if RACK_ENV != 'production'
-
   def self.call(env)
     request = Rack::Request.new env
     case request.path_info
@@ -50,7 +46,6 @@ class Application
   end
 end
 
-require 'config/application'
 require 'api'
 require 'static'
 
