@@ -1,22 +1,17 @@
 require 'active_record'
-require 'uri'
 require 'yaml'
 require 'erb'
 
-# Sets up database configuration
-db = URI.parse(ENV['DATABASE_URL'] || 'http://localhost')
-if db.scheme == 'postgres' # Heroku environment
-  ActiveRecord::Base.establish_connection(
-    :adapter  => db.scheme == 'postgres' ? 'em_postgresql' : db.scheme,
-    :host     => db.host,
-    :username => db.user,
-    :password => db.password,
-    :database => db.path[1..-1],
-    :encoding => 'utf8'
-  )
-else # local environment
-  environment = ENV['DATABASE_URL'] ? 'production' : 'development'
-  db = YAML.load(ERB.new(File.read('config/database.yml')).result)[environment]
-  ActiveRecord::Base.establish_connection(db)
-end
+class Application
+  ROOT = Pathname File.expand_path(File.dirname(__FILE__) + '/../') unless defined?(ROOT)
+  RACK_ENV = ENV['RACK_ENV'] || 'development' unless defined?(RACK_ENV)
+  REPO = ROOT.join 'repos'
 
+  require 'pry' if RACK_ENV != 'production'
+
+  ActiveRecord::Base.configurations = YAML.load ERB.new(File.read('config/database.yml')).result
+
+  DBCONFIG = ActiveRecord::Base.configurations[Application::RACK_ENV]
+
+  ActiveRecord::Base.establish_connection(DBCONFIG)
+end

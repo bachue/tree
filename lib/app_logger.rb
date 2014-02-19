@@ -1,10 +1,10 @@
 require 'logger'
 
 class Application
-  if APP_ENV == 'development'
+  if RACK_ENV == 'development'
     Logger = ::Logger.new STDOUT
-  elsif APP_ENV == 'test' || APP_ENV == 'production'
-    Logger = ::Logger.new ROOT.join('log', APP_ENV + '.log')
+  elsif RACK_ENV == 'test' || RACK_ENV == 'production'
+    Logger = ::Logger.new ROOT.join('log', RACK_ENV + '.log')
   end
 
   def self.logger
@@ -15,3 +15,6 @@ class Application
     self.class.logger
   end
 end
+
+require 'grape'
+Grape::API.logger Application.logger
