@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 
+gem 'rake'
 gem 'sqlite3'
 gem 'rack-contrib', git: 'https://github.com/bachue/rack-contrib.git'
 gem 'rack-accept-media-types'
-gem 'activerecord'
 gem 'grape'
 gem 'grape-entity'
 gem 'foreman', require: nil
