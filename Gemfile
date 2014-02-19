@@ -1,5 +1,6 @@
 source 'http://rubygems.org'
 
+gem 'rake'
 gem 'sqlite3'
 gem 'rack-contrib', git: 'http://github.com/bachue/rack-contrib.git'
 gem 'rack-accept-media-types'
