@@ -16,6 +16,10 @@ gem 'RedCloth'
 gem 'puma'
 gem 'sidekiq-unique-jobs'
 
+group :production do
+  gem 'god', require: nil
+end
+
 group :development, :test do
   gem 'pry'
   gem 'pry-doc'

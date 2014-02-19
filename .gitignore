@@ -4,3 +4,5 @@
 *~
 repos/*
 log/*
+tmp/*
+*.rdb
