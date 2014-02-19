@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'fileutils'
 require 'bundler/setup'
-require 'em-synchrony/activerecord'
+require 'active_record'
 require 'yaml'
 require 'erb'
 
@@ -77,7 +77,7 @@ task :delete, :name do |t, args|
 end
 
 def db_conf
-  config = YAML.load(ERB.new(File.read('config/database.yml')).result)
+  YAML.load(ERB.new(File.read('config/database.yml')).result)
 end
 
 def init_db

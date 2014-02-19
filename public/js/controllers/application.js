@@ -5,23 +5,26 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         $scope.current.new_tag_dialog = {};
         $scope.current.searchbar = {};
         $scope.current.opening_modal = 0;
+        $scope.current.loading = 0;
 
         $scope.submit_config = function() {
             $scope.current.config_dialog.cloning = true;
             Restangular.all('projects').post($scope.current.config_dialog).then(function(result) {
-                if (!result['error']) {
+                if (result && !result['error']) {
                     $scope.projects.push(result);
                     $scope.current.config_dialog = {branch: 'master'};
                     $state.go('application.project', {project_name: result.name});
-                    $('#project-config').modal('hide');
+                    hide_project_config_dialog();
                 } else {
                     // TODO: Error handling
-                    $('#project-config').modal('hide');
+                    delete $scope.current.config_dialog.cloning;
+                    hide_project_config_dialog();
                     throw result['error'];
-                };
+                }
             }, function(error) {
                 // TODO: Error handling
-                $('#project-config').modal('hide');
+                delete $scope.current.config_dialog.cloning;
+                hide_project_config_dialog();
                 throw result['error'];
             });
         };
@@ -29,6 +32,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         $scope.set_current_project = function(name) {
             if ($scope.current.project.name === name) return;
             delete $scope.current.tag_name;
+            delete $scope.current.sections;
             delete $scope.current.document;
             delete $scope.current.document_path;
             $scope.current.searchbar = {};
@@ -38,32 +42,35 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
 
         $scope.set_current_tag = function(tag_name) {
             if ($scope.current.tag === tag_name) return;
+            delete $scope.current.sections;
             $scope.current.searchbar = {};
             $state.go('application.project.tag.doc', {tag_name: tag_name});
-        }
+        };
 
         $scope.open_new_tag_dialog = function() {
             $('#new-tag-dialog').modal('show');
-        }
+        };
 
         $scope.add_tag = function() {
             $scope.current.new_tag_dialog.pushing = true;
             Restangular.one('projects', $scope.current.project.id).
                 customPUT(null, $scope.current.new_tag_dialog.tag_name).then(function(project) {
-                    if (project['error']) {
+                    if (!project || project['error']) {
                         // TODO: Error handling
-                        $('#new-tag-dialog').modal('hide');
+                        delete $scope.current.new_tag_dialog.pushing;
+                        hide_new_tag_dialog();
                         throw project['error'];
                     }
                     $scope.current.new_tag_dialog = {};
                     $scope.current.project.tags = project.tags;
-                    $('#new-tag-dialog').modal('hide');
+                    hide_new_tag_dialog();
             }, function(error) {
                 // TODO: Error handling
-                $('#new-tag-dialog').modal('hide');
+                delete $scope.current.new_tag_dialog.pushing;
+                hide_new_tag_dialog();
                 throw error;
             });
-        }
+        };
 
         $scope.search = function() {
             if (!$scope.current.searchbar.query) return;
@@ -71,22 +78,24 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
             Restangular.one('projects', $scope.current.project.id).
                 getList($scope.current.tag_name + '/_search', {q: $scope.current.searchbar.query}).
                 then(function(results) {
-                    if (results['error']) {
+                    if (!results || results['error']) {
+                        // TODO: Error handling
                         delete $scope.current.searchbar.searching;
                         throw results['error'];
                     }
                     $scope.current.searchbar.results = results;
                     delete $scope.current.searchbar.searching;
-            }, function(error) {
-                delete $scope.current.searchbar.searching;
-                throw error;
-            });
+                }, function(error) {
+                    // TODO: Error handling
+                    delete $scope.current.searchbar.searching;
+                    throw error;
+                });
         };
 
         $scope.open_path = function(path) {
             $state.go('application.project.tag.doc', {document_path: path});
             $('#project-search').modal('hide');
-        }
+        };
 
         $('.modal').on('show.bs.modal', function() {
             $scope.current.opening_modal++;
@@ -113,5 +122,13 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
 
         $scope.projects = projects;
         $state.go('application.project');
+
+        function hide_project_config_dialog() {
+            $('#project-config').modal('hide');
+        }
+
+        function hide_new_tag_dialog() {
+            $('#new-tag-dialog').modal('hide');
+        }
     });
 });

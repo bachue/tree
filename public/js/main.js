@@ -24,7 +24,7 @@ var shim = {
     highlight: {
         exports: 'hljs'
     }
-}
+};
 
 require.config({
     paths: {

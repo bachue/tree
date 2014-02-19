@@ -2,10 +2,14 @@ define(['jquery'], function($) {
     var deferred = new $.Deferred();
 
     $.getJSON('api/projects').then(function(projects) {
-        if (projects['error']) deferred.reject(projects);
+        if (!projects || projects['error']) {
+            // TODO: Error handling
+            throw projects['error'];
+        }
         else deferred.resolve(projects);
     }, function(error) {
-        deferred.reject(error);
+        // TODO: Error handling
+        throw error;
     });
 
     return deferred.promise();

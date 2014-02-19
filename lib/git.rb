@@ -1,5 +1,4 @@
 require 'open3'
-require 'uri'
 require 'fileutils'
 require 'escape'
 
@@ -37,7 +36,7 @@ Stderr: #{errput}
       end
 
       def valid_git_repo?(url)
-        %w(ssh https http).include? URI(url).scheme
+        url =~ /^((?:http|https|ssh):\/\/[^\/:.]+\.[^\/:]+(:\d+)?\/\w+|([^@:]+(:[^@]+)?@)?[^\/:.]+\.[^\/:]+(:\w+)?)/
       end
     end
   end

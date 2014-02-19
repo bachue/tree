@@ -9,16 +9,19 @@ define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
 
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;
+            $scope.current.loading += 1;
             Restangular.one('projects', $scope.current.project.id).getList($state.params.tag_name + '/' + $state.params.document_path).then(function(doc) {
-                if(doc['error']) {
+                $scope.current.loading -= 1;
+                if(!doc || doc['error']) {
                     // TODO: Error handling
                     throw doc['error'];
                 } else if(!_.isUndefined(doc['doc'])) {
                     $scope.current.document = $sce.trustAsHtml(doc['doc']);
                     handle();
                 }
-            }, function(error){
+            }, function(error) {
                 // TODO: Error handling
+                $scope.current.loading -= 1;
                 throw error;
             });
         }
@@ -27,7 +30,7 @@ define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
 
         function handle() {
             $timeout(function() {
-                $('#current_document pre code').each(function(i, e) { 
+                $('#current_document pre code').each(function(i, e) {
                     $(e).addClass($(e).parent('pre').attr('lang'));
                     hljs.highlightBlock(e);
                 });

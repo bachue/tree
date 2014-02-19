@@ -9,8 +9,8 @@
             </button>
             <a class="navbar-brand" href="javascript:void(0)">Tree</a>
         </div>
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
+        <div class="collapse navbar-collapse text-center">
+            <ul class="nav navbar-nav text-left">
                 <li class="dropdown" data-ng-if="current.tag_name">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><span data-ng-bind="current.tag_name"></span>&nbsp;<b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -32,7 +32,7 @@
                 </li>
                 <li data-ng-if="current.project && current.tag_name"><a title="Search in current project" href="javascript:void(0)" class="glyphicon glyphicon-search" data-toggle="modal" data-target="#project-search"></a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right text-left">
                 <li class="dropdown" data-ng-if="current.project">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><span data-ng-bind="current.project.name"></span>&nbsp;<b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -41,8 +41,9 @@
                         </li>
                     </ul>
                 </li>
-                <li><a href="javascript:void(0)" class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#project-config"></a></li>
+                <li><a title="Add new project" href="javascript:void(0)" class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#project-config"></a></li>
             </ul>
+            <h3 data-ng-if="current.loading > 0" class="display: inline-block;"><img src="/img/loading.gif" alt="loading" height="20" /></h3>
         </div><!-- /.nav-collapse -->
     </div><!-- /.container -->
 </div><!-- /.navbar -->
@@ -67,7 +68,7 @@
                         </div>
                         <div class="input-group project-config-text-input">
                             <span class="input-group-addon">Git</span>
-                            <input type="text" class="form-control" name="git_url" data-ng-model="current.config_dialog.url" data-required placeholder="e.g. ssh://user@gerrit.dechocorp.com/bifrost" data-ng-maxlength="255" data-ng-pattern="/^(?:http|https|ssh):\/\/[^\/]+\/.+/" />
+                            <input type="text" class="form-control" name="git_url" data-ng-model="current.config_dialog.url" data-required placeholder="e.g. https://mozy@gerrit.dechocorp.com:29418/bifrost.git" data-ng-maxlength="255" data-ng-pattern="/^((?:http|https|ssh):\/\/[^\/:.]+\.[^\/:]+(:\d+)?\/\w+|([^@:]+(:[^@]+)?@)?[^\/:.]+\.[^\/:]+(:\w+)?)/" />
                         </div>
                     </div>
                     <div class="progress progress-striped active" data-ng-if="current.config_dialog.cloning">

@@ -8,7 +8,11 @@ class API < Grape::API
   format :json
 
   rescue_from :all
-  error_formatter :json, ->(message, backtrace, options, env) { {error: 'error'}.to_json }
+  error_formatter :json, ->(message, backtrace, options, env) do 
+    logger.error message
+    logger.error backtrace.join("\n")
+    {error: 'error'}.to_json
+  end
   
   desc 'Only for test, to make sure server works'
   get '/ping' do
