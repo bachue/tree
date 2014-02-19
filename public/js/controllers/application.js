@@ -14,6 +14,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                     $scope.projects.push(result);
                     $scope.current.config_dialog = {branch: 'master'};
                     $state.go('application.project', {project_name: result.name});
+                    $scope.set_current_project(result.name);
                     hide_project_config_dialog();
                 } else {
                     // TODO: Error handling
