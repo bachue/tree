@@ -1,3 +1,5 @@
+require 'fileutils'
+
 class Project < ActiveRecord::Base
   validates :name, :url, :branch, :path, presence: true
   validates :name, :branch, length: {maximum: 30}
@@ -45,6 +47,18 @@ class Project < ActiveRecord::Base
     result
   end
 
+  def updated?
+    Git.updated? path, branch
+  end
+
+  def lock_as_reader &block
+    lock File::LOCK_SH, &block
+  end
+
+  def lock_as_writer &block
+    lock File::LOCK_EX, &block
+  end
+
   private
     def cat_file file, tag
       Git.cat_file path, file, tag
@@ -67,6 +81,16 @@ class Project < ActiveRecord::Base
           root << target
         end
         insert_into target[:children], names[1..-1]
+      end
+    end
+
+    def lock type, timeout: 10.minutes
+      FileUtils.mkdir path unless File.directory?(path)
+      File.open(path) do |f|
+        f.flock type
+        Timeout::timeout(timeout) do
+          yield
+        end
       end
     end
 end

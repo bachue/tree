@@ -13,8 +13,8 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                 if (result && !result['error']) {
                     $scope.projects.push(result);
                     $scope.current.config_dialog = {branch: 'master'};
-                    $state.go('application.project', {project_name: result.name});
                     hide_project_config_dialog();
+                    $scope.set_current_project(result.name);
                 } else {
                     // TODO: Error handling
                     delete $scope.current.config_dialog.cloning;
@@ -30,7 +30,8 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         };
 
         $scope.set_current_project = function(name) {
-            if ($scope.current.project.name === name) return;
+            if ($scope.current.project && $scope.current.project.name === name)
+                return;
             delete $scope.current.tag_name;
             delete $scope.current.sections;
             delete $scope.current.document;

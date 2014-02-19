@@ -7,6 +7,7 @@ $: << File.expand_path(File.dirname(__FILE__))
 $: << File.expand_path(File.dirname(__FILE__) + '/app/apis')
 $: << File.expand_path(File.dirname(__FILE__) + '/app/models')
 $: << File.expand_path(File.dirname(__FILE__) + '/app/entities')
+$: << File.expand_path(File.dirname(__FILE__) + '/app/workers')
 $: << File.expand_path(File.dirname(__FILE__) + '/lib')
 
 require "rubygems"

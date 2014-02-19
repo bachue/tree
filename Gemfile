@@ -14,6 +14,7 @@ gem 'github-markdown'
 gem 'nokogiri'
 gem 'RedCloth'
 gem 'puma'
+gem 'sidekiq-unique-jobs'
 
 group :development, :test do
   gem 'pry'

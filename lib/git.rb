@@ -74,6 +74,12 @@ Stderr: #{errput}
       }
     end
 
+    def updated? target, branch = 'master'
+      remote = Utils.execute(['cd', target], ['git', 'ls-remote', 'origin', 'HEAD']).try(:split, /\s+/)[0]
+      local = Utils.execute(['cd', target], ['git', 'show-ref', "refs/remotes/origin/#{branch}"]).try(:split, /\s+/)[0]
+      remote != local
+    end
+
     private
       def grep_in_filenames target, text, tag = 'HEAD'
         ls_tree(target, tag).select { |name| name.include?(text) }
