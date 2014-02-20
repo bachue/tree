@@ -91,8 +91,10 @@ class API < Grape::API
 
       return false if params[:branch] != project.branch
 
-      project.lock_as_writer do
-        project.pull
+      if project.updated?
+        project.lock_as_writer do
+          project.pull
+        end
       end
       true
     end

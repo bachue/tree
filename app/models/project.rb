@@ -47,6 +47,10 @@ class Project < ActiveRecord::Base
     result
   end
 
+  def updated?
+    Git.updated? path, branch
+  end
+
   def lock_as_reader &block
     lock File::LOCK_SH, &block
   end
