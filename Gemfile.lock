@@ -49,6 +49,7 @@ GEM
       dotenv (>= 0.7)
       thor (>= 0.13.6)
     github-markdown (0.6.3)
+    god (0.13.2)
     grape (0.6.1)
       activesupport
       builder
@@ -127,6 +128,7 @@ DEPENDENCIES
   escape
   foreman
   github-markdown
+  god
   grape
   grape-entity
   nokogiri
