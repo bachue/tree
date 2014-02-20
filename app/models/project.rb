@@ -80,11 +80,13 @@ class Project < ActiveRecord::Base
       end
     end
 
-    def lock type
-      FileUtils.mkdir(path) unless File.directory?(path)
+    def lock type, timeout: 10.minutes
+      FileUtils.mkdir path unless File.directory?(path)
       File.open(path) do |f|
         f.flock type
-        yield
+        Timeout::timeout(timeout) do
+          yield
+        end
       end
     end
 end
