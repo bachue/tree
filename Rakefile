@@ -13,7 +13,7 @@ task :console do
   require 'grape'
   require 'grape-entity'
 
-  Dir['app/models/**/*.rb', 'app/entities/**/*.rb', 'lib/**/*.rb'].each {|f| require f }
+  Dir['app/models/**/*.rb', 'app/entities/**/*.rb', 'app/workers/**/*.rb', 'lib/**/*.rb'].each {|f| require f }
 
   pry
 end

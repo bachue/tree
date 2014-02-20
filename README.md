@@ -10,5 +10,5 @@
     - Config it to do a `PATCH` call: `/api/projects/$name/$branch`
   - Else
     -   Install Redis Server
-    -  `bundle exec sidekiq -r app/workers/project_updater -c config/sidekiq.yml`
+    -  `bundle exec sidekiq -r ./app/workers/project_updater.rb -C config/sidekiq.yml -e production -d`
 6. `bundle exec puma -d --environment production -p 80 -t 8:32 -w 3 --preload`

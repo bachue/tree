@@ -1,5 +1,6 @@
 require 'project'
 require 'project_entity'
+require 'project_updater'
 
 require 'validators/git_repo_url'
 
@@ -33,6 +34,8 @@ class API < Grape::API
     get '/:id/:tag_name' do
       project = Project.find_by id: params[:id]
       error! 'Project not found', 404 unless project
+
+      ProjectUpdater.perform_async project.id
 
       project.lock_as_reader do
         project.tree params[:tag_name]
@@ -107,6 +110,8 @@ class API < Grape::API
     get '/:id/:tag_name/*path', anchor: false do
       project = Project.find_by id: params[:id]
       error! 'Project not found', 404 unless project
+      
+      ProjectUpdater.perform_async project.id
 
       result, renderer =  project.lock_as_reader do
                             project.render params[:path], params[:tag_name]
