@@ -8,6 +8,7 @@ $: << File.expand_path(File.dirname(__FILE__) + '/../../lib')
 require 'config/application'
 require 'project'
 require 'git'
+require 'app_logger'
 
 class ProjectUpdater
   include Sidekiq::Worker

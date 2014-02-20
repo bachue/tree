@@ -43,7 +43,7 @@ require.config({
     shim: shim
 });
 
-require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular',
+require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants',
          'controllers/application', 'controllers/project', 'controllers/tag', 'controllers/doc',
          'directives/application', 'directives/doc'], function(angular, app, domReady, $) {
     app.config(function($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {

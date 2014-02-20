@@ -69,12 +69,24 @@ class API < Grape::API
       project = Project.new name: params[:name], url: params[:url], branch: params[:branch]
       project.path = Application::REPO.join(params[:name]).to_s # We don't have validate path here because name is limited
 
+      is_server_provided_repo = project.url.start_with? Application.consts['NEW_REPO_PREFIX']
+      if is_server_provided_repo
+        server_provided_repo_name = project.url.sub(%r{^#{Application.consts['NEW_REPO_PREFIX']}/*}, '')
+        server_provided_repo_path = Application::REPO_SVR.join(server_provided_repo_name).to_s
+      end
+
       error! 'ArgumentError', 400 unless project.valid?
       begin
         Project.transaction do
           project.save!
           project.lock_as_writer do
-            Git.clone project.url, project.path, project.branch
+            if is_server_provided_repo
+              Git.new_repo server_provided_repo_path
+              Git.clone "file://#{server_provided_repo_path}", project.path, nil
+              Git.initial_commit project.path, project.branch
+            else
+              Git.clone project.url, project.path, project.branch
+            end
           end
         end
         present project, with: ProjectEntity

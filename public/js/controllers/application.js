@@ -98,6 +98,12 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
             $('#project-search').modal('hide');
         };
 
+        $scope.create_new_repo = function() {
+            if($scope.current.config_dialog.name.length > 1) {
+                $scope.current.config_dialog.url = CONSTANTS['NEW_REPO_PREFIX'] + $scope.current.config_dialog.name;
+            }
+        };
+
         $('.modal').on('show.bs.modal', function() {
             $scope.current.opening_modal++;
         });

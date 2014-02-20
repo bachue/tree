@@ -44,7 +44,21 @@ Stderr: #{errput}
   class << self
     def clone source, target, branch = 'master'
       FileUtils.rm_rf target
-      Utils.execute ['git', 'clone', '--quiet', '--branch', branch, Escape.uri_path(source), target]
+      branch_params =  if branch.present? then ['--branch', branch]
+                       else                    []
+                       end
+      Utils.execute ['git', 'clone', '--quiet', *branch_params, Escape.uri_path(source), target]
+    end
+
+    def new_repo target
+      FileUtils.rm_rf target
+      Utils.execute ['git', 'init', '--bare', target]
+    end
+
+    def initial_commit target, branch = 'master'
+      Utils.execute ['cd', target], ['touch', 'README.md'],
+                    ['git', 'add', '.'], ['git', 'commit', '-m', 'first commit'],
+                    ['git', 'push', '-q', 'origin', branch]
     end
 
     def pull target, branch = 'master'

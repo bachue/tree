@@ -24,6 +24,8 @@ class Application
   def self.call(env)
     request = Rack::Request.new env
     case request.path_info
+    when %r{^/+js/+_constants\.js$}
+      [200, {}, ['CONSTANTS = ' + Application.consts.to_json]]
     when %r{^/+api/}
       ::API.call env
     else
