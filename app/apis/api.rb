@@ -61,7 +61,7 @@ class API < Grape::API
 
     desc 'Create a project'
     params do
-      requires :name, type: String, desc: 'Project name', regexp: /^[\w\-]+$/
+      requires :name, type: String, desc: 'Project name', regexp: /^[\w\s\-]+$/
       requires :url, type: String, desc: 'Git repo URL', git_repo_url: true
       optional :branch, type: String, desc: 'Branch name', default: 'master'
     end

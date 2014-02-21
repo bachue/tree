@@ -27,6 +27,7 @@ var shim = {
 };
 
 require.config({
+    waitSeconds: 0,
     paths: {
         domReady: 'vendor/domReady',
         jquery: 'vendor/jquery.min',
