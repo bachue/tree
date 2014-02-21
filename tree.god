@@ -3,10 +3,10 @@ ROOT = File.expand_path(File.dirname(__FILE__))
 God.watch do |w|
   w.name = 'tree'
   w.dir = ROOT
-  w.start = 'bundle exec puma -d --environment production -p 80 -t 8:32 -w 3 --preload --pidfile tmp/puma.pid -S tmp/puma.state'
+  w.start = 'bundle exec unicorn -E production -D -c config/unicorn.rb'
   w.keepalive
   w.log = File.join ROOT, 'log', 'god.log'
-  w.pid_file = File.join ROOT, 'tmp', 'puma.pid'
+  w.pid_file = File.join ROOT, 'tmp', 'unicorn.pid'
 end
 
 God.watch do |w|

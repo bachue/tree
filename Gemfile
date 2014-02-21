@@ -13,7 +13,7 @@ gem 'escape'
 gem 'github-markdown'
 gem 'nokogiri'
 gem 'RedCloth'
-gem 'puma'
+gem 'unicorn'
 gem 'sidekiq-unique-jobs'
 
 group :production do
