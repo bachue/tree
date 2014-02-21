@@ -56,8 +56,7 @@ Stderr: #{errput}
     end
 
     def initial_commit target, branch = 'master'
-      Utils.execute ['cd', target], ['touch', 'README.md'],
-                    ['git', 'add', '.'], ['git', 'commit', '-m', 'first commit'],
+      Utils.execute ['cd', target], ['git', 'commit', '--allow-empty', '-m', 'Initial commit'],
                     ['git', 'push', '-q', 'origin', branch]
     end
 

@@ -10,9 +10,7 @@ require 'config/application'
 desc 'runs a console to operate your environment'
 task :console do
   require 'pry'
-  require 'grape'
-  require 'grape-entity'
-
+  
   Dir['app/models/**/*.rb', 'app/entities/**/*.rb', 'app/workers/**/*.rb', 'lib/**/*.rb'].each {|f| require f }
 
   pry
