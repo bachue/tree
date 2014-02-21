@@ -62,7 +62,7 @@
                     <div data-ng-if="!current.config_dialog.cloning">
                         <div class="input-group project-config-text-input">
                             <span class="input-group-addon">Project</span>
-                            <input type="text" autofocus class="form-control" name="project_name" data-uniq-project data-ng-model="current.config_dialog.name" data-required data-ng-maxlength="30" placeholder="e.g. Bifrost" data-ng-pattern="/^[\w\-]+$/" />
+                            <input type="text" autofocus class="form-control" name="project_name" data-uniq-project data-ng-model="current.config_dialog.name" data-required data-ng-maxlength="30" placeholder="e.g. Bifrost" data-ng-pattern="/^[\w\s\-]+$/" />
                             <span class="input-group-addon">Branch</span>
                             <input type="text" class="form-control" name="branch_name" data-ng-model="current.config_dialog.branch" data-required data-ng-maxlength="30" placeholder="e.g. master" />
                         </div>
