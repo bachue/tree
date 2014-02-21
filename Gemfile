@@ -20,8 +20,8 @@ group :production do
   gem 'god', require: nil
 end
 
+gem 'pry'
 group :development, :test do
-  gem 'pry'
   gem 'pry-doc'
   gem 'pry-byebug'
 end
