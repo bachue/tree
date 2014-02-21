@@ -2,9 +2,9 @@ worker_processes 16
 preload_app      true
 timeout          180
 listen           80
-pid              '../tmp/unicorn.pid'
-stdout_path      "../log/#{ENV['RACK_ENV']}.log"
-stderr_path      "../log/#{ENV['RACK_ENV']}.log"
+pid              'tmp/unicorn.pid'
+stdout_path      "log/#{ENV['RACK_ENV']}.log"
+stderr_path      "log/#{ENV['RACK_ENV']}.log"
 
 if GC.respond_to?(:copy_on_write_friendly=)
   GC.copy_on_write_friendly = true
@@ -16,7 +16,7 @@ after_fork do |server, worker|
   # Unix forking works, we need to make sure we aren't using any of the parent's
   # sockets, e.g. db connection
  
-  ActiveRecord::Base.establish_connection
+  ActiveRecord::Base.establish_connection Application::DBCONFIG
  
   ##
   # Unicorn master is started as root, which is fine, but let's
