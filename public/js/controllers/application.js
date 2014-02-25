@@ -115,6 +115,9 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         $('body').keypress(function(e) {
             if ($scope.current.opening_modal === 0) {
                 switch (e.which) {
+                case 43:
+                    $('#project-config').modal('show');
+                    break;
                 case 47:
                     $('#project-search').modal('show');
                     break;
