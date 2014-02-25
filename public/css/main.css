@@ -320,6 +320,14 @@ textarea {
 }
 
 /*
+ * Project help dialog
+ */
+
+#project-help .modal-dialog {
+    width: 800px;
+}
+
+/*
  * Sidebar
  */
 

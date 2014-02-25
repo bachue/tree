@@ -113,8 +113,16 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         });
 
         $('body').keypress(function(e) {
-            if (e.which == 47 && $scope.current.opening_modal === 0)
-                $('#project-search').modal('show');
+            if ($scope.current.opening_modal === 0) {
+                switch (e.which) {
+                case 47:
+                    $('#project-search').modal('show');
+                    break;
+                case 63:
+                    $('#project-help').modal('show');
+                    break;
+                }
+            }
         });
 
         $scope.keypress_in_query = function(e) {
