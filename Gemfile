@@ -15,6 +15,7 @@ gem 'nokogiri'
 gem 'RedCloth'
 gem 'unicorn'
 gem 'sidekiq-unique-jobs'
+gem 'sinatra'
 
 group :production do
   gem 'god', require: nil

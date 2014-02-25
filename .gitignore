@@ -6,3 +6,4 @@ repos/*
 log/*
 tmp/*
 *.rdb
+.bundle/*
