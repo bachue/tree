@@ -37,11 +37,12 @@
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><span data-ng-bind="current.project.name"></span>&nbsp;<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li data-ng-repeat="project in projects">
-                            <a title="Create new project" href="javascript:void(0)" data-ng-click="set_current_project(project.name)" data-ng-bind="project.name"></a>
+                            <a href="javascript:void(0)" data-ng-click="set_current_project(project.name)" data-ng-bind="project.name"></a>
                         </li>
                     </ul>
                 </li>
                 <li><a title="Add new project" href="javascript:void(0)" class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#project-config"></a></li>
+                <li><a title="Help" href="javascript:void(0)" class="glyphicon glyphicon-question-sign" data-toggle="modal" data-target="#project-help"  data-ng-if="current.project"></a></li>
             </ul>
             <h3 data-ng-if="current.loading > 0" class="display: inline-block;"><img src="/img/loading.gif" alt="loading" height="20" /></h3>
         </div><!-- /.nav-collapse -->
@@ -138,6 +139,24 @@
                 <span class="sr-only">Searching...</span>
             </div>
         </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="project-help" data-ng-if="current.project">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+            <h3>To edit wiki for this project, please:</h3>
+            <pre>
+git clone &quot;<span data-ng-bind="current.project.url"></span>&quot;
+git checkout <span data-ng-bind="current.project.branch"></span>
+# Edit something in your faviorite editor ...
+git add --all .
+git commit
+git push origin <span data-ng-bind="current.project.branch"></span>
+# Refresh current page and you will see the change!</pre>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
