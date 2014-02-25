@@ -127,10 +127,9 @@
             </div>
         </form>
         <div class="list-group">
-            <a href="javascript:void(0)" class="list-group-item" data-ng-bind="result" data-ng-repeat="result in current.searchbar.results.filenames" data-ng-click="open_path(result)"></a>
-        </div>
-        <div class="list-group">
-            <a href="javascript:void(0)" class="list-group-item" data-ng-bind="result" data-ng-repeat="result in current.searchbar.results.content" data-ng-click="open_path(result)"></a>
+            <a href="javascript:void(0)" class="list-group-item" data-ng-repeat="result in current.searchbar.results.both" data-ng-click="open_path(result)"><span class="badge">Name</span><span class="badge">Content</span><span data-ng-bind="result"></span></a>
+            <a href="javascript:void(0)" class="list-group-item" data-ng-repeat="result in current.searchbar.results.filenames" data-ng-click="open_path(result)"><span class="badge">Name</span><span data-ng-bind="result"></span></a>
+            <a href="javascript:void(0)" class="list-group-item" data-ng-repeat="result in current.searchbar.results.content" data-ng-click="open_path(result)"><span class="badge">Content</span><span data-ng-bind="result"></span></a>
         </div>
       </div>
       <div class="modal-body" data-ng-if="current.searchbar.searching">

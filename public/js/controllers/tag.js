@@ -17,6 +17,7 @@ define(['controllers/project', 'underscore'], function(project_controller, _) {
         });
 
         $scope.tree_selected_callback = function(branch) {
+            if (branch.children.length > 0) return; // TODO: Remove this, server should try to find {readme,index}.{md,textile,html} and return it
             var labels = _.map(branch.parents().concat(branch), function(branch) { return branch.label; });
             $state.go('application.project.tag.doc', {document_path: labels.join('/')});
         };
