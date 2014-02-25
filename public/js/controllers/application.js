@@ -84,7 +84,10 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
                         delete $scope.current.searchbar.searching;
                         throw results['error'];
                     }
-                    $scope.current.searchbar.results = results;
+                    $scope.current.searchbar.results = {};
+                    $scope.current.searchbar.results.both = _.intersection(results.filenames, results.content);
+                    $scope.current.searchbar.results.filenames = _.difference(results.filenames, results.content);
+                    $scope.current.searchbar.results.content = _.difference(results.content, results.filenames);
                     delete $scope.current.searchbar.searching;
                 }, function(error) {
                     // TODO: Error handling
