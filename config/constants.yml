@@ -2,4 +2,4 @@
 
 NEW_REPO_PREFIX: 'ssh://zhour6@0.0.0.0:Projects/tree/tmp/'
 production:
-  NEW_REPO_PREFIX: 'git@<%= `hostname -i`.strip %>:'
+  NEW_REPO_PREFIX: 'git@tree:'

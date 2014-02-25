@@ -329,7 +329,7 @@ textarea {
     padding-bottom: 10px;
     text-shadow: 0 1px 0 #fff;
     border-radius: 5px;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 .sidebar ul {
@@ -348,7 +348,6 @@ textarea {
     padding-top: 5px;
     padding-bottom: 5px;
     border-radius: 0;
-    overflow-y: scroll;
 }
 
 .sidebar ul li a:hover,

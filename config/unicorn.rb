@@ -1,7 +1,7 @@
 worker_processes 16
 preload_app      true
 timeout          180
-listen           80
+listen           File.expand_path(File.dirname(__FILE__) + '/../tmp/unicorn.sock'), backlog: 2048
 pid              'tmp/unicorn.pid'
 stdout_path      "log/#{ENV['RACK_ENV']}.log"
 stderr_path      "log/#{ENV['RACK_ENV']}.log"

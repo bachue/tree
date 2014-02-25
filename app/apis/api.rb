@@ -73,6 +73,8 @@ class API < Grape::API
       if is_server_provided_repo
         server_provided_repo_name = project.url.sub(%r{^#{Application.consts['NEW_REPO_PREFIX']}/*}, '')
         server_provided_repo_path = Application::REPO_SVR.join(server_provided_repo_name).to_s
+        error! 'Invalid path', 400 unless server_provided_repo_path.start_with? "#{Application::REPO_SVR}/"
+        FileUtils.mkdir_p server_provided_repo_path
       end
 
       error! 'ArgumentError', 400 unless project.valid?

@@ -22,7 +22,7 @@ class Application
 
   class << self
     attr_reader :consts
-    def load_constants
+    private def load_constants
       @consts = YAML.load ERB.new(File.read(File.dirname(__FILE__) + '/constants.yml')).result
       overrided_consts = {
         'production'  =>  @consts.delete('production'), 
