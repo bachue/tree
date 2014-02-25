@@ -1,5 +1,5 @@
 define(['controllers/application', 'underscore'], function(application_controller, _) {
-    return application_controller.controller('Project', function($scope, $state, Restangular) {
+    return application_controller.controller('Project', function($scope, $state) {
         if (!$state.params.project_name && $scope.current.project)
             return $state.go('application.project', {project_name: $scope.current.project.name});
 

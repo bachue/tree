@@ -31,6 +31,10 @@ class MarkDownRenderer
   def self.render content
     GitHub::Markdown.render_gfm content
   end
+
+  def self.name
+    'markdown'
+  end
 end
 
 class HTMLRender
@@ -39,12 +43,17 @@ class HTMLRender
   end
 
   def self.render content
+    # TODO: Remove iframe, frameset, frame, script, link, style, object, param, dialog, canvas ...
     html = Nokogiri::HTML content
     if body = html.css('body')
       body[0].inner_html
     else
       content
     end
+  end
+
+  def self.name
+    'html'
   end
 end
 
@@ -55,6 +64,10 @@ class TextileRenderer
 
   def self.render content
     RedCloth.new(content).to_html
+  end
+
+  def self.name
+    'textile'
   end
 end
 

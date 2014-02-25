@@ -80,7 +80,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-ng-disabled="current.config_dialog.cloning" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-cancel" data-ng-disabled="current.config_dialog.cloning" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" data-ng-disabled="current.config_dialog.cloning || project_config.$invalid" data-ng-click="submit_config()">Save changes</button>
                 </div>
             </form>
@@ -109,8 +109,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" data-ng-click="add_tag()" data-ng-disabled="new_tag_dialog.$invalid" >Save changes</button>
+        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-ng-click="add_tag()" data-ng-disabled="new_tag_dialog.$invalid">Save changes</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -156,6 +156,34 @@ git add --all .
 git commit
 git push origin <span data-ng-bind="current.project.branch"></span>
 # Refresh current page and you will see the change!</pre>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="removing-commit-dialog"> <!-- Just for removing index -->
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Commit changes</h4>
+      </div>
+      <div class="modal-body">
+        <form name="removing_commit_dialog">
+            <div class="input-group removing-commit-dialog-text-input" data-ng-if="!current.removing_commit_dialog.pushing">
+                <input id="removing_commit_dialog_message" data-ng-model="current.removing_commit_dialog.message" data-required type="text" class="form-control" placeholder="Delete {{current.document_path}}" />
+                <textarea id="removing_commit_dialog_description" class="form-control" data-ng-model="current.removing_commit_dialog.description" rows="5" placeholder="Add an optional extended description ..."></textarea>
+            </div>
+            <div class="progress progress-striped active" data-ng-if="current.removing_commit_dialog.pushing">
+                <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                    <span class="sr-only">Commit pushing...</span>
+                </div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-ng-click="do_removing_commit()" data-ng-disabled="removing_commit_dialog.$invalid">Commit Changes</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

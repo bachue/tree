@@ -14,18 +14,31 @@ class Project < ActiveRecord::Base
     root
   end
 
-  def render file, tag
-    begin
-      if files(tag).include?(file) && renderer = Renderers.choose_for(file)
-        [renderer.render(cat_file(file, tag)), renderer]
-      elsif all_files(tag).include?(file)
-        [cat_file(file, tag), nil]
-      elsif cat_file(file, tag)
-        ['', false]
+  def render file, tag, raw: false
+    content = cat_file file, tag
+    renderer = Renderers.choose_for(file)
+    if content == false then [false, renderer] # File not found
+    elsif content.is_a? String
+      if renderer
+        # File exists & Can be rendered
+        if raw
+          [content, renderer, blob_id_of(file, tag)]
+        else
+          [renderer.render(content), renderer]
+        end
+      else
+        # File exists but it's binary
+        content
       end
-    rescue
-      [false, false]
+    elsif content == Rugged::Tree
+      :tree
+    else
+      raise ArgumentError.new "Project\#render can't handle: #{content.inspect} self: #{self.inspect} file: #{file.inspect} tag: #{tag.inspect}"
     end
+  end
+
+  def raw file, tag
+    render file, tag, raw: true
   end
 
   def pull
@@ -37,7 +50,15 @@ class Project < ActiveRecord::Base
   end
 
   def add_tag tag_name
-    Git.tag path, :add, tag_name, "Add tag #{tag_name.inspect}"
+    Git.tag path, :add, tag_name, branch: branch
+  end
+
+  def add_to_index file, content, base, message
+    Git.add_to_index path, file, content, base, message, branch
+  end
+
+  def remove_from_index file, message
+    Git.remove_from_index path, file, message, branch
   end
 
   def grep text, tag_name
@@ -59,9 +80,21 @@ class Project < ActiveRecord::Base
     lock File::LOCK_EX, &block
   end
 
+  def suggest path, tag
+    files = files tag
+    ['readme', 'index'].each do |basename|
+      result =  files.detect do |file|
+                  File.dirname(file) == (path.present? ? path : '.') &&
+                  File.basename(file).sub(/\.\w+$/, '').downcase == basename.downcase
+                end
+      return result if result
+    end
+    nil
+  end
+
   private
     def cat_file file, tag
-      Git.cat_file path, file, tag
+      Git.cat_file path, file, branch: branch, tag: tag
     end
 
     def all_files tag
@@ -70,6 +103,10 @@ class Project < ActiveRecord::Base
 
     def files tag
       all_files(tag).select {|path| Renderers.available_ext.detect {|ext| path.end_with?(ext) }}
+    end
+
+    def blob_id_of file, tag
+      Git.blob_id_of path, file, branch: branch, tag: tag
     end
 
     def insert_into root, names

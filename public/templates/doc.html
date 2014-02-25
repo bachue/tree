@@ -1,4 +1,10 @@
-<div id="current_document" data-ng-if="has_document()" data-auto-anchors data-ng-bind-html="current.document"></div>
+<div id="current_document" data-ng-if="has_document()">
+    <div class="text-right" data-ng-if="current.tag_name == 'HEAD'">
+        <button type="button" data-ng-click="edit_doc()" class="btn btn-sm btn-primary edit-btn">Edit</button>
+        <button type="button" data-ng-click="open_removing_commit_dialog()" class="btn btn-sm btn-danger remove-btn">Delete</button>
+    </div>
+    <div data-auto-anchors data-ng-bind-html="current.document"></div>
+</div>
 <div id="current_document" data-ng-if="!has_document()">
     <h3>To edit wiki for this project, please:</h3>
     <pre>

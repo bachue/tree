@@ -304,6 +304,14 @@ textarea {
 }
 
 /*
+ * For all
+ */
+
+.btn-cancel {
+    color: #900;
+}
+
+/*
  * Project config dialog
  */
 
@@ -391,6 +399,10 @@ textarea {
     border: solid 1px #bbb;
 }
 
+#current_document .edit-btn, #current_document .remove-btn {
+    width: 60px;
+}
+
 .section-level-1 {
     font-size: 14px;
 }
@@ -413,4 +425,24 @@ textarea {
 .section-level-6 {
     font-size: 9px;
     padding-left: 25px;
+}
+
+/*
+ * Commit Message
+ */
+
+#comment_message_label {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+#commit_message, #commit_description, #commit_buttons_row,
+#removing_commit_dialog_message, #removing_commit_dialog_description {
+    margin: 5px 0;
+}
+#commit_buttons_row button {
+    margin: 5px 0 5px 5px;
+}
+
+.removing-commit-dialog-text-input {
+    width: 100%;
 }

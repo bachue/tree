@@ -10,6 +10,7 @@ require 'config/application'
 desc 'runs a console to operate your environment'
 task :console do
   require 'pry'
+  require 'rugged'
   require 'grape'
   require 'grape-entity'
   

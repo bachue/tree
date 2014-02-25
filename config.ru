@@ -54,7 +54,7 @@ require 'static'
 
 require 'git'
 require 'app_logger'
-require 'renderer'
+require 'renderers'
 
 use ActiveRecord::ConnectionAdapters::ConnectionManagement
 use Rack::TryStatic,

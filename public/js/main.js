@@ -4,7 +4,6 @@ var shim = {
     },
     angular: {
         exports: 'angular',
-        deps: ['jquery']
     },
     angular_ui_router: {
         deps: ['angular']
@@ -39,14 +38,15 @@ require.config({
         angular_animate: 'vendor/angular-animate.min',
         abn_tree_directive: 'vendor/abn_tree_directive',
         promise: 'vendor/requirejs-promise',
-        highlight: 'vendor/highlight.min'
+        highlight: 'vendor/highlight.min',
+        ace: 'vendor/ace/ace'
     },
     shim: shim
 });
 
-require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants',
-         'controllers/application', 'controllers/project', 'controllers/tag', 'controllers/doc',
-         'directives/application', 'directives/doc'], function(angular, app, domReady, $) {
+require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants', 'ace',
+         'controllers/application', 'controllers/project', 'controllers/tag', 'controllers/edit', 'controllers/doc',
+         'directives/application', 'directives/doc', 'directives/editor'], function(angular, app, domReady, $) {
     app.config(function($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {
         $stateProvider.
            state('application', {
@@ -61,6 +61,10 @@ require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_c
             url: '/:tag_name',
             controller: 'Tag',
             templateUrl: '/templates/tag.html'
+        }).state('application.project.tag.edit', {
+            url: '/edit/*document_path?new&type',
+            controller: 'Edit',
+            templateUrl: '/templates/edit.html'
         }).state('application.project.tag.doc', {
             url: '/*document_path',
             controller: 'Doc',

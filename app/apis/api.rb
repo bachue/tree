@@ -1,20 +1,23 @@
 require 'project'
 require 'project_entity'
-require 'project_updater'
 
+require 'helpers/api_helper'
 require 'validators/git_repo_url'
 
 class API < Grape::API
   version 'api', using: :path
   format :json
+  default_format :json
+
+  helpers APIHelper
 
   rescue_from :all
-  error_formatter :json, ->(message, backtrace, options, env) do 
+  error_formatter :json, ->(message, backtrace, options, env) do
     logger.error message
     logger.error backtrace.join("\n")
     {error: 'error'}.to_json
   end
-  
+
   desc 'Only for test, to make sure server works'
   get '/ping' do
     'pong'
@@ -32,10 +35,9 @@ class API < Grape::API
       requires :tag_name, type: String, desc: 'Tag name'
     end
     get '/:id/:tag_name' do
-      project = Project.find_by id: params[:id]
-      error! 'Project not found', 404 unless project
+      project = load_project id: params[:id]
 
-      ProjectUpdater.perform_async project.id
+      update_project project
 
       project.lock_as_reader do
         project.tree params[:tag_name]
@@ -51,8 +53,7 @@ class API < Grape::API
     get '/:id/:tag_name/_search' do
       error! 'No query text', 400 unless params[:q]
 
-      project = Project.find_by id: params[:id]
-      error! 'Project not found', 404 unless project
+      project = load_project id: params[:id]
 
       project.lock_as_reader do
         project.grep params[:q], params[:tag_name]
@@ -105,8 +106,7 @@ class API < Grape::API
       requires :branch, type: String, desc: 'Branch name'
     end
     patch '/:name/:branch' do
-      project = Project.find_by name: params[:name]
-      error! 'Project not found', 404 unless project
+      project = load_project name: params[:name]
 
       return false if params[:branch] != project.branch
 
@@ -118,31 +118,123 @@ class API < Grape::API
       true
     end
 
+    desc 'Get a suggested document from the project'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+      requires :tag_name, type: String, desc: 'Tag name'
+      optional :path, type: String, desc: 'Directory path', default: ''
+    end
+    get '/suggest/:id/:tag_name(/*path)', anchor: false do
+      project = load_project id: params[:id]
+
+      suggest = project.lock_as_reader do
+                  project.suggest params[:path], params[:tag_name]
+                end
+      {suggest: suggest || ''}
+    end
+
+    desc 'Get a raw document from the project'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+      requires :path, type: String, desc: 'File path'
+    end
+    get '/raw/:id/*path', anchor: false do
+      project = load_project id: params[:id]
+
+      update_project project
+
+      result, renderer, blob_id = project.lock_as_reader do
+                                    project.raw params[:path], 'HEAD'
+                                  end
+      case result
+      when false
+        status 404
+        if renderer then {empty: true, type: renderer.name}
+        else             {not_found: true}
+        end
+      when :tree
+        error! 'Path is a directory, not supported', 400
+      else
+        if renderer && blob_id
+          {raw: result, type: renderer.name, blob: blob_id}
+        else # result == nil means file exists but can't be rendered
+          content_type "application/x-download"
+          env['api.format'] = :binary
+          body result
+        end
+      end
+    end
+
     desc 'Get a rendered document from the project'
     params do
       requires :id, type: Integer, desc: 'Project id'
       requires :tag_name, type: String, desc: 'Tag name'
+      requires :path, type: String, desc: 'File path'
     end
     get '/:id/:tag_name/*path', anchor: false do
-      project = Project.find_by id: params[:id]
-      error! 'Project not found', 404 unless project
-      
-      ProjectUpdater.perform_async project.id
+      project = load_project id: params[:id]
+
+      update_project project
 
       result, renderer =  project.lock_as_reader do
                             project.render params[:path], params[:tag_name]
-                          end 
-      if !result 
-        error! 'Document not found', 404
-      elsif renderer == false
-        {empty: true}
-      elsif renderer # Have rendered?
-        {doc: result}
-      elsif # Static file, must be an attachment
-        content_type "application/x-download"
-        env['api.format'] = :binary
-        body result
+                          end
+      case result
+      when false
+        status 404
+        if renderer then {empty: true, type: renderer.name}
+        else             {not_found: true}
+        end
+      when :tree
+        {tree: true}
+      else
+        if renderer # Have rendered?
+          {doc: result}
+        elsif # Static file, must be an attachment
+          content_type "application/x-download"
+          env['api.format'] = :binary
+          body result
+        end
       end
+    end
+
+    desc 'Push a document change for a project'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+      requires :path, type: String, desc: 'File path'
+      requires :content, type: String, desc: 'File content'
+      requires :message, type: String, desc: 'Commit message'
+      optional :description, type: String, desc: 'Commit description'
+      requires :base, type: String, desc: 'Commit based on'
+    end
+    put '/raw/:id/*path', anchor: false do
+      project = load_project id: params[:id]
+
+      begin
+        project.lock_as_writer do
+          project.add_to_index params[:path], params[:content], params[:base],
+                             "#{params[:message]}\r\n\r\n#{params[:description]}"
+        end
+      rescue Git::CommitError => e
+        error! e.message, 400
+      end
+      true
+    end
+
+    desc 'Delete a document from a project'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+      requires :path, type: String, desc: 'File path'
+      requires :message, type: String, desc: 'Commit message'
+      optional :description, type: String, desc: 'Commit description'
+    end
+    delete '/raw/:id/*path', anchor: false do
+      project = load_project id: params[:id]
+
+      project.lock_as_writer do
+        project.remove_from_index params[:path], "#{params[:message]}\r\n\r\n#{params[:description]}"
+      end
+      true
     end
 
     desc 'Create a tag in the project'
@@ -151,8 +243,7 @@ class API < Grape::API
       requires :tag_name, type: String, desc: 'Tag name'
     end
     put '/:id/:tag_name' do
-      project = Project.find_by id: params[:id]
-      error! 'Project not found', 404 unless project
+      project = load_project id: params[:id]
 
       project.lock_as_writer do
         project.add_tag params[:tag_name]

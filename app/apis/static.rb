@@ -11,6 +11,7 @@ class Static < Grape::API
       error! 'Document not found', 404
     elsif renderer.nil? # Nil renderer means static file
       env['api.format'] = :binary
+      content_type Rack::Mime.mime_type(File.extname(params[:path]))
       body data
     else
       # If renderer is false, means it's a dir

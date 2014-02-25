@@ -16,6 +16,7 @@ gem 'RedCloth'
 gem 'unicorn'
 gem 'sidekiq-unique-jobs'
 gem 'sinatra'
+gem 'rugged', git: 'http://github.com/bachue/rugged.git', branch: 'development', submodules: true
 
 group :production do
   gem 'god', require: nil

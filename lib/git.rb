@@ -1,24 +1,28 @@
 require 'open3'
 require 'fileutils'
 require 'escape'
+require 'rugged'
+
+unless (not_implemented = [:https, :ssh] - Rugged.features).empty?
+  fail "Rugged doesn't support #{not_implemented}, please config and rebuild libgit2"
+end
 
 class Git
   class CommandError < RuntimeError; end
+  class CommitError < RuntimeError; end
 
   class Utils
     class << self
-      def execute *multi_args
-        options = multi_args.extract_options!
+      def execute *multi_args, ignore_status: false
         commands = multi_args.map {|args| Escape.shell_command args }
         begin
           command = commands.join ' && '
           stdin, stdout, stderr, status = Open3.popen3 command
           stdin.close
           output = stdout.gets(nil) || ''
-          errput  = stderr.gets(nil)
-
-          if options[:ignore_status]
-            return output unless errput
+          errput = stderr.gets(nil) || ''
+          if ignore_status
+            return output unless errput.present?
           else
             return output if status.value == 0
           end
@@ -44,20 +48,27 @@ Stderr: #{errput}
   class << self
     def clone source, target, branch = 'master'
       FileUtils.rm_rf target
-      branch_params =  if branch.present? then ['--branch', branch]
-                       else                    []
-                       end
-      Utils.execute ['git', 'clone', '--quiet', *branch_params, Escape.uri_path(source), target]
+      extra = branch ? {branch: branch} : {}
+      Rugged::Repository.clone_at source, target,
+        **extra,
+        ignore_cert_errors: true,
+        credentials: credentials
     end
 
     def new_repo target
       FileUtils.rm_rf target
-      Utils.execute ['git', 'init', '--bare', target]
+      Rugged::Repository.init_at(target, :bare)
     end
 
     def initial_commit target, branch = 'master'
-      Utils.execute ['cd', target], ['git', 'commit', '--allow-empty', '-m', 'Initial commit'],
-                    ['git', 'push', '-q', 'origin', branch]
+      repo = get_repo target
+      # TODO: use add_to_index here
+      builder = Rugged::Tree::Builder.new
+      Rugged::Commit.create repo, tree: builder.write(repo),
+                            message: 'Initial commit',
+                            parents: [],
+                            update_ref: 'HEAD'
+      push repo, branches: 'master'
     end
 
     def pull target, branch = 'master'
@@ -68,15 +79,24 @@ Stderr: #{errput}
       Utils.execute(['cd', target], ['git', 'ls-tree', '-r', '--name-only', tag]).try(:split, "\n")
     end
 
-    def cat_file target, file_path, tag = 'HEAD'
-      Utils.execute ['cd', target], ['git', 'show', "#{tag}:#{file_path}"]
+    def cat_file target, file_path, tag: 'HEAD', branch: 'master'
+      repo = get_repo target
+      blob_id = blob_id_of repo, file_path, tag: tag, branch: branch
+      return false unless blob_id # File not found, returns false
+      blob = repo.lookup blob_id
+      if blob.is_a?(Rugged::Blob) then blob.text
+      else                             blob.class
+      end
     end
 
-    def tag target, *args
+    def tag target, *args, branch: 'master'
+      repo = get_repo target
       if args.empty? # Git.tag <target>
-        Utils.execute(['cd', target], ['git', 'tag']).try(:split, "\n")
-      elsif args.first == :add # Git.tag <target>, :add, tag_name, tag_message
-        Utils.execute ['cd', target], ['git', 'tag', '-am', args[2], args[1]], ['git', 'push', '-q', '--tags']
+        repo.tags.map(&:name)
+      elsif args.first == :add # Git.tag <target>, :add, tag_name, branch: 'master'
+        tag_name = args[1]
+        repo.tags.create tag_name, repo.branches[branch].target_id
+        push repo, tags: tag_name
       end
     end
 
@@ -88,9 +108,66 @@ Stderr: #{errput}
     end
 
     def updated? target, branch = 'master'
-      remote = Utils.execute(['cd', target], ['git', 'ls-remote', 'origin', 'HEAD']).try(:split, /\s+/)[0]
-      local = Utils.execute(['cd', target], ['git', 'show-ref', "refs/remotes/origin/#{branch}"]).try(:split, /\s+/)[0]
+      repo = get_repo(target)
+
+      remote = repo.remotes.detect {|r| r.name == 'origin' }
+      # TODO: Add credentials to ls when it's available
+      remote = remote.ls.detect {|ref| ref[:name] == 'HEAD' }[:oid]
+
+      local = repo.branches['master'].target_id
       remote != local
+    end
+
+    def blob_id_of target, file_path, branch: 'master', tag: 'HEAD'
+      repo = get_repo target
+      tree =  if tag != 'HEAD' # Git.blob target, path, tag: 'v1'
+                repo.tags.detect {|t| t.name == tag }.target.tree
+              else             # Git.blob target, path, branch: 'development'
+                repo.branches[branch].target.tree
+              end
+      object_id_of(repo, tree, file_path)
+    end
+
+    def add_to_index target, file_path, file_content, based_on, message, branch = 'master'
+      pull target, branch
+
+      repo = get_repo target
+
+      # Validate your parent
+      blob_id = object_id_of(repo, repo.branches[branch].target.tree, file_path)
+      # If blob_id is false, means to create new file in git repo
+      if blob_id && based_on != blob_id
+        raise CommitError.new 'That file has been modified before your commit'
+      end
+
+      oid = repo.write file_content, :blob
+      index = repo.index
+      index.add path: file_path, oid: oid, mode: 0100644
+      Rugged::Commit.create repo, tree: index.write_tree(repo),
+                                  message: message,
+                                  parents: repo.empty? ? [] : [repo.branches[branch].target_id],
+                                  update_ref: 'HEAD'
+      clear_all target
+      push repo, branches: branch
+    end
+
+    def remove_from_index target, file_path, message, branch = 'master'
+      pull target, branch
+
+      repo = get_repo target
+
+      index = repo.index
+      begin
+        index.remove file_path
+        Rugged::Commit.create repo, tree: index.write_tree(repo),
+                                    message: message,
+                                    parents: repo.empty? ? [] : [repo.branches[branch].target_id],
+                                    update_ref: 'HEAD'
+        clear_all target
+        push repo, branches: branch
+      rescue Rugged::IndexError
+        # If file is not existed, do nothing
+      end
     end
 
     # Only for server-provided repo
@@ -104,7 +181,7 @@ do
     branch=$(git rev-parse --symbolic --abbrev-ref $refname)
     if [ "$branch" == "#{branch}" ]; then
       echo "curl -X PATCH '#{host}/api/projects/#{project_name}/#{branch}'" >>"#{log}"
-      curl -X PATCH "#{host}/api/projects/#{project_name}/#{branch}" >>"#{log}" 2>&1
+      curl -X PATCH "#{host}/api/projects/#{project_name}/#{branch}" >>"#{log}" 2>&1 &
     fi
 done
         HOOK
@@ -121,6 +198,41 @@ done
       def grep_in_content target, text, tag = 'HEAD'
         # TODO: support searching in all tags
         Utils.execute(['cd', target], ['git', 'grep', '-l', '-i', '-I', text, tag], ignore_status: true).try(:split, "\n").map {|line| line.sub "#{tag}:", '' }
+      end
+
+      def push repo, branches: [], tags: [] # Git.push repo, branches: ['b1', 'b2'], tags: ['t1', 't2']
+        repo.push 'origin', [
+          *Array(branches).map {|branch| "refs/heads/#{branch}" },
+          *Array(tags).map     {|tag|    "refs/tags/#{tag}"}
+        ], credentials: credentials
+      end
+
+      def clear_all target
+        Utils.execute ['cd', target], ['git', 'reset', 'HEAD'], ['git', 'checkout', '.']
+        untracked = Utils.execute(['cd', target], ['git', 'ls-files', '--others', '--exclude-standard']).try(:split, "\n")
+        untracked.each {|path| FileUtils.rm_rf "#{target}/#{path}" }
+      end
+
+      def object_id_of repo, tree, path
+        path = path.split('/') if path.is_a?(String)
+        ref = tree[path.shift]
+        return false unless ref # File not found, returns false
+        oid = ref[:oid]
+        if path.empty? then oid
+        else                object_id_of repo, repo.lookup(oid), path
+        end
+      end
+
+      def get_repo target
+        target.is_a?(Rugged::Repository) ? target : Rugged::Repository.new(target)
+      end
+
+      def credentials # TODO: Need to wait for HTTPS authorization
+        ->(url, username, _) {
+          Rugged::Credentials::SshKey.new username: username,
+                                          publickey: "#{ENV['HOME']}/.ssh/id_rsa.pub",
+                                          privatekey: "#{ENV['HOME']}/.ssh/id_rsa"
+        } # No passphrase for now
       end
   end
 end

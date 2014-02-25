@@ -5,6 +5,14 @@ GIT
     rack-contrib (1.2.0)
       rack (>= 0.9.1)
 
+GIT
+  remote: http://github.com/bachue/rugged.git
+  revision: 3bbf402d3634b10500ec92cfdb5bc05bf982c2b6
+  branch: development
+  submodules: true
+  specs:
+    rugged (0.19.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -149,6 +157,7 @@ DEPENDENCIES
   rack-accept-media-types
   rack-contrib!
   rake
+  rugged!
   sidekiq-unique-jobs
   sinatra
   sqlite3
