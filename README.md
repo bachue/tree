@@ -18,7 +18,7 @@
           while read oldrev newrev refname
           do
               branch=$(git rev-parse --symbolic --abbrev-ref $refname)
-              curl -X PATCH "http://localhost/api/projects/$project/$branch" POST >/tmp/log 2&>1
+              curl -X PATCH "http://localhost/api/projects/$project/$branch" >/tmp/log 2>&1
           done
           ```
       3. `chmod +x $git_repo_path/hooks/post-receive`
