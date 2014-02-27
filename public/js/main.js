@@ -1,47 +1,45 @@
-var shim = {
-    underscore: {
-        exports: '_'
-    },
-    angular: {
-        exports: 'angular',
-        deps: ['jquery']
-    },
-    angular_ui_router: {
-        deps: ['angular']
-    },
-    bootstrap: {
-        deps: ['jquery']
-    },
-    restangular: {
-        deps: ['angular', 'underscore']
-    },
-    angular_animate: {
-        deps: ['angular']
-    },
-    abn_tree_directive: {
-        deps: ['angular', 'angular_animate', 'underscore']
-    },
-    highlight: {
-        exports: 'hljs'
-    }
-};
-
 require.config({
     waitSeconds: 0,
     paths: {
         domReady: 'vendor/domReady',
-        jquery: 'vendor/jquery',
-        underscore: 'vendor/underscore',
-        angular: 'vendor/angular',
-        angular_ui_router: 'vendor/angular-ui-router',
-        bootstrap: 'vendor/bootstrap',
-        restangular: 'vendor/restangular',
-        angular_animate: 'vendor/angular-animate',
+        jquery: 'vendor/jquery.min',
+        underscore: 'vendor/underscore.min',
+        angular: 'vendor/angular.min',
+        angular_ui_router: 'vendor/angular-ui-router.min',
+        bootstrap: 'vendor/bootstrap.min',
+        restangular: 'vendor/restangular.min',
+        angular_animate: 'vendor/angular-animate.min',
         abn_tree_directive: 'vendor/abn_tree_directive',
         promise: 'vendor/requirejs-promise',
         highlight: 'vendor/highlight.min'
     },
-    shim: shim
+    shim: {
+        underscore: {
+            exports: '_'
+        },
+        angular: {
+            exports: 'angular',
+            deps: ['jquery']
+        },
+        angular_ui_router: {
+            deps: ['angular']
+        },
+        bootstrap: {
+            deps: ['jquery']
+        },
+        restangular: {
+            deps: ['angular', 'underscore']
+        },
+        angular_animate: {
+            deps: ['angular']
+        },
+        abn_tree_directive: {
+            deps: ['angular', 'angular_animate', 'underscore']
+        },
+        highlight: {
+            exports: 'hljs'
+        }
+    }
 });
 
 require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular',
