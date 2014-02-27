@@ -97,13 +97,13 @@ Stderr: #{errput}
     def add_hook_for_server_check target, project_name, branch = 'master', log: '/tmp/log', host: 'http://localhost'
       File.open "#{target}/hooks/post-receive", 'w' do |file|
         file.write <<-HOOK
-#!/bin/sh
+#!/bin/bash
 
 while read oldrev newrev refname
 do
     branch=$(git rev-parse --symbolic --abbrev-ref $refname)
     if [ "$branch" == "#{branch}" ]; then
-      echo "curl -X PATCH \"#{host}/api/projects/#{project_name}/#{branch}\"" >>"#{log}"
+      echo "curl -X PATCH '#{host}/api/projects/#{project_name}/#{branch}'" >>"#{log}"
       curl -X PATCH "#{host}/api/projects/#{project_name}/#{branch}" >>"#{log}" 2>&1
     fi
 done
