@@ -93,6 +93,26 @@ Stderr: #{errput}
       remote != local
     end
 
+    # Only for server-provided repo
+    def add_hook_for_server_check target, project_name, branch = 'master', log: '/tmp/log', host: 'http://localhost'
+      File.open "#{target}/hooks/post-receive", 'w' do |file|
+        file.write <<-HOOK
+#!/bin/sh
+
+while read oldrev newrev refname
+do
+    branch=$(git rev-parse --symbolic --abbrev-ref $refname)
+    if [ "$branch" == "#{branch}" ]; then
+      echo "curl -X PATCH \"#{host}/api/projects/#{project_name}/#{branch}\"" >>"#{log}"
+      curl -X PATCH "#{host}/api/projects/#{project_name}/#{branch}" >>"#{log}" 2>&1
+    fi
+done
+        HOOK
+        file.chmod 0755
+      end
+      true
+    end
+
     private
       def grep_in_filenames target, text, tag = 'HEAD'
         ls_tree(target, tag).select { |name| name.include?(text) }

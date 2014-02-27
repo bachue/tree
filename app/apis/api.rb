@@ -86,6 +86,8 @@ class API < Grape::API
               Git.new_repo server_provided_repo_path
               Git.clone "file://#{server_provided_repo_path}", project.path, nil
               Git.initial_commit project.path, project.branch
+              Git.add_hook_for_server_check server_provided_repo_path, project.name, project.branch,
+                log: Application::ROOT.join('log', 'git.log'), host: Rack::Request.new(env).base_url
             else
               Git.clone project.url, project.path, project.branch
             end
