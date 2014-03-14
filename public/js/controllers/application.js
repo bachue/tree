@@ -136,7 +136,7 @@ define(['controllers', 'promise!loaders/projects'], function(controllers, projec
         };
 
         $scope.projects = projects;
-        $state.go('application.project');
+        $state.go('application.project', {location: 'replace'});
 
         function hide_project_config_dialog() {
             $('#project-config').modal('hide');

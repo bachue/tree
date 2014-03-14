@@ -1,7 +1,7 @@
 define(['controllers/project', 'underscore'], function(project_controller, _) {
     return project_controller.controller('Tag', function($scope, $state, Restangular) {
         if (!$state.params.tag_name && $scope.current.tag_name)
-            return $state.go('application.project.tag', {tag_name: $scope.current.tag_name});
+            return $state.go('application.project.tag', {tag_name: $scope.current.tag_name}, {location: 'replace'});
 
         if ($state.params.tag_name) {
             if (_.contains($scope.current.project.tags.concat('HEAD'), $state.params.tag_name))
@@ -9,7 +9,7 @@ define(['controllers/project', 'underscore'], function(project_controller, _) {
         }
 
         if (!$scope.current.tag_name)
-            return $state.go('application.project.tag', {tag_name: 'HEAD'});
+            return $state.go('application.project.tag', {tag_name: 'HEAD'}, {location: 'replace'});
 
         $scope.$on('treeInitialized', function() {
             if ($state.params.document_path)
@@ -19,7 +19,7 @@ define(['controllers/project', 'underscore'], function(project_controller, _) {
         $scope.tree_selected_callback = function(branch) {
             if (branch.children.length > 0) return; // TODO: Remove this, server should try to find {readme,index}.{md,textile,html} and return it
             var labels = _.map(branch.parents().concat(branch), function(branch) { return branch.label; });
-            $state.go('application.project.tag.doc', {document_path: labels.join('/')});
+            $state.go('application.project.tag.doc', {document_path: labels.join('/')}, {location: 'replace'});
         };
 
         $scope.current.loading += 1;
@@ -30,7 +30,7 @@ define(['controllers/project', 'underscore'], function(project_controller, _) {
                 throw tree['error'];
             }
             $scope.current.project.directory = tree;
-            $state.go('application.project.tag.doc');
+            $state.go('application.project.tag.doc', {}, {location: 'replace'});
         }, function(error) {
             // TODO: Error handling
             $scope.current.loading -= 1;

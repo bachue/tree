@@ -1,7 +1,7 @@
 define(['controllers/tag', 'highlight'], function(tag_controller, hljs) {
     return tag_controller.controller('Doc', function($scope, $state, $sce, $timeout, Restangular) {
         if (!$state.params.document_path && $scope.current.document_path)
-            return $state.go('application.project.tag.doc', {document_path: $scope.current.document_path});
+            return $state.go('application.project.tag.doc', {document_path: $scope.current.document_path}, {location: 'replace'});
 
         $scope.has_document = function() {
             return !_.isUndefined($scope.current.document);
