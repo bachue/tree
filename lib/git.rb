@@ -67,7 +67,9 @@ Stderr: #{errput}
       Rugged::Commit.create repo, tree: builder.write(repo),
                             message: 'Initial commit',
                             parents: [],
-                            update_ref: 'HEAD'
+                            update_ref: 'HEAD',
+                            author: author,
+                            committer: author
       push repo, branches: 'master'
     end
 
@@ -146,7 +148,9 @@ Stderr: #{errput}
       Rugged::Commit.create repo, tree: index.write_tree(repo),
                                   message: message,
                                   parents: repo.empty? ? [] : [repo.branches[branch].target_id],
-                                  update_ref: 'HEAD'
+                                  update_ref: 'HEAD',
+                                  author: author,
+                                  committer: author
       clear_all target
       push repo, branches: branch
     end
@@ -162,7 +166,9 @@ Stderr: #{errput}
         Rugged::Commit.create repo, tree: index.write_tree(repo),
                                     message: message,
                                     parents: repo.empty? ? [] : [repo.branches[branch].target_id],
-                                    update_ref: 'HEAD'
+                                    update_ref: 'HEAD',
+                                    author: author,
+                                    committer: author
         clear_all target
         push repo, branches: branch
       rescue Rugged::IndexError
@@ -233,6 +239,10 @@ done
                                           publickey: "#{ENV['HOME']}/.ssh/id_rsa.pub",
                                           privatekey: "#{ENV['HOME']}/.ssh/id_rsa"
         } # No passphrase for now
+      end
+
+      def author # TODO: To remove it
+        {name: 'Rong Zhou', email: 'rongz@mozy.com'}
       end
   end
 end

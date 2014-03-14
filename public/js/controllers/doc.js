@@ -28,7 +28,7 @@ define(['controllers/tag', 'highlight', 'factories/projects'], function(tag_cont
                         handle();
                     }
                 }, function(error) {
-                    if ($scope.current.tag != 'HEAD') {
+                    if ($scope.current.tag_name != 'HEAD') {
                         delete $scope.current.document_path;
                         $state.go('application.project.tag.doc', {document_path: null});
                     }
