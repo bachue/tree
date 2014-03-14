@@ -63,7 +63,9 @@ define(['controllers/tag', 'highlight', 'factories/projects'], function(tag_cont
                 });
 
                 $('#current_document a[href]').each(function(i, e) { // Important for ui-router
-                    $(e).attr('target', '_self');
+                    var href = $(e).attr('href');
+                    if (href.indexOf('javascript:') != 0)
+                        $(e).attr('href', 'javascript:open("' + href + '")');
                 });
 
                 $('#current_document img, #current_document audio, #current_document video').each(function(i, e) {

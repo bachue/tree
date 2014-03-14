@@ -428,6 +428,36 @@ textarea {
 }
 
 /*
+ * Preview
+ */
+.with_preview td {
+    position: relative;
+    width: 50%;
+    padding: 10px;
+}
+
+.with_preview #editor {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.without_preview {
+    width: 100%;
+}
+
+.without_preview td.editor_part {
+    position: relative;
+}
+
+.without_preview td.preview_part {
+    display: none;
+}
+
+/*
  * Commit Message
  */
 

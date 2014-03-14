@@ -39,6 +39,7 @@ require.config({
         abn_tree_directive: 'vendor/abn_tree_directive',
         promise: 'vendor/requirejs-promise',
         highlight: 'vendor/highlight.min',
+        marked: 'vendor/marked',
         ace: 'vendor/ace/ace'
     },
     shim: shim

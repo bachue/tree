@@ -1,4 +1,10 @@
-<pre id="editor" data-auto-save-settings data-auto-save-value></pre>
+<pre data-ng-if="!current.doc_type" id="editor" data-auto-save-settings data-auto-save-value></pre>
+<table data-ng-if="current.doc_type" class="with_preview">
+    <tr>
+        <td class="editor_part"><pre data-ng-if="current.doc_type" id="editor" data-auto-save-settings data-auto-save-value></pre></td>
+        <td class="preview_part"><div data-ng-bind-html="current.preview" id="document_preview"></div></td>
+    </tr>
+<table>
 <form name="commit_form" class="input-group">
     <label for="comment_message" id="comment_message_label">Commit changes</label>
     <input id="commit_message" data-ng-model="current.commit.message" data-required type="text" class="form-control" placeholder="{{commit_placeholder()}}" />
