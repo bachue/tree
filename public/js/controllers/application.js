@@ -98,7 +98,7 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
         var back_to_doc = function() {
             close_commit_dialog();
             $scope.$broadcast('aceEditorCleared');
-            $state.go('application.project.tag.doc');
+            $state.go('application.project.tag.doc', {document_path: $scope.current.document_path});
         };
 
         $scope.cancel_and_back_to_doc = function() {

@@ -1,4 +1,4 @@
-define(['controllers/tag', 'jquery', 'marked', 'highlight', 'ace', 'factories/projects'], function(tag_controller, $, marked, hljs) {
+define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'ace', 'factories/projects'], function(tag_controller, $, marked, textile, hljs) {
     return tag_controller.controller('Edit', function($scope, $state, $sce, $timeout, Projects) {
         if (!$state.params.document_path && $scope.current.document_path)
             return $state.go('application.project.tag.edit', {document_path: $scope.current.document_path}, {location: 'replace'});
@@ -51,19 +51,27 @@ define(['controllers/tag', 'jquery', 'marked', 'highlight', 'ace', 'factories/pr
                 $scope.current.commit_dialog.base = doc['blob'];
 
                 if (doc['type']) {
+                    $scope.current.doc_type = doc['type'];
                     switch (doc['type']) {
                     case 'markdown':
-                        $scope.current.doc_type = doc['type'];
                         callback = function(editor) {
                             var rendered = marked(editor.getValue());
                             var dom = handle($(rendered));
-                            var html = $sce.trustAsHtml($('<div />').append(dom).html());
-                            $scope.current.preview = html;
+                            return $sce.trustAsHtml($('<div />').append(dom).html());
                         };
                         break;
                     case 'textile':
-                        $scope.current.doc_type = doc['type'];
-                        // TODO: Do it
+                        callback = function(editor) {
+                            var rendered = textile(editor.getValue());
+                            var dom = handle($(rendered));
+                            return $sce.trustAsHtml($('<div />').append(dom).html());
+                        };
+                        break;
+                    case 'html':
+                        callback = function(editor) {
+                            var dom = handle($(editor.getValue()));
+                            return $sce.trustAsHtml($('<div />').append(dom).html());
+                        };
                         break;
                     default:
                         delete $scope.current.doc_type;
@@ -83,8 +91,9 @@ define(['controllers/tag', 'jquery', 'marked', 'highlight', 'ace', 'factories/pr
                     $scope.$broadcast('aceEditorInitilized', doc['raw']);
 
                     if (callback) {
-                        editor.getSession().on('change', function() { $timeout(function() { callback(editor); }); });
-                        callback(editor);
+                        var update_preview = function() { $scope.current.preview = callback(editor); };
+                        editor.getSession().on('change', function() { $timeout(update_preview); });
+                        update_preview();
                     }
                 }, 200);
             }

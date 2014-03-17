@@ -22,6 +22,9 @@ var shim = {
     },
     highlight: {
         exports: 'hljs'
+    },
+    textile: {
+        exports: 'textile'
     }
 };
 
@@ -40,6 +43,7 @@ require.config({
         promise: 'vendor/requirejs-promise',
         highlight: 'vendor/highlight.min',
         marked: 'vendor/marked',
+        textile: 'vendor/textile',
         ace: 'vendor/ace/ace'
     },
     shim: shim
