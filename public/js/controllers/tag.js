@@ -1,7 +1,7 @@
 define(['controllers/project', 'underscore', 'factories/projects'], function(project_controller, _) {
     return project_controller.controller('Tag', function($scope, $state, Projects) {
         if (!$state.params.tag_name && $scope.current.tag_name)
-            return $state.go('application.project.tag', {tag_name: $scope.current.tag_name});
+            return $state.go('application.project.tag', {tag_name: $scope.current.tag_name}, {location: 'replace'});
 
         if ($state.params.tag_name) {
             if (_.contains($scope.current.project.tags.concat('HEAD'), $state.params.tag_name))
@@ -9,7 +9,7 @@ define(['controllers/project', 'underscore', 'factories/projects'], function(pro
         }
 
         if (!$scope.current.tag_name)
-            return $state.go('application.project.tag', {tag_name: 'HEAD'});
+            return $state.go('application.project.tag', {tag_name: 'HEAD'}, {location: 'replace'});
 
         $scope.$on('treeInitialized', function() {
             $scope.select_tree($state.params.document_path);
@@ -26,7 +26,7 @@ define(['controllers/project', 'underscore', 'factories/projects'], function(pro
                     tag($state.params.tag_name).
                     suggest(labels.join('/')).
                     then(function(result) {
-                        $state.go('application.project.tag.doc', {document_path: result['suggest']});
+                        $state.go('application.project.tag.doc', {document_path: result['suggest']}, {location: 'replace'});
                         $scope.select_tree(result['suggest']);
                     }).finally(function() {
                         $scope.current.loading -= 1;
@@ -44,8 +44,8 @@ define(['controllers/project', 'underscore', 'factories/projects'], function(pro
                 $scope.current.project.directory = tree;
 
                 var current_routes = current_controller.split('.');
-                if (_.last(current_routes) === 'tag') $state.go(current_routes.concat('doc').join('.'));
-                else                                  $state.go(current_controller); // If current controller is EditController
+                if (_.last(current_routes) === 'tag') $state.go(current_routes.concat('doc').join('.'), {}, {location: 'replace'});
+                else                                  $state.go(current_controller, {}, {location: 'replace'}); // If current controller is EditController
             }).finally(function() {
                 $scope.current.loading -= 1;
             });

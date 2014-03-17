@@ -110,7 +110,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" data-ng-click="add_tag()" data-ng-disabled="new_tag_dialog.$invalid">Save changes</button>
+        <button type="button" class="btn btn-primary" data-ng-click="add_tag()" data-ng-disabled="current.new_tag_dialog.pushing || new_tag_dialog.$invalid">Save changes</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -183,7 +183,7 @@ git push origin <span data-ng-bind="current.project.branch"></span>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" data-ng-click="do_commit()" data-ng-disabled="commit_dialog.$invalid">Commit Changes</button>
+        <button type="button" class="btn btn-primary" data-ng-click="do_commit()" data-ng-disabled="current.commit_dialog.pushing || commit_dialog.$invalid">Commit Changes</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

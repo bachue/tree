@@ -202,7 +202,7 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
         };
 
         $scope.projects = projects;
-        $state.go('application.project');
+        $state.go('application.project', {}, {location: 'replace'});
 
         function hide_project_config_dialog() {
             $('#project-config').modal('hide');

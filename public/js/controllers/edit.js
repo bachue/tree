@@ -1,10 +1,10 @@
 define(['controllers/tag', 'jquery', 'marked', 'highlight', 'ace', 'factories/projects'], function(tag_controller, $, marked, hljs) {
     return tag_controller.controller('Edit', function($scope, $state, $sce, $timeout, Projects) {
         if (!$state.params.document_path && $scope.current.document_path)
-            return $state.go('application.project.tag.edit', {document_path: $scope.current.document_path});
+            return $state.go('application.project.tag.edit', {document_path: $scope.current.document_path}, {location: 'replace'});
 
         if ($state.params.tag_name !== 'HEAD') {
-            return $state.go('application.project.tag.doc', {document_path: null});
+            return $state.go('application.project.tag.doc', {document_path: null}, {location: 'replace'});
         }
 
         marked.setOptions({
@@ -106,7 +106,7 @@ define(['controllers/tag', 'jquery', 'marked', 'highlight', 'ace', 'factories/pr
                             $state.go('application.project.tag.edit', {
                                 document_path: $scope.current.document_path,
                                 new: true, type: error.data.type
-                            });
+                            }, {location: 'replace'});
                         else
                             // TODO: use dialog lib here
                             alert("You can't create file " + $scope.current.document_path);
@@ -120,7 +120,7 @@ define(['controllers/tag', 'jquery', 'marked', 'highlight', 'ace', 'factories/pr
        function handle(dom) {
             dom.find('a[href]').each(function(i, e) { // Important for ui-router
                 var href = $(e).attr('href');
-                if (href.indexOf('javascript:') != 0)
+                if (href.indexOf('javascript:') !== 0)
                     $(e).attr('href', 'javascript:open("' + correct_url(href) + '");');
             });
 
@@ -131,8 +131,8 @@ define(['controllers/tag', 'jquery', 'marked', 'highlight', 'ace', 'factories/pr
             return dom;
 
             function correct_url(src) {
-                var url;
-                if (src.indexOf('://') !== -1 || src.indexOf('/') !== 0) {
+                var url = src;
+                if (src.indexOf('://') === -1 && src.indexOf('/') !== 0) {
                     url  = '/' + $scope.current.project.name;
                     url += '/' + $scope.current.tag_name;
                     var base = $scope.current.document_path.split('/').slice(0, -1).join('/');
