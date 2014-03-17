@@ -25,12 +25,12 @@ define(['controllers/tag', 'jquery', 'marked', 'highlight', 'ace', 'factories/pr
 
         $scope.enable_preview = function() {
             $scope.current.preview_mode = 'with_preview';
-            if (window.localStorage) localStorage['preview_mode'] = 'with_preview';
+            if (window.localStorage) localStorage['preview_mode'] = $scope.current.preview_mode;
         };
 
         $scope.disable_preview = function() {
             $scope.current.preview_mode = 'without_preview';
-            if (window.localStorage) localStorage['preview_mode'] = 'without_preview';
+            if (window.localStorage) localStorage['preview_mode'] = $scope.current.preview_mode;
         };
 
         $scope.preview_disabled = function() {

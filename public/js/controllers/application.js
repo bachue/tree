@@ -90,14 +90,14 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
             if (path) $scope.$broadcast('toSelectBranches', path);
         };
 
-        var quit_editor = function() {
-            $scope.$broadcast('aceEditorCleared');
+        var close_commit_dialog = function() {
             $scope.current.commit_dialog = {};
             $('#commit-dialog').modal('hide');
         };
 
         var back_to_doc = function() {
-            quit_editor();
+            close_commit_dialog();
+            $scope.$broadcast('aceEditorCleared');
             $state.go('application.project.tag.doc');
         };
 
@@ -152,17 +152,14 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
                         message: $scope.current.commit_dialog.message,
                         description: $scope.current.commit_dialog.description
                     }).then(function() {
-                        $scope.current.loading += 1;
                         Projects.get($scope.current.project.id).tag($scope.current.tag_name).tree().
                             then(function(tree) {
                                 $scope.current.project.directory = tree;
                                 $scope.select_tree($scope.current.document_path);
-                            }).finally(function() {
-                                $scope.current.loading -= 1;
-                            });
+                            }).finally(close_commit_dialog);
                         delete $scope.current.document_path;
                         $state.go('application.project.tag.doc', {document_path: null});
-                    }).finally(quit_editor);
+                    });
                     break;
             default:
                 throw 'Unexpected commit_dialog.mode';

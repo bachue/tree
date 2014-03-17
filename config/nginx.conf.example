@@ -15,7 +15,7 @@ server {
     location ~* ^/(js(?!/_)|css|img|fonts|templates)/ {
         gzip_static      on;
         expires          max;
-        add_header       Cache-Control public;
+        add_header       Cache-Control "max-age=3600, must-revalidate";
         access_log       off;
     }
 
