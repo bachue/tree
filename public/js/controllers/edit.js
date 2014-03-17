@@ -23,6 +23,27 @@ define(['controllers/tag', 'jquery', 'marked', 'highlight', 'ace', 'factories/pr
             }
         });
 
+        $scope.enable_preview = function() {
+            $scope.current.preview_mode = 'with_preview';
+            if (window.localStorage) localStorage['preview_mode'] = 'with_preview';
+        };
+
+        $scope.disable_preview = function() {
+            $scope.current.preview_mode = 'without_preview';
+            if (window.localStorage) localStorage['preview_mode'] = 'without_preview';
+        };
+
+        $scope.preview_disabled = function() {
+            return $scope.current.doc_type && $scope.current.preview_mode == 'without_preview';
+        };
+
+        $scope.preview_enabled = function() {
+            return $scope.current.doc_type && $scope.current.preview_mode == 'with_preview';
+        };
+
+        if (window.localStorage) $scope.current.preview_mode = $scope.current.preview_mode || localStorage['preview_mode'];
+        $scope.current.preview_mode = $scope.current.preview_mode || 'with_preview';
+
         var initialize_ace = function(doc) {
             if(!_.isUndefined(doc['raw'])) {
                 var callback;

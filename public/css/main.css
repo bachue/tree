@@ -435,12 +435,17 @@ textarea {
  */
 .with_preview, .without_preview {
     width: 100%;
+    table-layout: fixed;
 }
 
 .with_preview td {
     position: relative;
     width: 50%;
     padding: 10px;
+}
+
+.with_preview td.preview_part {
+    overflow: auto;
 }
 
 .with_preview #editor {
