@@ -11,10 +11,6 @@ define(['controllers/tag', 'highlight', 'factories/projects'], function(tag_cont
             $state.go('application.project.tag.edit', {document_path: $scope.current.document_path});
         };
 
-        $scope.open_removing_commit_dialog = function() {
-            $('#removing-commit-dialog').modal('show');
-        };
-
         $scope.current.loading += 1;
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;

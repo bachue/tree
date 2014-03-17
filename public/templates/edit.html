@@ -1,16 +1,13 @@
+<div>
+    <div class="text-right">
+        <button type="button" data-ng-click="open_commit_dialog()" class="btn btn-sm btn-primary">Commit</button>
+        <button type="button" class="btn btn-sm btn-cancel" data-ng-click="cancel_and_back_to_doc()">Cancel</button>
+    </div>
+</div>
 <pre data-ng-if="!current.doc_type" id="editor" data-auto-save-settings data-auto-save-value></pre>
 <table data-ng-if="current.doc_type" class="with_preview">
     <tr>
         <td class="editor_part"><pre data-ng-if="current.doc_type" id="editor" data-auto-save-settings data-auto-save-value></pre></td>
         <td class="preview_part"><div data-ng-bind-html="current.preview" id="document_preview"></div></td>
     </tr>
-<table>
-<form name="commit_form" class="input-group">
-    <label for="comment_message" id="comment_message_label">Commit changes</label>
-    <input id="commit_message" data-ng-model="current.commit.message" data-required type="text" class="form-control" placeholder="{{commit_placeholder()}}" />
-    <textarea class="form-control" data-ng-model="current.commit.description" id="commit_description" rows="5" placeholder="Add an optional extended description ..."></textarea>
-    <div id="commit_buttons_row" class="pull-right">
-        <button type="button" class="btn btn-default btn-cancel" data-ng-click="back_to_doc()">Cancel</button>
-        <button data-ng-disabled="commit_form.$invalid" type="button" class="btn btn-primary" data-ng-click="do_commit()">Commit Changes</button>
-    </div>
-</form>
+</table>

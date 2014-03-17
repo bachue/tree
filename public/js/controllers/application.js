@@ -1,9 +1,9 @@
-define(['controllers', 'promise!loaders/projects', 'factories/projects'], function(controllers, projects) {
+define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'], function(controllers, projects) {
     return controllers.controller('Application', function($scope, $state, $location, Projects) {
         $scope.current = {};
         $scope.current.config_dialog = {branch: 'master'};
         $scope.current.new_tag_dialog = {};
-        $scope.current.removing_commit_dialog = {};
+        $scope.current.commit_dialog = {};
         $scope.current.searchbar = {};
         $scope.current.opening_modal = 0;
         $scope.current.loading = 0;
@@ -29,7 +29,7 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects'], functi
             delete $scope.current.document;
             delete $scope.current.document_path;
             $scope.current.searchbar = {};
-            $scope.current.removing_commit_dialog = {};
+            $scope.current.commit_dialog = {};
             $scope.current.new_tag_dialog = {};
             // We don't specify tag_name in this project, so it'll be set to default value 'HEAD'
             $state.go('application.project', {project_name: name, tag_name: 'HEAD', document_path: null});
@@ -90,29 +90,84 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects'], functi
             if (path) $scope.$broadcast('toSelectBranches', path);
         };
 
-        $scope.do_removing_commit = function() {
-            $scope.current.removing_commit_dialog.pushing = true;
-            Projects.get($scope.current.project.id).
-                delete($state.params.document_path, {
-                    message: $scope.current.removing_commit_dialog.message,
-                    description: $scope.current.removing_commit_dialog.description
-                }).then(function() {
-                    $scope.current.loading += 1;
-                    Projects.get($scope.current.project.id).tag($scope.current.tag_name).tree().
-                        then(function(tree) {
-                            $scope.current.project.directory = tree;
-                            $scope.select_tree($scope.current.document_path);
-                        }).finally(function() {
-                            $scope.current.loading -= 1;
-                        });
-                    delete $scope.current.document_path;
-                    $state.go('application.project.tag.doc', {document_path: null});
-                }).finally(function() {
-                    $('#removing-commit-dialog').modal('hide');
-                    $scope.current.removing_commit_dialog = {};
-                });
+        var quit_editor = function() {
+            $scope.$broadcast('aceEditorCleared');
+            $scope.current.commit_dialog = {};
+            $('#commit-dialog').modal('hide');
         };
 
+        var back_to_doc = function() {
+            quit_editor();
+            $state.go('application.project.tag.doc');
+        };
+
+        $scope.cancel_and_back_to_doc = function() {
+            if ($scope.current.commit_dialog.mode == 'Create')
+                delete $scope.current.document_path;
+            back_to_doc();
+        };
+
+        $scope.commit_placeholder = function() {
+            // $scope.current.commit_dialog.mode could be 'Create', 'Edit' or 'Remove'
+            return $scope.current.commit_dialog.mode + ' ' + $state.params.document_path;
+        };
+
+        $scope.open_commit_dialog = function() {
+            $('#commit-dialog').modal('show');
+        };
+
+        $scope.open_removing_commit_dialog = function() {
+            $scope.current.commit_dialog.mode = 'Delete';
+            $scope.open_commit_dialog();
+        };
+
+        $scope.do_commit = function() {
+            $scope.current.commit_dialog.pushing = true;
+            switch($scope.current.commit_dialog.mode) {
+            case 'Create':
+            case 'Edit':
+                var editor = ace.edit('editor');
+                Projects.get($scope.current.project.id).
+                update($scope.current.document_path, {
+                    content: editor.getValue(),
+                    message: $scope.current.commit_dialog.message,
+                    description: $scope.current.commit_dialog.description,
+                    base: $scope.current.commit_dialog.base
+                }).then(function() {
+                    if ($scope.current.commit_dialog.mode == 'Create') {
+                        $scope.current.loading += 1;
+                        Projects.get($scope.current.project.id).tag($scope.current.tag_name).tree().
+                            then(function(tree) {
+                                $scope.current.project.directory = tree;
+                                $scope.select_tree($scope.current.document_path);
+                            }).finally(function() {
+                                $scope.current.loading -= 1;
+                            });
+                    }
+                }).finally(back_to_doc);
+                break;
+            case 'Delete':
+                Projects.get($scope.current.project.id).
+                    delete($state.params.document_path, {
+                        message: $scope.current.commit_dialog.message,
+                        description: $scope.current.commit_dialog.description
+                    }).then(function() {
+                        $scope.current.loading += 1;
+                        Projects.get($scope.current.project.id).tag($scope.current.tag_name).tree().
+                            then(function(tree) {
+                                $scope.current.project.directory = tree;
+                                $scope.select_tree($scope.current.document_path);
+                            }).finally(function() {
+                                $scope.current.loading -= 1;
+                            });
+                        delete $scope.current.document_path;
+                        $state.go('application.project.tag.doc', {document_path: null});
+                    }).finally(quit_editor);
+                    break;
+            default:
+                throw 'Unexpected commit_dialog.mode';
+            }
+        };
 
         $('.modal').on('show.bs.modal', function() {
             $scope.current.opening_modal++;

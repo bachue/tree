@@ -309,6 +309,8 @@ textarea {
 
 .btn-cancel {
     color: #900;
+    background-color: white;
+    border-color: #ccc;
 }
 
 /*
@@ -427,9 +429,14 @@ textarea {
     padding-left: 25px;
 }
 
+
 /*
  * Preview
  */
+.with_preview, .without_preview {
+    width: 100%;
+}
+
 .with_preview td {
     position: relative;
     width: 50%;
@@ -437,16 +444,12 @@ textarea {
 }
 
 .with_preview #editor {
-    margin: 0;
+    margin: 10px;
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-}
-
-.without_preview {
-    width: 100%;
 }
 
 .without_preview td.editor_part {
@@ -461,18 +464,10 @@ textarea {
  * Commit Message
  */
 
-#comment_message_label {
-    font-weight: bold;
-    font-size: 1.2em;
-}
-#commit_message, #commit_description, #commit_buttons_row,
-#removing_commit_dialog_message, #removing_commit_dialog_description {
+#commit_dialog_message, #commit_dialog_description {
     margin: 5px 0;
 }
-#commit_buttons_row button {
-    margin: 5px 0 5px 5px;
-}
 
-.removing-commit-dialog-text-input {
+.commit-dialog-text-input {
     width: 100%;
 }
