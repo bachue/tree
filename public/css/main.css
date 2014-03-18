@@ -341,6 +341,14 @@ textarea {
  * Sidebar
  */
 
+.main-container .full-mode .sidebar-col {
+    display: none;
+}
+
+.main-container .full-mode .main-col {
+    width: 100% !important;
+}
+
 .sidebar {
     background-color: #eee;
     padding-top: 10px;

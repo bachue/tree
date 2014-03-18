@@ -42,6 +42,12 @@
                     </ul>
                 </li>
                 <li><a title="Add new project" href="javascript:void(0)" class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#project-config"></a></li>
+                <li data-ng-if="is_full_mode()">
+                    <a title="Set Split Mode" href="javascript:void(0)" class="glyphicon glyphicon-list" data-ng-click="set_split_mode()"></a>
+                </li>
+                <li data-ng-if="!is_full_mode()">
+                    <a title="Set Full Mode" href="javascript:void(0)" class="glyphicon glyphicon-align-justify" data-ng-click="set_full_mode()"></a>
+                </li>
                 <li><a title="Help" href="javascript:void(0)" class="glyphicon glyphicon-question-sign" data-toggle="modal" data-target="#project-help"  data-ng-if="current.project"></a></li>
             </ul>
             <h3 data-ng-if="current.loading > 0" class="display: inline-block;"><img src="/img/loading.gif" alt="loading" height="20" /></h3>

@@ -1,5 +1,5 @@
 define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'], function(controllers, projects) {
-    return controllers.controller('Application', function($scope, $state, $location, Projects) {
+    return controllers.controller('Application', function($scope, $state, $location, $timeout, Projects) {
         $scope.current = {};
         $scope.current.config_dialog = {branch: 'master'};
         $scope.current.new_tag_dialog = {};
@@ -7,6 +7,9 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
         $scope.current.searchbar = {};
         $scope.current.opening_modal = 0;
         $scope.current.loading = 0;
+
+        if (window.localStorage) $scope.current.screen_mode = localStorage['screen_mode'];
+        $scope.current.screen_mode = $scope.current.screen_mode || 'sidebar-mode';
 
         $scope.submit_config = function() {
             $scope.current.config_dialog.cloning = true;
@@ -119,6 +122,24 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
         $scope.open_removing_commit_dialog = function() {
             $scope.current.commit_dialog.mode = 'Delete';
             $scope.open_commit_dialog();
+        };
+
+        $scope.is_full_mode = function() {
+            return $scope.current.screen_mode == 'full-mode';
+        };
+
+        $scope.set_full_mode = function() {
+            $timeout(function() {
+                $scope.current.screen_mode = 'full-mode';
+                if (window.localStorage) localStorage['screen_mode'] = $scope.current.screen_mode;
+            });
+        };
+
+        $scope.set_split_mode = function() {
+            $timeout(function() {
+                $scope.current.screen_mode = 'sidebar-mode';
+                if (window.localStorage) localStorage['screen_mode'] = $scope.current.screen_mode;
+            });
         };
 
         $scope.do_commit = function() {
