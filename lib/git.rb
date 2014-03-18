@@ -214,7 +214,7 @@ done
       end
 
       def clear_all target
-        Utils.execute ['cd', target], ['git', 'reset', 'HEAD'], ['git', 'checkout', '.']
+        Utils.execute ['cd', target], ['git', 'reset', 'HEAD'], ['git', 'clean', '-f', '-d', '-q']
         untracked = Utils.execute(['cd', target], ['git', 'ls-files', '--others', '--exclude-standard']).try(:split, "\n")
         untracked.each {|path| FileUtils.rm_rf "#{target}/#{path}" }
       end
