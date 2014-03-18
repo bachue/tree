@@ -118,6 +118,19 @@ class API < Grape::API
       true
     end
 
+    desc 'Get Diff information between tags or HEAD in the project'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+      requires :tag1, type: String, desc: 'Tag 1 name'
+      requires :tag2, type: String, desc: 'Tag 2 name'
+    end
+    get '/diff/:id/:tag1/:tag2' do
+      project = load_project id: params[:id]
+      project.lock_as_reader do
+        project.diff_between params['tag1'], params['tag2']
+      end
+    end
+
     desc 'Get a suggested document from the project'
     params do
       requires :id, type: Integer, desc: 'Project id'

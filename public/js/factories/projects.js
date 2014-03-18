@@ -75,6 +75,12 @@ define(['factories'], function(factories) {
                                     getList(tag + '/' + (path || '')).
                                     then(resolveCallback(deferred), rejectCallback(deferred));
                                 return deferred.promise;
+                            },
+                            diff: function(another) {
+                                var deferred = $q.defer();
+                                Restangular.one('projects/diff', id).getList(another + '/' + tag).
+                                    then(resolveCallback(deferred), rejectCallback(deferred));
+                                return deferred.promise;
                             }
                         };
                     }

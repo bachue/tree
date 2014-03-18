@@ -5,6 +5,7 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
         $scope.current.new_tag_dialog = {};
         $scope.current.commit_dialog = {};
         $scope.current.searchbar = {};
+        $scope.current.tag_diff_dialog = {};
         $scope.current.opening_modal = 0;
         $scope.current.loading = 0;
 
@@ -34,6 +35,7 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
             $scope.current.searchbar = {};
             $scope.current.commit_dialog = {};
             $scope.current.new_tag_dialog = {};
+            $scope.current.tag_diff_dialog = {};
             // We don't specify tag_name in this project, so it'll be set to default value 'HEAD'
             $state.go('application.project', {project_name: name, tag_name: 'HEAD', document_path: null});
         };
@@ -43,10 +45,6 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
             delete $scope.current.sections;
             $scope.current.searchbar = {};
             $state.go('application.project.tag.doc', {tag_name: tag_name});
-        };
-
-        $scope.open_new_tag_dialog = function() {
-            $('#new-tag-dialog').modal('show');
         };
 
         $scope.add_tag = function() {
@@ -61,6 +59,29 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
                     hide_new_tag_dialog();
                 });
         };
+
+        // This helper selects all tags from current project, but without currect tag
+        $scope.existed_tags_without_current = function() {
+            return _.without(['HEAD'].concat($scope.current.project.tags), $scope.current.tag_name);
+        };
+
+        $scope.do_diff_between_tags = function() {
+            $scope.current.tag_diff_dialog.processing = true;
+            Projects.get($scope.current.project.id).
+                tag($scope.current.tag_name).
+                diff($scope.current.tag_diff_dialog.tag).
+                then(function(results) {
+                    $scope.current.tag_diff_dialog.diff_results = results;
+                }).finally(function() {
+                    delete $scope.current.tag_diff_dialog.processing;
+                });
+        };
+
+        $('#tag-diff-dialog.modal').on('hidden.bs.modal', function() {
+            $timeout(function() {
+                delete $scope.current.tag_diff_dialog.diff_results;
+            });
+        });
 
         $scope.search = function() {
             if (!$scope.current.searchbar.query) return;
@@ -80,6 +101,7 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
 
         $scope.open_path = function(path) {
             $state.go('application.project.tag.doc', {document_path: path});
+            $scope.select_tree(path);
             $('#project-search').modal('hide');
         };
 

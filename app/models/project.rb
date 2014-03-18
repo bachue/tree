@@ -92,6 +92,10 @@ class Project < ActiveRecord::Base
     nil
   end
 
+  def diff_between tag1, tag2
+    Git.diff_between_tags path, tag1, tag2, branch: branch
+  end
+
   private
     def cat_file file, tag
       Git.cat_file path, file, branch: branch, tag: tag

@@ -51,7 +51,8 @@ require.config({
 
 require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants', 'ace',
          'controllers/application', 'controllers/project', 'controllers/tag', 'controllers/edit', 'controllers/doc',
-         'directives/application', 'directives/doc', 'directives/editor'], function(angular, app, domReady, $) {
+         'directives/application', 'directives/doc', 'directives/editor',
+         'filters/application'], function(angular, app, domReady, $) {
     app.config(function($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {
         $stateProvider.
            state('application', {

@@ -13,11 +13,10 @@ class Git
 
   class Utils
     class << self
-      def execute *multi_args, ignore_status: false
+      def execute *multi_args, ignore_status: false, **opts
         commands = multi_args.map {|args| Escape.shell_command args }
-        begin
-          command = commands.join ' && '
-          stdin, stdout, stderr, status = Open3.popen3 command
+        command = commands.join ' && '
+        Open3.popen3(command, **opts) do |stdin, stdout, stderr, status|
           stdin.close
           output = stdout.gets(nil) || ''
           errput = stderr.gets(nil) || ''
@@ -34,8 +33,6 @@ Stdout: #{output}
 Stderr: #{errput}
           ERROR
           raise CommandError.new command
-        ensure
-          [stdout, stderr].each {|io| io.close if io && !io.closed? }
         end
       end
 
@@ -74,11 +71,11 @@ Stderr: #{errput}
     end
 
     def pull target, branch = 'master'
-      Utils.execute ['cd', target], ['git', 'fetch'], ['git', 'pull', '--quiet', 'origin', branch]
+      Utils.execute ['git', 'fetch'], ['git', 'pull', '--quiet', 'origin', branch], chdir: target
     end
 
     def ls_tree target, tag = 'HEAD'
-      Utils.execute(['cd', target], ['git', 'ls-tree', '-r', '--name-only', tag]).try(:split, "\n")
+      Utils.execute(['git', 'ls-tree', '-r', '--name-only', tag], chdir: target).try(:split, "\n")
     end
 
     def cat_file target, file_path, tag: 'HEAD', branch: 'master'
@@ -196,14 +193,68 @@ done
       true
     end
 
+    def diff_between_tags target, old_tag, new_tag, branch: 'master'
+      repo = get_repo target
+
+      old_oid = if old_tag != 'HEAD'
+                  repo.tags.detect {|t| t.name == old_tag }.target
+                else
+                  repo.branches[branch].target
+                end
+      new_oid = if new_tag != 'HEAD'
+                  repo.tags.detect {|t| t.name == new_tag }.target
+                else
+                  repo.branches[branch].target
+                end
+      diff_between repo, old_oid, new_oid
+    end
+
     private
+      def diff_between repo, old_oid, new_oid
+        diff = repo.diff old_oid, new_oid,
+                         context_lines: 5,
+                         interhunk_lines: 5,
+                         ignore_whitespace: true,
+                         ignore_whitespace_change: true,
+                         ignore_whitespace_eol: true,
+                         skip_binary_check: true
+        diff.each_patch.map do |patch|
+          stat =  patch.hunks.map(&:lines).flatten.group_by(&:line_origin).
+                    inject(Hash.new {|h, k| h[k] = 0 }) {|h, (k, v)| h[k] += v.size; h }
+
+          delta = patch.delta
+          {
+            meta: {
+              status: delta.status,
+              binary: delta.binary,
+              old: delta.old_file,
+              new: delta.new_file,
+              stat: stat
+            },
+            hunks: patch.each_hunk.map do |hunk|
+              {
+                header: hunk.header,
+                lines: hunk.each_line.map do |line|
+                  {
+                    type: line.line_origin,
+                    content: line.content,
+                    old_lineno: line.old_lineno,
+                    new_lineno: line.new_lineno
+                  }
+                end
+              }
+            end
+          }
+        end
+      end
+
       def grep_in_filenames target, text, tag = 'HEAD'
         ls_tree(target, tag).select { |name| name.include?(text) }
       end
 
       def grep_in_content target, text, tag = 'HEAD'
         # TODO: support searching in all tags
-        Utils.execute(['cd', target], ['git', 'grep', '-l', '-i', '-I', text, tag], ignore_status: true).try(:split, "\n").map {|line| line.sub "#{tag}:", '' }
+        Utils.execute(['git', 'grep', '-l', '-i', '-I', text, tag], ignore_status: true, chdir: target).try(:split, "\n").map {|line| line.sub "#{tag}:", '' }
       end
 
       def push repo, branches: [], tags: [] # Git.push repo, branches: ['b1', 'b2'], tags: ['t1', 't2']
@@ -214,8 +265,8 @@ done
       end
 
       def clear_all target
-        Utils.execute ['cd', target], ['git', 'reset', 'HEAD'], ['git', 'clean', '-f', '-d', '-q']
-      end
+        Utils.execute ['git', 'reset', 'HEAD'], ['git', 'clean', '-f', '-d', '-q'], chdir: target
+        end
 
       def object_id_of repo, tree, path
         path = path.split('/') if path.is_a?(String)

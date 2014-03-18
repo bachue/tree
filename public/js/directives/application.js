@@ -17,7 +17,21 @@ define(['directives'], function(directives) {
             link: function(scope, element, attrs, ngModel) {
                 if (scope.current && scope.current.project) {
                     scope.$watch('current.new_tag_dialog.tag_name', function(value) {
-                        ngModel.$setValidity('uniq', !_.contains(scope.current.project.tags, value));
+                        ngModel.$setValidity('uniq', !_.contains(['HEAD'].concat(scope.current.project.tags), value));
+                    });
+                }
+            }
+        };
+    });
+
+    // This directive validate whether tags is existed in current project but not current tag
+    directives.directive('existedTag', function() {
+        return {
+            require: '?ngModel',
+            link: function(scope, element, attrs, ngModel) {
+                if (scope.current && scope.current.project) {
+                    scope.$watch('current.tag_diff_dialog.tag', function(value) {
+                        ngModel.$setValidity('existed', _.contains(scope.existed_tags_without_current(), value));
                     });
                 }
             }

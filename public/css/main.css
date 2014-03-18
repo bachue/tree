@@ -313,6 +313,14 @@ textarea {
     border-color: #ccc;
 }
 
+.widest {
+    width: 100%;
+}
+
+input.ng-invalid, textarea.ng-invalid {
+    color: red;
+}
+
 /*
  * Project config dialog
  */
@@ -325,15 +333,18 @@ textarea {
     min-width: 70px;
 }
 
-.project-config-text-input input.ng-invalid {
-    color: red;
-}
-
 /*
  * Project help dialog
  */
 
 #project-help .modal-dialog {
+    width: 800px;
+}
+
+/*
+ * Tag Diff Dialog
+ */
+#tag-diff-dialog .modal-dialog {
     width: 800px;
 }
 
@@ -481,6 +492,85 @@ textarea {
     margin: 5px 0;
 }
 
-.commit-dialog-text-input {
-    width: 100%;
+/*
+ * Diff information
+ */
+.diff-panel .panel-heading .filename {
+    font-weight: bold;
+}
+
+.diff-panel .panel-heading .addition {
+    color: green;
+}
+
+.diff-panel .panel-heading .deletion {
+    color: red;
+}
+
+.diff-panel .panel-body {
+    padding: 0;
+    overflow-y: auto;
+}
+
+.diff-panel .panel-body table {
+    margin: 0;
+    padding: 0;
+    border: none;
+    table-layout: fixed;
+    font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+.diff-panel .panel-body table tr {
+    line-height: 18px;
+}
+
+.diff-panel .panel-body table tr:first-child {
+    background-color:#F8F8FF;
+}
+
+.diff-panel .panel-body table .line-number {
+    width: 1%;
+    min-width: 40px;
+    text-align: right;
+    padding: 0 8px;
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.diff-panel .panel-body table .new-line-number {
+    border-right: solid #e5e5e5 1px;
+}
+
+.diff-panel .panel-body table .indicator {
+    width: 1%;
+    min-width: 30px;
+    text-align: center;
+}
+
+.diff-panel .panel-body table tr.addition, .diff-panel .panel-body table tr.eof_newline_added {
+    background-color: #ddffdd;
+}
+
+.diff-panel .panel-body table tr.deletion, .diff-panel .panel-body table tr.eof_newline_removed {
+    background-color: #fdd;
+}
+
+.diff-panel .panel-body table tr.eof_newline_added td.content, .diff-panel .panel-body table tr.eof_newline_removed td.content {
+    color: rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+}
+
+.diff-panel .panel-body table th.line-number {
+    background-color: #F3F4FE;
+}
+
+.diff-panel .panel-body table th.content {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.diff-panel .panel-body table td.line-number {
+    border-right: solid #e5e5e5 1px;
+}
+
+.diff-panel .panel-body table td.content {
+    white-space: pre;
 }
