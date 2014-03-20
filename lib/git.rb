@@ -13,11 +13,12 @@ class Git
 
   class Utils
     class << self
-      def execute *multi_args, ignore_status: false, **opts
+      def execute *multi_args, ignore_status: false, ignore_error: false, **opts
         commands = multi_args.map {|args| Escape.shell_command args }
         command = commands.join ' && '
         Open3.popen3(command, **opts) do |stdin, stdout, stderr, status|
           stdin.close
+          return if ignore_error
           output = stdout.gets(nil) || ''
           errput = stderr.gets(nil) || ''
           if ignore_status
@@ -266,7 +267,8 @@ done
 
       def clear_all target
         Utils.execute ['git', 'reset', 'HEAD'], ['git', 'clean', '-f', '-d', '-q'], chdir: target
-        end
+        Utils.execute ['git', 'checkout', '.'], chdir: target, ignore_error: true
+      end
 
       def object_id_of repo, tree, path
         path = path.split('/') if path.is_a?(String)

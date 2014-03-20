@@ -7,6 +7,8 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'ace', 'f
             return $state.go('application.project.tag.doc', {document_path: null}, {location: 'replace'});
         }
 
+        if (!$scope.current.tag_name) return;
+
         marked.setOptions({
             highlight: function(code, type) {
                 var value;
@@ -88,7 +90,7 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'ace', 'f
                         minLines: 30
                     });
                     editor.setValue(doc['raw'], 1);
-                    $scope.$broadcast('aceEditorInitilized', doc['raw']);
+                    $scope.$broadcast('aceEditorInitilized', editor, doc['raw']);
 
                     if (callback) {
                         var update_preview = function() { $scope.current.preview = callback(editor); };

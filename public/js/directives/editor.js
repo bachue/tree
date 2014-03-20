@@ -25,19 +25,17 @@ define(['directives', 'ace'], function(directives) {
     directives.directive('autoSaveValue', function() {
         return function(scope, element) {
             if (window.localStorage) {
-                var editor = ace.edit(element.attr('id'));
                 var path = scope.current.project.name + '/' + scope.current.document_path;
 
                 if (localStorage['editor.session.' + path]) {
                     localStorage['editor.lastSession.' + path] = localStorage['editor.session.' + path];
                 }
 
-                scope.$on('aceEditorInitilized', function(e, doc) {
+                scope.$on('aceEditorInitilized', function(e, editor, doc) {
                     if (localStorage['editor.lastSession.' + path] &&
                         localStorage['editor.lastSession.' + path] != doc) {
                         editor.setValue(localStorage['editor.lastSession.' + path], 1);
                     }
-
                     editor.getSession().on('change', function(e) {
                         localStorage['editor.session.' + path] = editor.getValue();
                     });

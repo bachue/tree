@@ -122,13 +122,13 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
 
         var back_to_doc = function() {
             close_commit_dialog();
-            $scope.$broadcast('aceEditorCleared');
             $state.go('application.project.tag.doc', {document_path: $scope.current.document_path});
         };
 
         $scope.cancel_and_back_to_doc = function() {
             if ($scope.current.commit_dialog.mode == 'Create')
                 delete $scope.current.document_path;
+            $scope.$broadcast('aceEditorCleared');
             back_to_doc();
         };
 
@@ -177,6 +177,7 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
                     description: $scope.current.commit_dialog.description,
                     base: $scope.current.commit_dialog.base
                 }).then(function() {
+                    $scope.$broadcast('aceEditorCleared');
                     if ($scope.current.commit_dialog.mode == 'Create') {
                         $scope.current.loading += 1;
                         Projects.get($scope.current.project.id).tag($scope.current.tag_name).tree().
