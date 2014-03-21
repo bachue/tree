@@ -25,6 +25,10 @@ var shim = {
     },
     textile: {
         exports: 'textile'
+    },
+    bootbox: {
+        exports: 'bootbox',
+        deps: ['bootstrap', 'jquery']
     }
 };
 
@@ -44,12 +48,13 @@ require.config({
         highlight: 'vendor/highlight.min',
         marked: 'vendor/marked',
         textile: 'vendor/textile',
-        ace: 'vendor/ace/ace'
+        ace: 'vendor/ace/ace',
+        bootbox: 'vendor/bootbox.min'
     },
     shim: shim
 });
 
-require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants', 'ace',
+require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants', 'ace', 'bootbox',
          'controllers/application', 'controllers/project', 'controllers/tag', 'controllers/edit', 'controllers/doc',
          'directives/application', 'directives/doc', 'directives/editor',
          'filters/application'], function(angular, app, domReady, $) {

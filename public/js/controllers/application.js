@@ -1,4 +1,4 @@
-define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'], function(controllers, projects) {
+define(['controllers', 'promise!loaders/projects', 'bootbox', 'factories/projects', 'ace'], function(controllers, projects, bootbox) {
     return controllers.controller('Application', function($scope, $state, $location, $timeout, Projects) {
         $scope.current = {};
         $scope.current.config_dialog = {branch: 'master'};
@@ -126,10 +126,21 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
         };
 
         $scope.cancel_and_back_to_doc = function() {
-            if ($scope.current.commit_dialog.mode == 'Create')
-                delete $scope.current.document_path;
-            $scope.$broadcast('aceEditorCleared');
-            back_to_doc();
+            bootbox.confirm({
+                message: "Your changes will be lost.<br /><br />Are you sure you want to leave this page?",
+                buttons: {
+                    cancel: {label: 'No'},
+                    confirm: {className: 'btn-danger', label: 'Sure'}
+                },
+                callback: function(result) {
+                    if (result) {
+                        if ($scope.current.commit_dialog.mode == 'Create')
+                            delete $scope.current.document_path;
+                        $scope.$broadcast('aceEditorCleared');
+                        back_to_doc();
+                    }
+                }
+            });
         };
 
         $scope.commit_placeholder = function() {
