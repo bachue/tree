@@ -131,6 +131,21 @@ class API < Grape::API
       end
     end
 
+    desc 'Get Diff information between the specified commit and your changes'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+      requires :path, type: String, desc: 'File path'
+      requires :content, type: String, desc: 'File content'
+      requires :base, type: String, desc: 'Commit based on'
+    end
+    post '/diff/:id', anchor: false do
+      project = load_project id: params[:id]
+
+      project.lock_as_reader do
+        project.diff_between params[:path], params[:content], params[:base]
+      end
+    end
+
     desc 'Get a suggested document from the project'
     params do
       requires :id, type: Integer, desc: 'Project id'
@@ -156,9 +171,9 @@ class API < Grape::API
 
       update_project project
 
-      result, renderer, blob_id = project.lock_as_reader do
-                                    project.raw params[:path], 'HEAD'
-                                  end
+      result, renderer, blob_id, last_commit =  project.lock_as_reader do
+                                                  project.raw params[:path], 'HEAD'
+                                                end
       case result
       when false
         status 404
@@ -169,7 +184,7 @@ class API < Grape::API
         error! 'Path is a directory, not supported', 400
       else
         if renderer && blob_id
-          {raw: result, type: renderer.name, blob: blob_id}
+          {raw: result, type: renderer.name, blob: blob_id, commit: last_commit}
         else # result == nil means file exists but can't be rendered
           content_type "application/x-download"
           env['api.format'] = :binary
@@ -229,7 +244,8 @@ class API < Grape::API
                              "#{params[:message]}\r\n\r\n#{params[:description]}"
         end
       rescue Git::CommitError => e
-        error! e.message, 400
+        status 400
+        return {error: 'error', message: e.message}
       end
       true
     end

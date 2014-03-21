@@ -44,7 +44,6 @@ require.config({
         restangular: 'vendor/restangular.min',
         angular_animate: 'vendor/angular-animate.min',
         abn_tree_directive: 'vendor/abn_tree_directive',
-        promise: 'vendor/requirejs-promise',
         highlight: 'vendor/highlight.min',
         marked: 'vendor/marked',
         textile: 'vendor/textile',
@@ -57,13 +56,19 @@ require.config({
 require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants', 'ace', 'bootbox',
          'controllers/application', 'controllers/project', 'controllers/tag', 'controllers/edit', 'controllers/doc',
          'directives/application', 'directives/doc', 'directives/editor',
-         'filters/application'], function(angular, app, domReady, $) {
+         'filters/application', 'factories/projects'], function(angular, app, domReady, $) {
     app.config(function($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {
         $stateProvider.
            state('application', {
             url: '',
             templateUrl: '/templates/application.html',
-            controller: 'Application'
+            controller: 'Application',
+            abstract: true,
+            resolve: {
+                projects: function(Projects) {
+                    return Projects.all();
+                }
+            }
         }).state('application.project', {
             url: '/:project_name',
             controller: 'Project',

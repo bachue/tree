@@ -183,11 +183,12 @@ git push origin <span data-ng-bind="current.project.branch"></span>
                 <input id="commit_dialog_message" data-ng-model="current.commit_dialog.message" data-required type="text" class="form-control" placeholder="{{current.commit_dialog.mode}} {{current.document_path}}" />
                 <textarea id="commit_dialog_description" class="form-control" data-ng-model="current.commit_dialog.description" rows="5" placeholder="Add an optional extended description ..."></textarea>
             </div>
-            <div class="progress progress-striped active" data-ng-if="current.commit_dialog.pushing">
+            <div class="loading-bar progress progress-striped active" data-ng-if="show_loading_bar()">
                 <div class="progress-bar widest" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
                     <span class="sr-only">Commit pushing...</span>
                 </div>
             </div>
+            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!current.commit_dialog.pushing && current.commit_dialog.diff_results" data-ng-init="dialog = current.commit_dialog"></div>
         </form>
       </div>
       <div class="modal-footer">
@@ -219,48 +220,7 @@ git push origin <span data-ng-bind="current.project.branch"></span>
                     <span class="sr-only">Commit pushing...</span>
                 </div>
             </div>
-            <div class="diff-panel" data-ng-if="!current.tag_diff_dialog.processing && current.tag_diff_dialog.diff_results">
-                <div class="panel panel-default" data-ng-repeat="patch in current.tag_diff_dialog.diff_results | withoutBinary">
-                    <div class="panel-heading">
-                        <div class="pull-left">
-                            <span data-ng-if="patch.meta.old.path != patch.meta.new.path">
-                                <span class="filename" data-ng-bind="patch.meta.old.path"></span>&ngsp;-&gt;&nbsp;
-                            </span>
-                            <span class="filename" data-ng-bind="patch.meta.new.path"></span>
-                            <span data-ng-bind="patch.meta.status"></span>
-                        </div>
-                        <div class="pull-right">
-                            <span class="addition" data-ng-if="patch.meta.stat.addition">
-                                <span data-ng-if="patch.meta.stat.addition && patch.meta.stat.deletion">++</span><span data-ng-bind="patch.meta.stat.addition"></span></span>
-                            <span class="deletion" data-ng-if="patch.meta.stat.deletion">
-                                <span data-ng-if="patch.meta.stat.addition && patch.meta.stat.deletion">--</span><span data-ng-bind="patch.meta.stat.deletion"></span></span>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="panel-body">
-                        <table ng-repeat="hunk in patch.hunks" data-ng-if="!patch.meta.binary">
-                            <tr>
-                                <th class="line-number old-line-number">&nbsp;</th>
-                                <th class="line-number new-line-number">&nbsp;</th>
-                                <th class="indicator"></th>
-                                <th class="content" data-ng-bind="hunk.header"></th>
-                            </tr>
-                            <tr class="line" data-ng-repeat="line in hunk.lines" data-ng-class="line.type">
-                                <td class="line-number old-line-number">
-                                    <span data-ng-if="line.old_lineno != -1" data-ng-bind="line.old_lineno"></span>
-                                    <span data-ng-if="line.old_lineno == -1">&nbsp;</span>
-                                </td>
-                                <td class="line-number new-line-number">
-                                    <span data-ng-if="line.new_lineno != -1" data-ng-bind="line.new_lineno"></span>
-                                    <span data-ng-if="line.new_lineno == -1">&nbsp;</span>
-                                </td>
-                                <td class="indicator"><span data-ng-if="line.type == 'addition'">+</span><span data-ng-if="line.type == 'deletion'">-</span></td>
-                                <td class="content" data-ng-bind="line.content"></td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!current.tag_diff_dialog.processing && current.tag_diff_dialog.diff_results" data-ng-init="dialog = current.tag_diff_dialog"></div>
         </form>
       </div>
       <div class="modal-footer" data-ng-if="!current.tag_diff_dialog.processing && !current.tag_diff_dialog.diff_results">

@@ -128,6 +128,15 @@ Stderr: #{errput}
       object_id_of(repo, tree, file_path)
     end
 
+    def last_commit target, branch: 'master', tag: 'HEAD'
+      repo = get_repo target
+      if tag != 'HEAD' # Git.last_commit target, tag: 'v1'
+        repo.tags.detect {|t| t.name == tag }.target_id
+      else             # Git.last_commit target, branch: 'development'
+        repo.branches[branch].target_id
+      end
+    end
+
     def add_to_index target, file_path, file_content, based_on, message, branch = 'master'
       pull target, branch
 
@@ -137,7 +146,7 @@ Stderr: #{errput}
       blob_id = object_id_of(repo, repo.branches[branch].target.tree, file_path)
       # If blob_id is false, means to create new file in git repo
       if blob_id && based_on != blob_id
-        raise CommitError.new 'That file has been modified before your commit'
+        raise CommitError.new "That file has been modified before your commit! Please edit and commit again"
       end
 
       oid = repo.write file_content, :blob
@@ -151,6 +160,16 @@ Stderr: #{errput}
                                   committer: author
       clear_all target
       push repo, branches: branch
+    end
+
+    def diff_between_changes target, file_path, file_content, based_on, branch = 'master'
+      repo = get_repo target
+
+      oid = repo.write file_content, :blob
+      index = repo.index
+      index.add path: file_path, oid: oid, mode: 0100644
+      tree = index.write_tree repo
+      diff_between repo, based_on, tree
     end
 
     def remove_from_index target, file_path, message, branch = 'master'

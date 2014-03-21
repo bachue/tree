@@ -1,9 +1,9 @@
 define(['controllers/tag', 'highlight', 'factories/projects'], function(tag_controller, hljs) {
     return tag_controller.controller('Doc', function($scope, $state, $sce, $timeout, Projects) {
+        if (!$scope.current.tag_name) return;
+
         if (!$state.params.document_path && $scope.current.document_path)
             return $state.go('application.project.tag.doc', {document_path: $scope.current.document_path}, {location: 'replace'});
-
-        if (!$scope.current.tag_name) return;
 
         $scope.has_document = function() {
             return !_.isUndefined($scope.current.document);

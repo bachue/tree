@@ -22,7 +22,7 @@ class Project < ActiveRecord::Base
       if renderer
         # File exists & Can be rendered
         if raw
-          [content, renderer, blob_id_of(file, tag)]
+          [content, renderer, blob_id_of(file, tag), last_commit(tag)]
         else
           [renderer.render(content), renderer]
         end
@@ -92,8 +92,17 @@ class Project < ActiveRecord::Base
     nil
   end
 
-  def diff_between tag1, tag2
-    Git.diff_between_tags path, tag1, tag2, branch: branch
+  def diff_between *args
+    case args.size
+    when 2
+      tag1, tag2 = args
+      Git.diff_between_tags path, tag1, tag2, branch: branch
+    when 3
+      file, content, based_on = args
+      Git.diff_between_changes path, file, content, based_on, branch: branch
+    else
+      raise ArgumentError.new 'Invalid Arguments'
+    end
   end
 
   private
@@ -111,6 +120,10 @@ class Project < ActiveRecord::Base
 
     def blob_id_of file, tag
       Git.blob_id_of path, file, branch: branch, tag: tag
+    end
+
+    def last_commit tag
+      Git.last_commit path, branch: branch, tag: tag
     end
 
     def insert_into root, names

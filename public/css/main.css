@@ -321,6 +321,11 @@ input.ng-invalid, textarea.ng-invalid {
     color: red;
 }
 
+.loading-bar {
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
 /*
  * Project config dialog
  */

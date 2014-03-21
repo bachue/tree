@@ -1,13 +1,13 @@
 define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'ace', 'factories/projects'], function(tag_controller, $, marked, textile, hljs) {
     return tag_controller.controller('Edit', function($scope, $state, $sce, $timeout, Projects) {
+        if (!$scope.current.tag_name) return;
+
         if (!$state.params.document_path && $scope.current.document_path)
             return $state.go('application.project.tag.edit', {document_path: $scope.current.document_path}, {location: 'replace'});
 
         if ($state.params.tag_name !== 'HEAD') {
             return $state.go('application.project.tag.doc', {document_path: null}, {location: 'replace'});
         }
-
-        if (!$scope.current.tag_name) return;
 
         marked.setOptions({
             highlight: function(code, type) {
@@ -51,6 +51,7 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'ace', 'f
                 var callback;
                 $scope.current.raw_document = doc['raw'];
                 $scope.current.commit_dialog.base = doc['blob'];
+                $scope.current.commit_dialog.last = doc['commit'];
 
                 if (doc['type']) {
                     $scope.current.doc_type = doc['type'];
@@ -97,7 +98,7 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'ace', 'f
                         editor.getSession().on('change', function() { $timeout(update_preview); });
                         update_preview();
                     }
-                }, 200);
+                }, 100);
             }
         };
 
@@ -106,7 +107,7 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'ace', 'f
 
             if ($state.params.new === 'true') {
                 $scope.current.commit_dialog.mode = 'Create';
-                initialize_ace({raw: '', blob: null, type: $state.params.type});
+                initialize_ace({raw: '', blob: null, commit: null, type: $state.params.type});
             } else {
                 $scope.current.loading += 1;
                 $scope.current.commit_dialog.mode = 'Edit';

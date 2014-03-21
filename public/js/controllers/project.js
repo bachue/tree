@@ -1,5 +1,7 @@
 define(['controllers/application', 'underscore'], function(application_controller, _) {
     return application_controller.controller('Project', function($scope, $state) {
+        if(!$scope.projects[0]) return;
+
         if (!$state.params.project_name && $scope.current.project)
             return $state.go('application.project', {project_name: $scope.current.project.name}, {location: 'replace'});
 
@@ -8,8 +10,6 @@ define(['controllers/application', 'underscore'], function(application_controlle
                 return $state.params.project_name === project.name;
             });
         }
-
-        if(!$scope.projects[0]) return;
 
         if (!$scope.current.project)
             return $state.go('application.project', {project_name: $scope.projects[0].name}, {location: 'replace'});

@@ -1,5 +1,5 @@
-define(['controllers', 'promise!loaders/projects', 'bootbox', 'factories/projects', 'ace'], function(controllers, projects, bootbox) {
-    return controllers.controller('Application', function($scope, $state, $location, $timeout, Projects) {
+define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(controllers, bootbox) {
+    return controllers.controller('Application', function($scope, $state, $location, $timeout, Projects, projects) {
         $scope.current = {};
         $scope.current.config_dialog = {branch: 'master'};
         $scope.current.new_tag_dialog = {};
@@ -59,7 +59,7 @@ define(['controllers', 'promise!loaders/projects', 'bootbox', 'factories/project
                     hide_new_tag_dialog();
                 });
         };
-
+''
         // This helper selects all tags from current project, but without currect tag
         $scope.existed_tags_without_current = function() {
             return _.without(['HEAD'].concat($scope.current.project.tags), $scope.current.tag_name);
@@ -150,6 +150,24 @@ define(['controllers', 'promise!loaders/projects', 'bootbox', 'factories/project
 
         $scope.open_commit_dialog = function() {
             $('#commit-dialog').modal('show');
+            if ($scope.current.commit_dialog.mode == 'Edit') {
+                var editor = ace.edit('editor');
+                Projects.get($scope.current.project.id).
+                    diff_with($scope.current.commit_dialog.last, {
+                        path: $scope.current.document_path,
+                        content: editor.getValue()
+                    }).then(function(results) {
+                        $scope.current.commit_dialog.diff_results = results;
+                    });
+            }
+        };
+
+        $('#commit-dialog').on('hidden.bs.modal', function() {
+            delete $scope.current.commit_dialog.diff_results;
+        });
+
+        $scope.show_loading_bar = function() {
+            return $scope.current.commit_dialog.pushing || (!$scope.current.commit_dialog.diff_results && $scope.current.commit_dialog.mode == 'Edit');
         };
 
         $scope.open_removing_commit_dialog = function() {

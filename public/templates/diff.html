@@ -1,0 +1,42 @@
+<div class="diff-panel">
+    <div class="panel panel-default" data-ng-repeat="patch in dialog.diff_results| withoutBinary">
+        <div class="panel-heading">
+            <div class="pull-left">
+                <span data-ng-if="patch.meta.old.path != patch.meta.new.path">
+                    <span class="filename" data-ng-bind="patch.meta.old.path"></span>&ngsp;-&gt;&nbsp;
+                </span>
+                <span class="filename" data-ng-bind="patch.meta.new.path"></span>
+                <span data-ng-bind="patch.meta.status"></span>
+            </div>
+            <div class="pull-right">
+                <span class="addition" data-ng-if="patch.meta.stat.addition">
+                    <span data-ng-if="patch.meta.stat.addition && patch.meta.stat.deletion">++</span><span data-ng-bind="patch.meta.stat.addition"></span></span>
+                <span class="deletion" data-ng-if="patch.meta.stat.deletion">
+                    <span data-ng-if="patch.meta.stat.addition && patch.meta.stat.deletion">--</span><span data-ng-bind="patch.meta.stat.deletion"></span></span>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-body">
+            <table ng-repeat="hunk in patch.hunks" data-ng-if="!patch.meta.binary">
+                <tr>
+                    <th class="line-number old-line-number">&nbsp;</th>
+                    <th class="line-number new-line-number">&nbsp;</th>
+                    <th class="indicator"></th>
+                    <th class="content" data-ng-bind="hunk.header"></th>
+                </tr>
+                <tr class="line" data-ng-repeat="line in hunk.lines" data-ng-class="line.type">
+                    <td class="line-number old-line-number">
+                        <span data-ng-if="line.old_lineno != -1" data-ng-bind="line.old_lineno"></span>
+                        <span data-ng-if="line.old_lineno == -1">&nbsp;</span>
+                    </td>
+                    <td class="line-number new-line-number">
+                        <span data-ng-if="line.new_lineno != -1" data-ng-bind="line.new_lineno"></span>
+                        <span data-ng-if="line.new_lineno == -1">&nbsp;</span>
+                    </td>
+                    <td class="indicator"><span data-ng-if="line.type == 'addition'">+</span><span data-ng-if="line.type == 'deletion'">-</span></td>
+                    <td class="content" data-ng-bind="line.content"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

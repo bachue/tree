@@ -1,5 +1,7 @@
 define(['controllers/project', 'underscore', 'factories/projects'], function(project_controller, _) {
     return project_controller.controller('Tag', function($scope, $state, Projects) {
+        if (!$scope.current.project) return;
+
         if (!$state.params.tag_name && $scope.current.tag_name)
             return $state.go('application.project.tag', {tag_name: $scope.current.tag_name}, {location: 'replace'});
 
@@ -10,8 +12,6 @@ define(['controllers/project', 'underscore', 'factories/projects'], function(pro
 
         if (!$scope.current.tag_name)
             return $state.go('application.project.tag', {tag_name: 'HEAD'}, {location: 'replace'});
-
-        if (!$scope.current.project) return;
 
         $scope.$on('treeInitialized', function() {
             $scope.select_tree($state.params.document_path);
