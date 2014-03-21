@@ -202,6 +202,7 @@ define(['controllers', 'promise!loaders/projects', 'factories/projects', 'ace'],
                                 $scope.select_tree($scope.current.document_path);
                             }).finally(close_commit_dialog);
                         delete $scope.current.document_path;
+                        delete $scope.current.document;
                         $state.go('application.project.tag.doc', {document_path: null});
                     });
                     break;
