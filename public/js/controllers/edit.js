@@ -1,4 +1,4 @@
-define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'ace', 'factories/projects'], function(tag_controller, $, marked, textile, hljs) {
+define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'essage', 'ace', 'factories/projects'], function(tag_controller, $, marked, textile, hljs, essage) {
     return tag_controller.controller('Edit', function($scope, $state, $sce, $timeout, Projects) {
         if (!$scope.current.tag_name) return;
 
@@ -58,7 +58,9 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'ace', 'f
                     switch (doc['type']) {
                     case 'markdown':
                         callback = function(editor) {
-                            var rendered = marked(editor.getValue());
+                            var markdown = editor.getValue();
+                            markdown = markdown.replace(/\[\[([^\]]+)\]\]/, '[$1]($1)');
+                            var rendered = marked(markdown);
                             var dom = handle($(rendered));
                             return $sce.trustAsHtml($('<div />').append(dom).html());
                         };
@@ -119,9 +121,11 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'ace', 'f
                                 document_path: $scope.current.document_path,
                                 new: true, type: error.data.type
                             }, {location: 'replace'});
-                        else
-                            // TODO: use dialog lib here
-                            alert("You can't create file " + $scope.current.document_path);
+                        else if (error.status === 404 && error.data.not_found === true)
+                            essage.show({
+                                message: "You're forbidden to create file " + $scope.current.document_path,
+                                status: 'warning'
+                            }, 5000);
                     }).finally(function() {
                         $scope.current.loading -= 1;
                     });

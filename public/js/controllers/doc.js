@@ -1,4 +1,4 @@
-define(['controllers/tag', 'highlight', 'factories/projects'], function(tag_controller, hljs) {
+define(['controllers/tag', 'highlight', 'essage', 'factories/projects'], function(tag_controller, hljs, essage) {
     return tag_controller.controller('Doc', function($scope, $state, $sce, $timeout, Projects) {
         if (!$scope.current.tag_name) return;
 
@@ -35,9 +35,11 @@ define(['controllers/tag', 'highlight', 'factories/projects'], function(tag_cont
                             document_path: $scope.current.document_path,
                             new: true, type: error.data.type
                         }, {location: 'replace'});
-                    else
-                        // TODO: use dialog lib here
-                        alert("You can't create file " + $scope.current.document_path);
+                    else if (error.status === 404 && error.data.not_found === true)
+                        essage.show({
+                            message: "You're forbidden to create file " + $scope.current.document_path,
+                            status: 'warning'
+                        }, 5000);
                 }).finally(function() {
                     $scope.current.loading -= 1;
                 });

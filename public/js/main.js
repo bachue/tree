@@ -29,6 +29,9 @@ var shim = {
     bootbox: {
         exports: 'bootbox',
         deps: ['bootstrap', 'jquery']
+    },
+    essage: {
+        exports: 'Essage'
     }
 };
 
@@ -48,7 +51,8 @@ require.config({
         marked: 'vendor/marked',
         textile: 'vendor/textile',
         ace: 'vendor/ace/ace',
-        bootbox: 'vendor/bootbox.min'
+        bootbox: 'vendor/bootbox.min',
+        essage: 'vendor/essage'
     },
     shim: shim
 });

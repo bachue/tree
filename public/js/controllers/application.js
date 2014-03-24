@@ -233,7 +233,7 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
                         delete $scope.current.document_path;
                         delete $scope.current.document;
                         $state.go('application.project.tag.doc', {document_path: null});
-                    });
+                    }, close_commit_dialog); // If error happened, still close the dialog
                     break;
             default:
                 throw 'Unexpected commit_dialog.mode';

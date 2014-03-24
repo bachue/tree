@@ -29,6 +29,8 @@ class MarkDownRenderer
   end
 
   def self.render content
+    # Convert [[doc/README.md]] to [doc/README.md](doc/README.md)
+    content.gsub!(/\[\[([^\]]+)\]\]/, '[\1](\1)')
     GitHub::Markdown.render_gfm content
   end
 
