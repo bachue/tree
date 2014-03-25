@@ -1,6 +1,13 @@
 <div class="diff-panel">
-    <div class="panel panel-default" data-ng-repeat="patch in dialog.diff_results| withoutBinary">
+    <div class="panel panel-default" data-ng-repeat="patch in diff.diff | withoutBinary">
         <div class="panel-heading">
+            <div class="pull-left" data-ng-if="diff.message">
+                <strong data-ng-bind="diff.message"></strong>
+            </div>
+            <div class="pull-right" data-ng-if="diff.author">
+                <span data-ng-bind="diff.author.name"></span>&nbsp;&lt;<span data-ng-bind="diff.author.email"></span>&gt;
+            </div>
+            <div class="clearfix"></div>
             <div class="pull-left">
                 <span data-ng-if="patch.meta.old.path != patch.meta.new.path">
                     <span class="filename" data-ng-bind="patch.meta.old.path"></span>&ngsp;-&gt;&nbsp;

@@ -6,6 +6,7 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
         $scope.current.commit_dialog = {};
         $scope.current.searchbar = {};
         $scope.current.tag_diff_dialog = {};
+        $scope.current.history_dialog = {};
         $scope.current.opening_modal = 0;
         $scope.current.loading = 0;
 
@@ -59,7 +60,7 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
                     hide_new_tag_dialog();
                 });
         };
-''
+
         // This helper selects all tags from current project, but without currect tag
         $scope.existed_tags_without_current = function() {
             return _.without(['HEAD'].concat($scope.current.project.tags), $scope.current.tag_name);
@@ -71,7 +72,7 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
                 tag($scope.current.tag_name).
                 diff($scope.current.tag_diff_dialog.tag).
                 then(function(results) {
-                    $scope.current.tag_diff_dialog.diff_results = results;
+                    $scope.current.tag_diff_dialog.diff = results;
                 }).finally(function() {
                     delete $scope.current.tag_diff_dialog.processing;
                 });
@@ -79,7 +80,7 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
 
         $('#tag-diff-dialog.modal').on('hidden.bs.modal', function() {
             $timeout(function() {
-                delete $scope.current.tag_diff_dialog.diff_results;
+                delete $scope.current.tag_diff_dialog.diff;
             });
         });
 
@@ -157,17 +158,17 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
                         path: $scope.current.document_path,
                         content: editor.getValue()
                     }).then(function(results) {
-                        $scope.current.commit_dialog.diff_results = results;
+                        $scope.current.commit_dialog.diff = results;
                     });
             }
         };
 
         $('#commit-dialog').on('hidden.bs.modal', function() {
-            delete $scope.current.commit_dialog.diff_results;
+            delete $scope.current.commit_dialog.diff;
         });
 
         $scope.show_loading_bar = function() {
-            return $scope.current.commit_dialog.pushing || (!$scope.current.commit_dialog.diff_results && $scope.current.commit_dialog.mode == 'Edit');
+            return $scope.current.commit_dialog.pushing || (!$scope.current.commit_dialog.diff && $scope.current.commit_dialog.mode == 'Edit');
         };
 
         $scope.open_removing_commit_dialog = function() {
@@ -193,6 +194,25 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
             });
         };
 
+        $scope.show_history = function() {
+            $('#history-dialog').modal('show');
+            Projects.get($scope.current.project.id).
+                tag($scope.current.tag_name).
+                logs($scope.current.document_path).
+                then(function(logs) {
+                    _.each(logs, function(log) {
+                        log.message = log.message.split('\n')[0];
+                    });
+                    $scope.current.history_dialog.logs = logs;
+                });
+        };
+
+        $('#history-dialog.modal').on('hidden.bs.modal', function() {
+            $timeout(function() {
+                delete $scope.current.history_dialog.logs;
+            });
+        });
+
         $scope.do_commit = function() {
             $scope.current.commit_dialog.pushing = true;
             switch($scope.current.commit_dialog.mode) {
@@ -200,24 +220,24 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
             case 'Edit':
                 var editor = ace.edit('editor');
                 Projects.get($scope.current.project.id).
-                update($scope.current.document_path, {
-                    content: editor.getValue(),
-                    message: $scope.current.commit_dialog.message,
-                    description: $scope.current.commit_dialog.description,
-                    base: $scope.current.commit_dialog.base
-                }).then(function() {
-                    $scope.$broadcast('aceEditorCleared');
-                    if ($scope.current.commit_dialog.mode == 'Create') {
-                        $scope.current.loading += 1;
-                        Projects.get($scope.current.project.id).tag($scope.current.tag_name).tree().
-                            then(function(tree) {
-                                $scope.current.project.directory = tree;
-                                $scope.select_tree($scope.current.document_path);
-                            }).finally(function() {
-                                $scope.current.loading -= 1;
-                            });
-                    }
-                }).finally(back_to_doc);
+                    update($scope.current.document_path, {
+                        content: editor.getValue(),
+                        message: $scope.current.commit_dialog.message,
+                        description: $scope.current.commit_dialog.description,
+                        base: $scope.current.commit_dialog.base
+                    }).then(function() {
+                        $scope.$broadcast('aceEditorCleared');
+                        if ($scope.current.commit_dialog.mode == 'Create') {
+                            $scope.current.loading += 1;
+                            Projects.get($scope.current.project.id).tag($scope.current.tag_name).tree().
+                                then(function(tree) {
+                                    $scope.current.project.directory = tree;
+                                    $scope.select_tree($scope.current.document_path);
+                                }).finally(function() {
+                                    $scope.current.loading -= 1;
+                                });
+                        }
+                    }).finally(back_to_doc);
                 break;
             case 'Delete':
                 Projects.get($scope.current.project.id).
@@ -234,7 +254,7 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
                         delete $scope.current.document;
                         $state.go('application.project.tag.doc', {document_path: null});
                     }, close_commit_dialog); // If error happened, still close the dialog
-                    break;
+                break;
             default:
                 throw 'Unexpected commit_dialog.mode';
             }

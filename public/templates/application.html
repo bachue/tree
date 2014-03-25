@@ -152,10 +152,10 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div class="modal fade" id="project-help" data-ng-if="current.project">
+<div class="modal fade" id="project-help">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-body">
+      <div class="modal-body" data-ng-if="current.project">
             <h3>To edit wiki for this project, please:</h3>
             <pre>
 git clone &quot;<span data-ng-bind="current.project.url"></span>&quot;
@@ -188,7 +188,7 @@ git push origin <span data-ng-bind="current.project.branch"></span>
                     <span class="sr-only">Commit pushing...</span>
                 </div>
             </div>
-            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!current.commit_dialog.pushing && current.commit_dialog.diff_results" data-ng-init="dialog = current.commit_dialog"></div>
+            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!current.commit_dialog.pushing && current.commit_dialog.diff" data-ng-init="diff = current.commit_dialog"></div>
         </form>
       </div>
       <div class="modal-footer">
@@ -209,7 +209,7 @@ git push origin <span data-ng-bind="current.project.branch"></span>
       </div>
       <div class="modal-body">
         <form name="tag_diff_dialog">
-            <div class="input-group widest" data-ng-if="!current.tag_diff_dialog.processing && !current.tag_diff_dialog.diff_results">
+            <div class="input-group widest" data-ng-if="!current.tag_diff_dialog.processing && !current.tag_diff_dialog.diff">
                 <input list="project_tags" data-ng-model="current.tag_diff_dialog.tag" data-required type="text" class="form-control" placeholder="Which tag?" data-existed-tag />
                 <datalist id="project_tags">
                     <option data-ng-value="tag" data-ng-repeat="tag in existed_tags_without_current()" />
@@ -217,15 +217,32 @@ git push origin <span data-ng-bind="current.project.branch"></span>
             </div>
             <div class="progress progress-striped active" data-ng-if="current.tag_diff_dialog.processing">
                 <div class="progress-bar widest" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                    <span class="sr-only">Commit pushing...</span>
+                    <span class="sr-only">Querying...</span>
                 </div>
             </div>
-            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!current.tag_diff_dialog.processing && current.tag_diff_dialog.diff_results" data-ng-init="dialog = current.tag_diff_dialog"></div>
+            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!current.tag_diff_dialog.processing && current.tag_diff_dialog.diff" data-ng-init="diff = current.tag_diff_dialog"></div>
         </form>
       </div>
-      <div class="modal-footer" data-ng-if="!current.tag_diff_dialog.processing && !current.tag_diff_dialog.diff_results">
+      <div class="modal-footer" data-ng-if="!current.tag_diff_dialog.processing && !current.tag_diff_dialog.diff">
         <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" data-ng-click="do_diff_between_tags()" data-ng-disabled="current.tag_diff_dialog.processing || tag_diff_dialog.$invalid">Diff</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="history-dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="progress progress-striped active" data-ng-if="!current.history_dialog.logs">
+            <div class="progress-bar widest" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                <span class="sr-only">Querying...</span>
+            </div>
+        </div>
+        <div data-ng-repeat="diff in current.history_dialog.logs">
+            <div data-ng-include src="'/templates/diff.html'"></div>
+        </div>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

@@ -1,5 +1,6 @@
 <div id="current_document" data-ng-if="has_document()">
     <div class="text-right" data-ng-if="current.tag_name == 'HEAD'">
+        <button type="button" data-ng-click="show_history()" class="btn btn-sm btn-info edit-btn">History</button>
         <button type="button" data-ng-click="edit_doc()" class="btn btn-sm btn-primary edit-btn">Edit</button>
         <button type="button" data-ng-click="open_removing_commit_dialog()" class="btn btn-sm btn-danger remove-btn">Delete</button>
     </div>

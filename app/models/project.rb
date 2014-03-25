@@ -22,7 +22,7 @@ class Project < ActiveRecord::Base
       if renderer
         # File exists & Can be rendered
         if raw
-          [content, renderer, blob_id_of(file, tag), last_commit(tag)]
+          [content, renderer, blob_id_of(file, tag), last_commit_id(tag)]
         else
           [renderer.render(content), renderer]
         end
@@ -105,6 +105,10 @@ class Project < ActiveRecord::Base
     end
   end
 
+  def logs file, tag
+    Git.logs path, file, tag: tag
+  end
+
   private
     def cat_file file, tag
       Git.cat_file path, file, branch: branch, tag: tag
@@ -122,8 +126,8 @@ class Project < ActiveRecord::Base
       Git.blob_id_of path, file, branch: branch, tag: tag
     end
 
-    def last_commit tag
-      Git.last_commit path, branch: branch, tag: tag
+    def last_commit_id tag
+      Git.last_commit_id path, branch: branch, tag: tag
     end
 
     def insert_into root, names

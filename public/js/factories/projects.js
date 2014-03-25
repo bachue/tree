@@ -95,7 +95,14 @@ define(['factories', 'bootbox', 'essage'], function(factories, bootbox, essage) 
                                 Restangular.one('projects/diff', id).getList(another + '/' + tag).
                                     then(resolveCallback(deferred), rejectCallback(deferred));
                                 return deferred.promise;
-                            }                        };
+                            },
+                            logs: function(path) {
+                                var deferred = $q.defer();
+                                Restangular.one('projects/logs', id).getList(tag + '/' + path).
+                                    then(resolveCallback(deferred), rejectCallback(deferred));
+                                return deferred.promise;
+                            }
+                        };
                     }
                 };
             }

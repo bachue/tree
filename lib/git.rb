@@ -120,21 +120,13 @@ Stderr: #{errput}
 
     def blob_id_of target, file_path, branch: 'master', tag: 'HEAD'
       repo = get_repo target
-      tree =  if tag != 'HEAD' # Git.blob target, path, tag: 'v1'
-                repo.tags.detect {|t| t.name == tag }.target.tree
-              else             # Git.blob target, path, branch: 'development'
-                repo.branches[branch].target.tree
-              end
+      tree = last_commit(repo, branch: branch, tag: tag).tree
       object_id_of(repo, tree, file_path)
     end
 
-    def last_commit target, branch: 'master', tag: 'HEAD'
+    def last_commit_id target, branch: 'master', tag: 'HEAD'
       repo = get_repo target
-      if tag != 'HEAD' # Git.last_commit target, tag: 'v1'
-        repo.tags.detect {|t| t.name == tag }.target_id
-      else             # Git.last_commit target, branch: 'development'
-        repo.branches[branch].target_id
-      end
+      last_commit(repo, branch: branch, tag: tag).oid
     end
 
     def add_to_index target, file_path, file_content, based_on, message, branch = 'master'
@@ -216,21 +208,34 @@ done
     def diff_between_tags target, old_tag, new_tag, branch: 'master'
       repo = get_repo target
 
-      old_oid = if old_tag != 'HEAD'
-                  repo.tags.detect {|t| t.name == old_tag }.target
-                else
-                  repo.branches[branch].target
-                end
-      new_oid = if new_tag != 'HEAD'
-                  repo.tags.detect {|t| t.name == new_tag }.target
-                else
-                  repo.branches[branch].target
-                end
-      diff_between repo, old_oid, new_oid
+      old_commmit = last_commit repo, tag: old_tag, branch: branch
+      new_commmit = last_commit repo, tag: new_tag, branch: branch
+      diff_between repo, old_commmit, new_commmit
+    end
+
+    # Just support to show all logs of a file
+    def logs target, file_path, reverse: true, branch: 'master', tag: 'HEAD'
+      repo = get_repo target
+
+      walker = Rugged::Walker.new repo
+      walker.push last_commit_id(repo, branch: branch, tag: tag)
+      walker.sorting Rugged::SORT_TOPO | Rugged::SORT_REVERSE
+      get_object_id = ->(commit) { object_id_of(repo, commit.tree, file_path) }
+      commits = walker.each.select(&get_object_id).uniq(&get_object_id)
+      commits.reverse! if reverse
+
+      groups = (0...commits.size).to_a.map {|i| [commits[i], commits[i + 1] || commits[i].parents.first] }
+      groups.map do |new, old|
+        {
+          message: new.message,
+          author: new.author,
+          diff: diff_between(repo, old, new, only: file_path)
+        }
+      end
     end
 
     private
-      def diff_between repo, old_oid, new_oid
+      def diff_between repo, old_oid, new_oid, only: nil
         diff = repo.diff old_oid, new_oid,
                          context_lines: 5,
                          interhunk_lines: 5,
@@ -238,7 +243,11 @@ done
                          ignore_whitespace_change: true,
                          ignore_whitespace_eol: true,
                          skip_binary_check: true
-        diff.each_patch.map do |patch|
+        diff.each_patch.select {|patch|
+          next true unless only
+          delta = patch.delta
+          delta.old_file[:path] == only || delta.new_file[:path] == only
+        }.map do |patch|
           stat =  patch.hunks.map(&:lines).flatten.group_by(&:line_origin).
                     inject(Hash.new {|h, k| h[k] = 0 }) {|h, (k, v)| h[k] += v.size; h }
 
@@ -265,6 +274,14 @@ done
               }
             end
           }
+        end
+      end
+
+      def last_commit repo, branch: 'master', tag: 'HEAD'
+        if tag != 'HEAD'
+          repo.tags.detect {|t| t.name == tag }.target
+        else
+          repo.branches[branch].target
         end
       end
 

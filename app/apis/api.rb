@@ -146,6 +146,20 @@ class API < Grape::API
       end
     end
 
+    desc 'Get all logs of a document from the project'
+    params do
+      requires :id, type: Integer, desc: 'Project id'
+      requires :path, type: String, desc: 'File path'
+      requires :tag_name, type: String, desc: 'Tag name'
+    end
+    get '/logs/:id/:tag_name/*path', anchor: false do
+      project = load_project id: params[:id]
+
+      project.lock_as_reader do
+        project.logs params[:path], params[:tag_name]
+      end
+    end
+
     desc 'Get a suggested document from the project'
     params do
       requires :id, type: Integer, desc: 'Project id'
