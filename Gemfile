@@ -28,3 +28,7 @@ group :development, :test do
   gem 'pry-doc'
   gem 'pry-byebug'
 end
+
+group :development do
+  gem 'mina'
+end

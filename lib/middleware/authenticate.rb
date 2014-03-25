@@ -4,7 +4,7 @@ require 'app/models/user'
 require 'redis'
 require 'yaml'
 require 'erb'
-require 'digest'
+require 'digest/sha2'
 
 module Middleware
   class Authenticate < Rack::Auth::Basic
