@@ -17,12 +17,13 @@ gem 'unicorn'
 gem 'sidekiq-unique-jobs'
 gem 'sinatra'
 gem 'rugged', git: 'http://github.com/bachue/rugged.git', branch: 'development', submodules: true
+gem 'god', require: nil
+gem 'pry'
 
-group :production do
-  gem 'god', require: nil
+group :development do
+  gem 'mina', require: nil
 end
 
-gem 'pry'
 group :development, :test do
   gem 'pry-doc'
   gem 'pry-byebug'
