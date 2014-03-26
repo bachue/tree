@@ -64,8 +64,17 @@ define(['controllers/tag', 'highlight', 'essage', 'factories/projects'], functio
 
                 $('#current_document a[href]').each(function(i, e) { // Important for ui-router
                     var href = $(e).attr('href');
-                    if (href.indexOf('javascript:') !== 0)
-                        $(e).attr('href', 'javascript:open("' + href + '")');
+                    if (href.indexOf('javascript:') !== 0) {
+                        if (href.indexOf('://') === -1 && href.indexOf('/') !== 0) {
+                            $(e).attr('href', 'javascript:void(0)');
+                            $(e).click(function() {
+                                $state.go('application.project.tag.doc', {document_path: expand_path(href)});
+                                $scope.select_tree(expand_path(href));
+                            });
+                        }
+                        else
+                            $(e).attr('href', 'javascript:open("' + href + '")');
+                    }
                 });
 
                 $('#current_document img, #current_document audio, #current_document video').each(function(i, e) {
@@ -73,11 +82,14 @@ define(['controllers/tag', 'highlight', 'essage', 'factories/projects'], functio
                     if (src.indexOf('://') === -1 && src.indexOf('/') !== 0) {
                         var url = '/' + $scope.current.project.name;
                         url += '/' + $scope.current.tag_name;
-                        var base = $scope.current.document_path.split('/').slice(0, -1).join('/');
-                        url += '/' + base + '/' + src;
+                        url += '/' + expand_path(src);
                         $(e).attr('src', url);
                     }
                 });
+
+                function expand_path(path) {
+                    return $scope.current.document_path.split('/').slice(0, -1).concat(path).join('/');
+                }
             });
         }
     });
