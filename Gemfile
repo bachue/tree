@@ -20,10 +20,6 @@ gem 'rugged', git: 'http://github.com/bachue/rugged.git', branch: 'development',
 gem 'god', require: nil
 gem 'pry'
 
-group :development do
-  gem 'mina', require: nil
-end
-
 group :development, :test do
   gem 'pry-doc'
   gem 'pry-byebug'
