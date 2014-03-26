@@ -32,6 +32,9 @@ var shim = {
     },
     essage: {
         exports: 'Essage'
+    },
+    strftime: {
+        exports: 'strftime'
     }
 };
 
@@ -52,7 +55,8 @@ require.config({
         textile: 'vendor/textile',
         ace: 'vendor/ace/ace',
         bootbox: 'vendor/bootbox.min',
-        essage: 'vendor/essage'
+        essage: 'vendor/essage',
+        strftime: 'vendor/strftime.min'
     },
     shim: shim
 });
