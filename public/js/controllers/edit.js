@@ -114,6 +114,7 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'essage',
                 $scope.current.loading += 1;
                 $scope.current.commit_dialog.mode = 'Edit';
                 Projects.get($scope.current.project.id).
+                    tag($scope.current.tag_name).
                     raw($scope.current.document_path).
                     then(initialize_ace, function(error) {
                         if (error.status === 404 && error.data.empty === true)

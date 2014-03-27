@@ -34,7 +34,7 @@ class API < Grape::API
       requires :id, type: Integer, desc: 'Project id'
       requires :tag_name, type: String, desc: 'Tag name'
     end
-    get '/:id/:tag_name' do
+    get '/:id/tags/:tag_name' do
       project = load_project id: params[:id]
 
       update_project project
@@ -50,7 +50,7 @@ class API < Grape::API
       requires :tag_name, type: String, desc: 'Tag name'
       optional :q, type: String, desc: 'Query text'
     end
-    get '/:id/:tag_name/_search' do
+    get '/:id/tags/:tag_name/search' do
       error! 'No query text', 400 unless params[:q]
 
       project = load_project id: params[:id]
@@ -118,27 +118,27 @@ class API < Grape::API
       true
     end
 
-    desc 'Get Diff information between tags or HEAD in the project'
+    desc 'Get diff information between tags or HEAD in the project'
     params do
       requires :id, type: Integer, desc: 'Project id'
       requires :tag1, type: String, desc: 'Tag 1 name'
       requires :tag2, type: String, desc: 'Tag 2 name'
     end
-    get '/diff/:id/:tag1/:tag2' do
+    get '/:id/diff/:tag1/:tag2' do
       project = load_project id: params[:id]
       project.lock_as_reader do
         project.diff_between params['tag1'], params['tag2']
       end
     end
 
-    desc 'Get Diff information between the specified commit and your changes'
+    desc 'Get diff information between the specified commit and your changes'
     params do
       requires :id, type: Integer, desc: 'Project id'
       requires :path, type: String, desc: 'File path'
       requires :content, type: String, desc: 'File content'
       requires :base, type: String, desc: 'Commit based on'
     end
-    post '/diff/:id', anchor: false do
+    post '/:id/diff', anchor: false do
       project = load_project id: params[:id]
 
       project.lock_as_reader do
@@ -146,13 +146,13 @@ class API < Grape::API
       end
     end
 
-    desc 'Get all logs of a document from the project'
+    desc 'Get all logs of the specified document'
     params do
       requires :id, type: Integer, desc: 'Project id'
       requires :path, type: String, desc: 'File path'
       requires :tag_name, type: String, desc: 'Tag name'
     end
-    get '/logs/:id/:tag_name/*path', anchor: false do
+    get '/:id/tags/:tag_name/logs/*path', anchor: false do
       project = load_project id: params[:id]
 
       project.lock_as_reader do
@@ -166,7 +166,7 @@ class API < Grape::API
       requires :tag_name, type: String, desc: 'Tag name'
       optional :path, type: String, desc: 'Directory path', default: ''
     end
-    get '/suggest/:id/:tag_name(/*path)', anchor: false do
+    get '/:id/tags/:tag_name/suggest(/*path)', anchor: false do
       project = load_project id: params[:id]
 
       suggest = project.lock_as_reader do
@@ -178,15 +178,16 @@ class API < Grape::API
     desc 'Get a raw document from the project'
     params do
       requires :id, type: Integer, desc: 'Project id'
+      requires :tag_name, type: String, desc: 'Tag name'
       requires :path, type: String, desc: 'File path'
     end
-    get '/raw/:id/*path', anchor: false do
+    get '/:id/tags/:tag_name/raw/*path', anchor: false do
       project = load_project id: params[:id]
 
       update_project project
 
       result, renderer, blob_id, last_commit =  project.lock_as_reader do
-                                                  project.raw params[:path], 'HEAD'
+                                                  project.raw params[:path], params[:tag_name]
                                                 end
       case result
       when false
@@ -213,7 +214,7 @@ class API < Grape::API
       requires :tag_name, type: String, desc: 'Tag name'
       requires :path, type: String, desc: 'File path'
     end
-    get '/:id/:tag_name/*path', anchor: false do
+    get '/:id/tags/:tag_name/render/*path', anchor: false do
       project = load_project id: params[:id]
 
       update_project project
@@ -249,7 +250,7 @@ class API < Grape::API
       optional :description, type: String, desc: 'Commit description'
       requires :base, type: String, desc: 'Commit based on'
     end
-    put '/raw/:id/*path', anchor: false do
+    put '/:id/raw/*path', anchor: false do
       project = load_project id: params[:id]
 
       begin
@@ -271,7 +272,7 @@ class API < Grape::API
       requires :message, type: String, desc: 'Commit message'
       optional :description, type: String, desc: 'Commit description'
     end
-    delete '/raw/:id/*path', anchor: false do
+    delete '/:id/raw/*path', anchor: false do
       project = load_project id: params[:id]
 
       project.lock_as_writer do
@@ -285,7 +286,7 @@ class API < Grape::API
       requires :id, type: Integer, desc: 'Project id'
       requires :tag_name, type: String, desc: 'Tag name'
     end
-    put '/:id/:tag_name' do
+    put '/:id/tags/:tag_name' do
       project = load_project id: params[:id]
 
       project.lock_as_writer do
