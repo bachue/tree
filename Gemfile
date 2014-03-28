@@ -15,10 +15,14 @@ gem 'nokogiri'
 gem 'RedCloth'
 gem 'unicorn'
 gem 'sidekiq-unique-jobs'
+gem 'hiredis'
 gem 'sinatra'
 gem 'rugged', git: 'http://github.com/bachue/rugged.git', branch: 'development', submodules: true
 gem 'god', require: nil
 gem 'pry'
+gem 'bcrypt-ruby', '~> 3.1.2'
+gem 'protected_attributes'
+gem 'sshkey'
 
 group :development, :test do
   gem 'pry-doc'

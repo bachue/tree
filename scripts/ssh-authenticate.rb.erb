@@ -1,0 +1,16 @@
+#!/usr/bin/ruby
+
+user = ARGV[0] or raise "Usage: #{$0} username"
+
+require 'sqlite3'
+
+# Only used for production env
+
+dbfile = "<%= File.expand_path(File.dirname(__FILE__) + '/../db/production.sqlite3') %>"
+
+db = SQLite3::Database.new dbfile
+
+public_keys = db.execute <<-SQL, user
+  SELECT public_key FROM keys;
+SQL
+public_keys.each(&method(:puts))

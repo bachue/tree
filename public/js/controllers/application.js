@@ -1,5 +1,5 @@
-define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(controllers, bootbox) {
-    return controllers.controller('Application', function($scope, $state, $location, $timeout, Projects, projects) {
+define(['controllers', 'bootbox', 'factories/projects', 'factories/keys', 'ace'], function(controllers, bootbox) {
+    return controllers.controller('Application', function($scope, $state, $location, $timeout, Projects, Keys, projects) {
         $scope.current = {};
         $scope.current.config_dialog = {branch: 'master'};
         $scope.current.new_tag_dialog = {};
@@ -7,6 +7,7 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
         $scope.current.searchbar = {};
         $scope.current.tag_diff_dialog = {};
         $scope.current.history_dialog = {};
+        $scope.current.key_dialog = {};
         $scope.current.opening_modal = 0;
         $scope.current.loading = 0;
 
@@ -149,8 +150,7 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
             return $scope.current.commit_dialog.mode + ' ' + $state.params.document_path;
         };
 
-        $scope.open_commit_dialog = function() {
-            $('#commit-dialog').modal('show');
+        $('#commit-dialog.modal').on('show.bs.modal', function() {
             if ($scope.current.commit_dialog.mode == 'Edit') {
                 var editor = ace.edit('editor');
                 Projects.get($scope.current.project.id).
@@ -161,9 +161,9 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
                         $scope.current.commit_dialog.diff = results;
                     });
             }
-        };
+        });
 
-        $('#commit-dialog').on('hidden.bs.modal', function() {
+        $('#commit-dialog.modal').on('hidden.bs.modal', function() {
             delete $scope.current.commit_dialog.diff;
         });
 
@@ -194,8 +194,7 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
             });
         };
 
-        $scope.show_history = function() {
-            $('#history-dialog').modal('show');
+        $('#history-dialog.modal').on('show.bs.modal', function() {
             Projects.get($scope.current.project.id).
                 tag($scope.current.tag_name).
                 logs($scope.current.document_path).
@@ -205,13 +204,52 @@ define(['controllers', 'bootbox', 'factories/projects', 'ace'], function(control
                     });
                     $scope.current.history_dialog.logs = logs;
                 });
-        };
+        });
 
         $('#history-dialog.modal').on('hidden.bs.modal', function() {
-            $timeout(function() {
-                delete $scope.current.history_dialog.logs;
+            delete $scope.current.history_dialog.logs;
+        });
+
+        $('#key-dialog.modal').on('show.bs.modal', function() {
+            $scope.current.key_dialog.loading = true;
+            Keys.all().then(function(keys) {
+                $scope.current.key_dialog.keys = keys;
+            }).finally(function() {
+                delete $scope.current.key_dialog.loading;
             });
         });
+
+        $('#key-dialog.modal').on('hidden.bs.modal', function() {
+            $scope.current.key_dialog = {};
+        });
+
+        $scope.add_new_key = function() {
+            $scope.current.key_dialog.new = {};
+        };
+
+        $scope.push_new_key = function() {
+            $scope.current.key_dialog.loading = true;
+            Keys.new({
+                name: $scope.current.key_dialog.new.name,
+                public_key: $scope.current.key_dialog.new.public_key,
+            }).then(function(new_key) {
+                $scope.current.key_dialog.keys.splice($scope.current.key_dialog.keys.length, 0, new_key);
+            }).finally(function() {
+                delete $scope.current.key_dialog.loading;
+                delete $scope.current.key_dialog.new;
+            });
+        };
+
+        $scope.delete_key = function(id) {
+            $scope.current.key_dialog.loading = true;
+            Keys.delete(id).then(function() {
+                $scope.current.key_dialog.keys = _.reject($scope.current.key_dialog.keys, function(key) {
+                    return key.id === id;
+                });
+            }).finally(function() {
+                delete $scope.current.key_dialog.loading;
+            });
+        };
 
         $scope.do_commit = function() {
             $scope.current.commit_dialog.pushing = true;

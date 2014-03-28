@@ -37,4 +37,15 @@ define(['directives'], function(directives) {
             }
         };
     });
+
+    directives.directive('uniqKeyName', function() {
+        return {
+            require: '?ngModel',
+            link: function(scope, element, attrs, ngModel) {
+                scope.$watch('current.key_dialog.new.name', function(value) {
+                    ngModel.$setValidity('uniq', !_.contains(_.map(scope.current.key_dialog.keys, function(key) { return key.name; }), value));
+                });
+            }
+        };
+    });
 });

@@ -1,5 +1,7 @@
 require 'project'
 require 'project_entity'
+require 'key'
+require 'key_entity'
 
 require 'helpers/api_helper'
 require 'validators/git_repo_url'
@@ -21,6 +23,38 @@ class API < Grape::API
   desc 'Only for test, to make sure server works'
   get '/ping' do
     'pong'
+  end
+
+  resource :keys do
+    desc 'Return all keys of current user'
+    params do
+    end
+    get do
+      user = load_user
+      present user.keys, with: KeyEntity
+    end
+
+    desc 'Add a new key for current user'
+    params do
+      requires :name, type: String, desc: 'Key\'s name'
+      requires :public_key, type: String, desc: 'Public key'
+    end
+    post do
+      user = load_user
+      key = user.keys.create! name: params[:name], public_key: params[:public_key]
+      present key, with: KeyEntity
+    end
+
+    desc 'Delete a key from current user'
+    params do
+      requires :id, type: Integer, desc: 'Key Id'
+    end
+    delete '/:id' do
+      user = load_user
+      key = user.keys.find_by id: params[:id]
+      key.destroy! if key
+      true
+    end
   end
 
   resource :projects do

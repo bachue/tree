@@ -2,7 +2,7 @@
     <div class="text-right">
         <button type="button" data-ng-click="enable_preview()" class="btn btn-sm btn-default" data-ng-if="preview_disabled()">Enable preview</button>
         <button type="button" data-ng-click="disable_preview()" class="btn btn-sm btn-default" data-ng-if="preview_enabled()">Disable preview</button>
-        <button type="button" data-ng-click="open_commit_dialog()" class="btn btn-sm btn-primary">Commit</button>
+        <button type="button" data-toggle="modal" data-target="#commit-dialog" class="btn btn-sm btn-primary">Commit</button>
         <button type="button" class="btn btn-sm btn-cancel" data-ng-click="cancel_and_back_to_doc()">Cancel</button>
     </div>
 </div>

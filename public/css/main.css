@@ -579,3 +579,31 @@ input.ng-invalid, textarea.ng-invalid {
 .diff-panel .panel-body table td.content {
     white-space: pre;
 }
+
+/*
+ * Key configuration
+ */
+#key-dialog tr {
+    height: 50px;
+}
+
+#key-dialog td.btn-col {
+    width: 100px;
+}
+
+#key-dialog td.btn-col button {
+    width: 64px;
+}
+
+#key-dialog td input, #key-dialog td textarea {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#key-dialog td textarea {
+    height: 200px;
+}
+
+#key-dialog .key_fingerprint {
+    color: rgba(0, 0, 0, 0.7);
+}

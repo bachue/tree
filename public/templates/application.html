@@ -51,6 +51,7 @@
                 <li data-ng-if="!is_full_mode()">
                     <a title="Set Full Mode" href="javascript:void(0)" class="glyphicon glyphicon-align-justify" data-ng-click="set_full_mode()"></a>
                 </li>
+                <li><a title="Configuration" href="javascript:void(0)" class="glyphicon glyphicon-cog" data-toggle="modal" data-target="#key-dialog"></a></li>
                 <li><a title="Help" href="javascript:void(0)" class="glyphicon glyphicon-question-sign" data-toggle="modal" data-target="#project-help"  data-ng-if="current.project"></a></li>
             </ul>
             <h3 data-ng-if="current.loading > 0" class="display: inline-block;"><img src="/img/loading.gif" alt="loading" height="20" /></h3>
@@ -242,6 +243,53 @@ git push origin <span data-ng-bind="current.project.branch"></span>
         </div>
         <div data-ng-repeat="diff in current.history_dialog.logs">
             <div data-ng-include src="'/templates/diff.html'"></div>
+        </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="key-dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">SSH keys</h4>
+      </div>
+      <div class="modal-body">
+        <table data-ng-if="!current.key_dialog.loading" class="widest">
+            <tr>
+                <td colspan="2" class="text-left">
+                    <button type="button" data-ng-click="add_new_key()" class="btn btn-sm btn-default">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </td>
+            </tr>
+            <tr data-ng-repeat="key in current.key_dialog.keys">
+                <td class="text-left">
+                    <div class="key_name"><strong data-ng-bind="key.name"></strong></div>
+                    <div class="key_fingerprint" data-ng-bind="key.fingerprint"></div>
+                </td>
+                <td class="text-center btn-col">
+                    <button type="button" data-ng-click="delete_key(key.id)" class="btn btn-sm btn-danger">Revoke</button>
+                </td>
+            </tr>
+            <tr data-ng-if="current.key_dialog.new">
+                <td class="text-left">
+                    <form name="key_dialog">
+                        <input type="text" class="form-control" placeholder="Title" data-ng-model="current.key_dialog.new.name" data-required data-ng-maxlength="250" data-uniq-key-name>
+                        <textarea placeholder="Key" class="form-control" data-required data-ng-model="current.key_dialog.new.public_key"></textarea>
+                    </form>
+                </td>
+                <td class="text-center btn-col">
+                    <button type="button" data-ng-click="push_new_key()" data-ng-disabled="key_dialog.$invalid" class="btn btn-sm btn-primary">Submit</button>
+                </td>
+            </tr>
+        </table>
+        <div class="progress progress-striped active" data-ng-if="current.key_dialog.loading">
+            <div class="progress-bar widest" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
       </div>
     </div><!-- /.modal-content -->

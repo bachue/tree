@@ -35,13 +35,16 @@ var shim = {
     },
     strftime: {
         exports: 'strftime'
+    },
+    jquery_cookie: {
+        deps: ['jquery']
     }
 };
 
 require.config({
     waitSeconds: 0,
     paths: {
-        domReady: 'vendor/domReady',
+        domReady: 'vendor/domReady.min',
         jquery: 'vendor/jquery.min',
         underscore: 'vendor/underscore.min',
         angular: 'vendor/angular.min',
@@ -51,12 +54,13 @@ require.config({
         angular_animate: 'vendor/angular-animate.min',
         abn_tree_directive: 'vendor/abn_tree_directive',
         highlight: 'vendor/highlight.min',
-        marked: 'vendor/marked',
-        textile: 'vendor/textile',
+        marked: 'vendor/marked.min',
+        textile: 'vendor/textile.min',
         ace: 'vendor/ace/ace',
         bootbox: 'vendor/bootbox.min',
-        essage: 'vendor/essage',
-        strftime: 'vendor/strftime.min'
+        essage: 'vendor/essage.min',
+        strftime: 'vendor/strftime.min',
+        jquery_cookie: 'vendor/jquery.cookie.min'
     },
     shim: shim
 });
@@ -64,7 +68,7 @@ require.config({
 require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants', 'ace', 'bootbox',
          'controllers/application', 'controllers/project', 'controllers/tag', 'controllers/edit', 'controllers/doc',
          'directives/application', 'directives/doc', 'directives/editor',
-         'filters/application', 'factories/projects'], function(angular, app, domReady, $) {
+         'filters/application', 'factories/projects', 'factories/keys'], function(angular, app, domReady, $) {
     app.config(function($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {
         $stateProvider.
            state('application', {

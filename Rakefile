@@ -24,6 +24,42 @@ task :db do
   exec "sqlite3 -line #{Application::DBCONFIG['database']}"
 end
 
+namespace :user do
+  desc 'add user'
+  task :add do
+    require 'io/console'
+    require 'app/models/user'
+
+    STDOUT.print 'name: '
+    name = STDIN.gets.strip
+
+    STDOUT.print 'email: '
+    email = STDIN.gets.strip
+
+    STDOUT.print 'password: '
+    password = STDIN.noecho(&:gets).strip
+    puts
+
+    user = User.new name: name, email: email, password: password, password_confirmation: password
+    if user.save
+      puts 'Added'
+    else
+      puts 'Error:'
+      puts user.errors.full_messages.join("\n")
+    end
+  end
+
+  desc 'delete user'
+  task :del, :name do |t, args|
+    require 'app/models/user'
+
+    user = User.find_by name: args[:name]
+    puts 'Not found' unless user
+    puts 'Gone' if user.destroy
+  end
+end
+
+
 namespace :db do
   desc 'creates and migrates your database'
   task :setup do
@@ -68,4 +104,18 @@ task :delete, :name do |t, args|
   project.destroy
   FileUtils.rm_rf project.path
   puts "Project \"#{args[:name]}\" has gone"
+end
+
+namespace :sidekiq do
+  task :monitor do
+    require 'sidekiq/web'
+    Sidekiq.configure_client do |config|
+      config.redis = { size: 1 }.merge Application::REDIS_CONFIG
+    end
+    app = Sidekiq::Web
+    app.set :environment, :production
+    app.set :bind, '0.0.0.0'
+    app.set :port, 9494
+    app.run!
+  end
 end

@@ -11,4 +11,10 @@ module APIHelper
   def update_project project
     ProjectUpdater.perform_async project.id
   end
+
+  def load_user
+    user = Application.current_user
+    error! 'Need for authentication', 401 unless user
+    user
+  end
 end

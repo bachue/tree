@@ -1,5 +1,18 @@
 require 'sidekiq'
 require 'sidekiq-unique-jobs'
+require 'yaml'
+require 'erb'
+
+yaml = ERB.new(File.read(File.expand_path(File.dirname(__FILE__) + '/../../config/redis.yml'))).result
+redis_config = YAML.load yaml
+
+Sidekiq.configure_server do |config|
+  config.redis = redis_config
+end
+
+Sidekiq.configure_client do |config|
+  config.redis = redis_config
+end
 
 $: << File.expand_path(File.dirname(__FILE__) + '/../models')
 $: << File.expand_path(File.dirname(__FILE__) + '/../../')

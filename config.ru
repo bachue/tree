@@ -20,12 +20,14 @@ require 'grape-entity'
 
 require 'config/application'
 
+require 'middleware/authenticate'
+
 class Application
   def self.call(env)
     request = Rack::Request.new env
     case request.path_info
     when %r{^/+js/+_constants\.js$}
-      [200, {}, ['CONSTANTS = ' + Application.consts.to_json]]
+      [200, {'Content-Type' => 'application/javascript'}, ['CONSTANTS = ' + Application.consts.to_json]]
     when %r{^/+api/}
       ::API.call env
     else
@@ -60,4 +62,6 @@ use ActiveRecord::ConnectionAdapters::ConnectionManagement
 use Rack::TryStatic,
               root: File.expand_path(File.dirname(__FILE__) + '/public'),
               urls: %w[/], try: ['.html', 'index.html', '/index.html']
+use Middleware::Authenticate
+
 run Application
