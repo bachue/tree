@@ -107,6 +107,7 @@ task :delete, :name do |t, args|
 end
 
 namespace :sidekiq do
+  desc 'monitor sidekiq status'
   task :monitor do
     require 'sidekiq/web'
     Sidekiq.configure_client do |config|

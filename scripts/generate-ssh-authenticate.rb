@@ -6,7 +6,7 @@ erb = File.read(File.expand_path(File.dirname(__FILE__) + '/ssh-authenticate.rb.
 content = ERB.new(erb).result binding
 
 if ARGV[0]
-  File.write content, ARGV[0]
+  File.write ARGV[0], content
 else
   puts content
 end
