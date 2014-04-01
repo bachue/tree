@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 user = ARGV[0] or raise "Usage: #{$0} username"
+user == 'git' or raise 'username must be "git"'
 
 require 'sqlite3'
 
