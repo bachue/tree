@@ -327,14 +327,14 @@ input.ng-invalid, textarea.ng-invalid {
 }
 
 /*
- * Project config dialog
+ * New Project dialog
  */
 
-.project-config-text-input {
+.new-project-dialog-text-input {
     margin-bottom: 10px;
 }
 
-.project-config-text-input > .input-group-addon {
+.new-project-dialog-text-input > .input-group-addon {
     min-width: 70px;
 }
 
@@ -342,7 +342,7 @@ input.ng-invalid, textarea.ng-invalid {
  * Project help dialog
  */
 
-#project-help .modal-dialog {
+#project-help-dialog .modal-dialog {
     width: 800px;
 }
 
@@ -493,7 +493,7 @@ input.ng-invalid, textarea.ng-invalid {
  * Commit Message
  */
 
-#commit_dialog_message, #commit_dialog_description {
+#code-commit-dialog input, #code-commit-dialog textarea {
     margin: 5px 0;
 }
 
@@ -583,27 +583,27 @@ input.ng-invalid, textarea.ng-invalid {
 /*
  * Key configuration
  */
-#key-dialog tr {
+#key-config-dialog tr {
     height: 50px;
 }
 
-#key-dialog td.btn-col {
+#key-config-dialog td.btn-col {
     width: 100px;
 }
 
-#key-dialog td.btn-col button {
+#key-config-dialog td.btn-col button {
     width: 64px;
 }
 
-#key-dialog td input, #key-dialog td textarea {
+#key-config-dialog td input, #key-config-dialog td textarea {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-#key-dialog td textarea {
+#key-config-dialog td textarea {
     height: 200px;
 }
 
-#key-dialog .key_fingerprint {
+#key-config-dialog .key_fingerprint {
     color: rgba(0, 0, 0, 0.7);
 }

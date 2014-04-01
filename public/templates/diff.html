@@ -1,4 +1,7 @@
 <div class="diff-panel">
+    <div data-ng-if="(diff.diff | withoutBinary).length == 0">
+        <strong>They're the same!</strong>
+    </div>
     <div class="panel panel-default" data-ng-repeat="patch in diff.diff | withoutBinary">
         <div class="panel-heading">
             <div class="pull-left" data-ng-if="diff.author">

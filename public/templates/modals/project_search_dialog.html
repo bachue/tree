@@ -1,0 +1,24 @@
+<div class="modal fade" id="project-search-dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body" data-ng-if="!searchbar.searching">
+        <form role="search">
+            <div class="input-group">
+              <input type="text" autofocus class="form-control query-text" placeholder="Search ..." data-ng-model="searchbar.query" data-ng-keypress="keypress_in_searchbar($event)" name="query_text">
+              <span class="input-group-addon"><a href="javascript:void(0)" data-ng-click="search()" class="glyphicon glyphicon-search"></a></span>
+            </div>
+        </form>
+        <div class="list-group">
+            <a href="javascript:void(0)" class="list-group-item" data-ng-repeat="result in searchbar.results.both" data-ng-click="open_path(result)"><span class="badge">Name</span><span class="badge">Content</span><span data-ng-bind="result"></span></a>
+            <a href="javascript:void(0)" class="list-group-item" data-ng-repeat="result in searchbar.results.filenames" data-ng-click="open_path(result)"><span class="badge">Name</span><span data-ng-bind="result"></span></a>
+            <a href="javascript:void(0)" class="list-group-item" data-ng-repeat="result in searchbar.results.content" data-ng-click="open_path(result)"><span class="badge">Content</span><span data-ng-bind="result"></span></a>
+        </div>
+      </div>
+      <div class="modal-body" data-ng-if="searchbar.searching">
+        <div class="progress progress-striped active">
+            <div class="progress-bar widest" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">Searching...</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

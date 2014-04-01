@@ -17,12 +17,12 @@ class Project < ActiveRecord::Base
   def render file, tag, raw: false
     content = cat_file file, tag
     renderer = Renderers.choose_for(file)
-    if content == false then [false, renderer] # File not found
+    if content == false then [false, renderer, last_commit_id(tag)] # File not found
     elsif content.is_a? String
       if renderer
         # File exists & Can be rendered
         if raw
-          [content, renderer, blob_id_of(file, tag), last_commit_id(tag)]
+          [content, renderer, last_commit_id(tag)]
         else
           [renderer.render(content), renderer]
         end
@@ -46,7 +46,7 @@ class Project < ActiveRecord::Base
   end
 
   def tags
-    Git.tag path
+    Git.tag(path).sort
   end
 
   def add_tag tag_name

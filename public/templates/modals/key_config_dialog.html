@@ -1,0 +1,44 @@
+<div class="modal fade" id="key-config-dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">SSH keys</h4>
+      </div>
+      <div class="modal-body">
+        <table data-ng-if="!key_config_dialog.loading" class="widest">
+            <tr>
+                <td colspan="2" class="text-left">
+                    <button type="button" data-ng-click="add_new_key()" class="btn btn-sm btn-default">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </td>
+            </tr>
+            <tr data-ng-repeat="key in key_config_dialog.keys">
+                <td class="text-left">
+                    <div class="key_name"><strong data-ng-bind="key.name"></strong></div>
+                    <div class="key_fingerprint" data-ng-bind="key.fingerprint"></div>
+                </td>
+                <td class="text-center btn-col">
+                    <button type="button" data-ng-click="delete_key(key.id)" class="btn btn-sm btn-danger">Revoke</button>
+                </td>
+            </tr>
+            <tr data-ng-if="key_config_dialog.new">
+                <td class="text-left">
+                    <form name="new_key_form">
+                        <input type="text" class="form-control" placeholder="Title" data-ng-model="key_config_dialog.new.name" data-required data-ng-maxlength="250" data-uniq-key-name>
+                        <textarea placeholder="Key" class="form-control" data-required data-ng-model="key_config_dialog.new.public_key"></textarea>
+                    </form>
+                </td>
+                <td class="text-center btn-col">
+                    <button type="button" data-ng-click="commit_new_key()" data-ng-disabled="new_key_form.$invalid" class="btn btn-sm btn-primary">Submit</button>
+                </td>
+            </tr>
+        </table>
+        <div class="progress progress-striped active" data-ng-if="key_config_dialog.loading">
+            <div class="progress-bar widest" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">Loading...</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

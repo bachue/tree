@@ -1,6 +1,7 @@
 require 'open3'
 require 'fileutils'
 require 'escape'
+require 'securerandom'
 require 'rugged'
 
 unless (not_implemented = [:https, :ssh] - Rugged.features).empty?
@@ -62,12 +63,7 @@ Stderr: #{errput}
       repo = get_repo target
       # TODO: use add_to_index here
       builder = Rugged::Tree::Builder.new
-      Rugged::Commit.create repo, tree: builder.write(repo),
-                            message: 'Initial commit',
-                            parents: [],
-                            update_ref: 'HEAD',
-                            author: author,
-                            committer: author
+      create_commit repo, builder.write(repo), 'initial commit', branch: branch
       push repo, branches: 'master'
     end
 
@@ -134,24 +130,36 @@ Stderr: #{errput}
 
       repo = get_repo target
 
-      # Validate your parent
-      blob_id = object_id_of(repo, repo.branches[branch].target.tree, file_path)
-      # If blob_id is false, means to create new file in git repo
-      if blob_id && based_on != blob_id
-        raise CommitError.new "That file has been modified before your commit! Please edit and commit again"
+      if based_on
+        temp_branch_name = SecureRandom.hex
+        temp_ref_name = "refs/heads/#{temp_branch_name}"
+        repo.create_branch temp_branch_name, based_on
       end
 
-      oid = repo.write file_content, :blob
-      index = repo.index
-      index.add path: file_path, oid: oid, mode: 0100644
-      Rugged::Commit.create repo, tree: index.write_tree(repo),
-                                  message: message,
-                                  parents: repo.empty? ? [] : [repo.branches[branch].target_id],
-                                  update_ref: 'HEAD',
-                                  author: author,
-                                  committer: author
-      clear_all target
-      push repo, branches: branch
+      begin
+        oid = repo.write file_content, :blob
+        index = repo.index
+        index.add path: file_path, oid: oid, mode: 0100644
+        if based_on
+          commit_id = create_commit repo, index.write_tree(repo), message, based_on: based_on, update_ref: temp_ref_name, branch: branch
+          temp_commit = repo.lookup commit_id
+          current_commit = repo.branches[branch].target
+          base_commit = repo.lookup based_on
+          index = current_commit.tree.merge temp_commit.tree, base_commit.tree
+
+          if index.conflicts?
+            raise CommitError.new <<-ERROR
+  That file has been modified before your commit! Merge conflict! Please edit and commit again.
+            ERROR
+          end
+        end
+
+        create_commit repo, index.write_tree(repo), message, branch: branch
+        push repo, branches: branch
+      ensure
+        clear_all target
+        repo.branches.delete temp_branch_name if temp_branch_name
+      end
     end
 
     def diff_between_changes target, file_path, file_content, based_on, branch = 'master'
@@ -172,16 +180,12 @@ Stderr: #{errput}
       index = repo.index
       begin
         index.remove file_path
-        Rugged::Commit.create repo, tree: index.write_tree(repo),
-                                    message: message,
-                                    parents: repo.empty? ? [] : [repo.branches[branch].target_id],
-                                    update_ref: 'HEAD',
-                                    author: author,
-                                    committer: author
-        clear_all target
+        create_commit repo, index.write_tree(repo), message, branch: branch
         push repo, branches: branch
       rescue Rugged::IndexError
         # If file is not existed, do nothing
+      ensure
+        clear_all target
       end
     end
 
@@ -318,6 +322,16 @@ done
 
       def get_repo target
         target.is_a?(Rugged::Repository) ? target : Rugged::Repository.new(target)
+      end
+
+      def create_commit repo, tree, message, based_on: nil, update_ref: 'HEAD', author: author, branch: 'master'
+        based_on ||= repo.branches[branch].target_id unless repo.empty?
+        Rugged::Commit.create repo, tree: tree,
+                                    message: message,
+                                    parents: Array(based_on),
+                                    update_ref: update_ref,
+                                    author: author,
+                                    committer: author
       end
 
       def credentials # TODO: Need to wait for HTTPS authorization

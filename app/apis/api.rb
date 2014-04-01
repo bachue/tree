@@ -220,20 +220,20 @@ class API < Grape::API
 
       update_project project
 
-      result, renderer, blob_id, last_commit =  project.lock_as_reader do
-                                                  project.raw params[:path], params[:tag_name]
-                                                end
+      result, renderer, last_commit = project.lock_as_reader do
+                                        project.raw params[:path], params[:tag_name]
+                                      end
       case result
       when false
         status 404
-        if renderer then {empty: true, type: renderer.name}
+        if renderer then {empty: true, type: renderer.name, last_commit: last_commit}
         else             {not_found: true}
         end
       when :tree
         error! 'Path is a directory, not supported', 400
       else
-        if renderer && blob_id
-          {raw: result, type: renderer.name, blob: blob_id, commit: last_commit}
+        if renderer && last_commit
+          {raw: result, type: renderer.name, last_commit: last_commit}
         else # result == nil means file exists but can't be rendered
           content_type "application/x-download"
           env['api.format'] = :binary
@@ -282,7 +282,7 @@ class API < Grape::API
       requires :content, type: String, desc: 'File content'
       requires :message, type: String, desc: 'Commit message'
       optional :description, type: String, desc: 'Commit description'
-      requires :base, type: String, desc: 'Commit based on'
+      optional :base, type: String, desc: 'Commit based on'
     end
     put '/:id/raw/*path', anchor: false do
       project = load_project id: params[:id]

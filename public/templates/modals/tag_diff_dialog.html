@@ -1,0 +1,31 @@
+<div class="modal fade" id="tag-diff-dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" data-ng-if="tag_diff_dialog.tag" data-ng-bind="'Diff between ' + current.tag_name + ' and ' + tag_diff_dialog.tag"></h4>
+        <h4 class="modal-title" data-ng-if="!tag_diff_dialog.tag">Diff</h4>
+      </div>
+      <div class="modal-body">
+        <form name="tag_diff_form">
+            <div class="input-group widest" data-ng-if="!tag_diff_dialog.processing && !tag_diff_dialog.diff">
+                <input list="project_tags" data-ng-model="tag_diff_dialog.tag" data-required type="text" class="form-control" placeholder="Which tag?" data-existed-tag data-ng-keypress="keypress_to_diff_tags($event)" />
+                <datalist id="project_tags">
+                    <option data-ng-value="tag" data-ng-repeat="tag in existed_tags_without_current()" />
+                </datalist>
+            </div>
+            <div class="progress progress-striped active" data-ng-if="tag_diff_dialog.processing">
+                <div class="progress-bar widest" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                    <span class="sr-only">Querying...</span>
+                </div>
+            </div>
+            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!tag_diff_dialog.processing && !!tag_diff_dialog.diff" data-ng-init="diff = tag_diff_dialog"></div>
+        </form>
+      </div>
+      <div class="modal-footer" data-ng-if="!tag_diff_dialog.processing && !tag_diff_dialog.diff">
+        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-ng-click="do_diff_between_tags()" data-ng-disabled="tag_diff_dialog.processing || tag_diff_form.$invalid">Diff</button>
+      </div>
+    </div>
+  </div>
+</div>

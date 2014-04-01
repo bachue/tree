@@ -1,91 +1,77 @@
-define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'essage', 'ace', 'factories/projects'], function(tag_controller, $, marked, textile, hljs, essage) {
-    return tag_controller.controller('Edit', function($scope, $state, $sce, $timeout, Projects) {
-        if (!$scope.current.tag_name) return;
+define(['controllers/tag', 'jquery', 'bootbox', 'ace', 'factories/projects', 'factories/preview', 'factories/loading_indicator', 'factories/preview_mode', 'factories/notice', 'factories/commit_mode'], function(tag_controller, $, bootbox) {
+    return tag_controller.controller('Edit', function($scope, $state, $timeout, Projects, PreviewFactory, LoadingIndicator, PreviewMode, Notice, CommitMode) {
+        if (!$scope.current.project || !$scope.current.tag_name) return;
 
         if (!$state.params.document_path && $scope.current.document_path)
             return $state.go('application.project.tag.edit', {document_path: $scope.current.document_path}, {location: 'replace'});
 
-        if ($state.params.tag_name !== 'HEAD') {
+        if ($state.params.tag_name !== 'HEAD')
             return $state.go('application.project.tag.doc', {document_path: null}, {location: 'replace'});
-        }
-
-        marked.setOptions({
-            highlight: function(code, type) {
-                var value;
-                if (type) {
-                    try {
-                        value = hljs.highlight(type, code).value;
-                    } catch(err) {
-                        value = hljs.highlightAuto(code).value;
-                    }
-                }
-                else
-                    value = hljs.highlightAuto(code).value;
-                return value;
-            }
-        });
 
         $scope.enable_preview = function() {
-            $scope.current.preview_mode = 'with_preview';
-            if (window.localStorage) localStorage['preview_mode'] = $scope.current.preview_mode;
+            PreviewMode.enable_preview_mode();
+            if (window.localStorage) localStorage['preview_mode'] = PreviewMode.get();
         };
 
         $scope.disable_preview = function() {
-            $scope.current.preview_mode = 'without_preview';
-            if (window.localStorage) localStorage['preview_mode'] = $scope.current.preview_mode;
+            PreviewMode.disable_preview_mode();
+            if (window.localStorage) localStorage['preview_mode'] = PreviewMode.get();
         };
 
         $scope.preview_disabled = function() {
-            return $scope.current.doc_type && $scope.current.preview_mode == 'without_preview';
+            return $scope.doc_type && PreviewMode.preview_disabled();
         };
 
         $scope.preview_enabled = function() {
-            return $scope.current.doc_type && $scope.current.preview_mode == 'with_preview';
+            return $scope.doc_type && PreviewMode.preview_enabled();
         };
 
-        if (window.localStorage) $scope.current.preview_mode = $scope.current.preview_mode || localStorage['preview_mode'];
-        $scope.current.preview_mode = $scope.current.preview_mode || 'with_preview';
+        $scope.current_preview_mode = PreviewMode.get;
+
+        $scope.cancel_and_back_to_doc = function() {
+            bootbox.confirm({
+                message: "Your changes will be lost.<br /><br />Are you sure you want to leave this page?",
+                buttons: {
+                    cancel: {label: 'No'},
+                    confirm: {className: 'btn-danger', label: 'Sure'}
+                },
+                callback: function(result) {
+                    if (result) {
+                        if (CommitMode.is_create_mode())
+                            delete $scope.current.document_path;
+                        $scope.$broadcast('aceEditorCleared');
+                        $state.go('application.project.tag.doc', {document_path: $scope.current.document_path});
+                    }
+                }
+            });
+        };
+
+        if (window.localStorage && PreviewMode.is_undefined())
+            PreviewMode.set(localStorage['preview_mode']);
+
+        if (PreviewMode.is_undefined()) PreviewMode.switch_to_default_mode();
 
         var initialize_ace = function(doc) {
             if(!_.isUndefined(doc['raw'])) {
-                var callback;
-                $scope.current.raw_document = doc['raw'];
-                $scope.current.commit_dialog.base = doc['blob'];
-                $scope.current.commit_dialog.last = doc['commit'];
+                var renderer;
+                if (doc['last_commit']) CommitMode.set_last_commit_id(doc['last_commit']);
 
                 if (doc['type']) {
-                    $scope.current.doc_type = doc['type'];
-                    switch (doc['type']) {
-                    case 'markdown':
-                        callback = function(editor) {
-                            var markdown = editor.getValue();
-                            markdown = markdown.replace(/\[\[([^\]]+)\]\]/, '[$1]($1)');
-                            var rendered = marked(markdown);
-                            var dom = handle($(rendered));
-                            return $sce.trustAsHtml($('<div />').append(dom).html());
-                        };
-                        break;
-                    case 'textile':
-                        callback = function(editor) {
-                            var rendered = textile(editor.getValue());
-                            var dom = handle($(rendered));
-                            return $sce.trustAsHtml($('<div />').append(dom).html());
-                        };
-                        break;
-                    case 'html':
-                        callback = function(editor) {
-                            var dom = handle($(editor.getValue()));
-                            return $sce.trustAsHtml($('<div />').append(dom).html());
-                        };
-                        break;
-                    default:
-                        delete $scope.current.doc_type;
-                    }
+                    $scope.doc_type = doc['type'];
+                    renderer = PreviewFactory.renderer(doc['type'], {
+                        before: function(content, type) {
+                            if (type === 'markdown')
+                                return content.replace(/\[\[([^\]]+)\]\]/g, '[$1]($1)');
+                            else
+                                return content;
+                        },
+                        after: handle
+                    });
                 }
 
                 $timeout(function() {
                     var editor = ace.edit('editor');
-                    editor.setTheme('ace/theme/chrome');
+                    if (!editor.getTheme()) editor.setTheme('ace/theme/chrome');
                     if (doc['type']) editor.getSession().setMode('ace/mode/' + doc['type']);
                     editor.setAutoScrollEditorIntoView();
                     editor.setOptions({
@@ -95,8 +81,8 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'essage',
                     editor.setValue(doc['raw'], 1);
                     $scope.$broadcast('aceEditorInitilized', editor, doc['raw']);
 
-                    if (callback) {
-                        var update_preview = function() { $scope.current.preview = callback(editor); };
+                    if (renderer) {
+                        var update_preview = function() { $scope.preview = renderer(editor); };
                         editor.getSession().on('change', function() { $timeout(update_preview); });
                         update_preview();
                     }
@@ -106,13 +92,14 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'essage',
 
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;
+            $scope.select_tree($scope.current.document_path);
 
             if ($state.params.new === 'true') {
-                $scope.current.commit_dialog.mode = 'Create';
-                initialize_ace({raw: '', blob: null, commit: null, type: $state.params.type});
+                CommitMode.switch_to_create_mode();
+                initialize_ace({raw: '', last_commit: $state.params.last_commit, type: $state.params.type});
             } else {
-                $scope.current.loading += 1;
-                $scope.current.commit_dialog.mode = 'Edit';
+                LoadingIndicator.load();
+                CommitMode.switch_to_edit_mode();
                 Projects.get($scope.current.project.id).
                     tag($scope.current.tag_name).
                     raw($scope.current.document_path).
@@ -120,16 +107,11 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'essage',
                         if (error.status === 404 && error.data.empty === true)
                             $state.go('application.project.tag.edit', {
                                 document_path: $scope.current.document_path,
-                                new: true, type: error.data.type
+                                new: true, type: error.data.type, last_commit: error.data.last_commit
                             }, {location: 'replace'});
                         else if (error.status === 404 && error.data.not_found === true)
-                            essage.show({
-                                message: "You're forbidden to create file " + $scope.current.document_path,
-                                status: 'warning'
-                            }, 5000);
-                    }).finally(function() {
-                        $scope.current.loading -= 1;
-                    });
+                            Notice.warning("Sorry, You're forbidden to create file " + $scope.current.document_path);
+                    }).finally(LoadingIndicator.loaded);
             }
         }
         else throw 'document_path is not set, failed to edit it';
@@ -137,7 +119,7 @@ define(['controllers/tag', 'jquery', 'marked', 'textile', 'highlight', 'essage',
        function handle(dom) {
             dom.find('a[href]').each(function(i, e) { // Important for ui-router
                 var href = $(e).attr('href');
-                if (href.indexOf('javascript:') !== 0)
+                if (href.indexOf('javascript:') === -1)
                     $(e).attr('href', 'javascript:open("' + correct_url(href) + '");');
             });
 

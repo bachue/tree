@@ -1,5 +1,5 @@
-define(['factories', 'bootbox', 'essage'], function(factories, bootbox, essage) {
-    return factories.factory('CommonFactory', function(Restangular) {
+define(['factories', 'bootbox', 'factories/notice'], function(factories, bootbox) {
+    return factories.factory('CommonFactory', function(Notice) {
         return {
             resolveCallback: function(deferred) {
                 return function(result) {
@@ -14,10 +14,7 @@ define(['factories', 'bootbox', 'essage'], function(factories, bootbox, essage) 
                     else if (error.data.message)
                         bootbox.alert(error.data.message);
                     else
-                        essage.show({
-                            message: 'Ooh... Looks like somethings wrong... Please check the network connection and try again.',
-                            status: 'error'
-                        }, 5000);
+                        Notice.error('Ooh... Looks like somethings wrong... Please check the network connection and try again.');
                     deferred.reject(error);
                 };
             }

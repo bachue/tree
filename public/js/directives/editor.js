@@ -1,23 +1,26 @@
-define(['directives', 'ace'], function(directives) {
+define(['directives', 'jquery', 'ace'], function(directives, $) {
     directives.directive('autoSaveSettings', function() {
         return function(scope, element) {
             if (window.localStorage) {
-                var editor = ace.edit(element.attr('id'));
-                if (localStorage['editor.options'])
-                    editor.setOptions(JSON.parse(localStorage['editor.options']));
-                if (localStorage['editor.keyBinding'])
-                    editor.setKeyboardHandler(localStorage['editor.keyBinding']);
-
-                element.bind('$destroy', function(e) {
-                    var editor = ace.edit(e.target.id);
-                    var options = editor.getOptions();
-                    delete options.mode; // Mode is decided by current file
-                    var keyBinding = editor.getKeyboardHandler().$id;
-                    localStorage['editor.options'] = JSON.stringify(options);
-                    if (keyBinding) localStorage['editor.keyBinding'] = keyBinding;
-                    else            localStorage.removeItem('editor.keyBinding');
-                    return true;
+                scope.$on('aceEditorInitilized', function(e, editor) {
+                    if (localStorage['editor.options'])
+                        editor.setOptions(JSON.parse(localStorage['editor.options']));
+                    if (localStorage['editor.keyBinding'])
+                        editor.setKeyboardHandler(localStorage['editor.keyBinding']);
+                    $(window).unload(function() { saveSettings(); });
+                    $(editor.container).bind('$destroy', function(e) { saveSettings(ace.edit(e.target.id)); });
                 });
+            }
+
+            function saveSettings(editor) {
+                if (!editor) editor = ace.edit(element.attr('id'));
+                var options = editor.getOptions();
+                delete options.mode; // Mode is decided by current file
+                var keyBinding = editor.getKeyboardHandler().$id;
+                localStorage['editor.options'] = JSON.stringify(options);
+                if (keyBinding) localStorage['editor.keyBinding'] = keyBinding;
+                else            localStorage.removeItem('editor.keyBinding');
+                return true;
             }
         };
     });

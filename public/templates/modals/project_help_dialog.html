@@ -1,0 +1,17 @@
+<div class="modal fade" id="project-help-dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body" data-ng-if="current.project">
+            <h3>To edit wiki for this project, please:</h3>
+            <pre>
+git clone &quot;<span data-ng-bind="current.project.url"></span>&quot;
+git checkout <span data-ng-bind="current.project.branch"></span>
+# Edit something in your faviorite editor ...
+git add --all .
+git commit
+git push origin <span data-ng-bind="current.project.branch"></span>
+# Refresh current page and you will see the change!</pre>
+      </div>
+    </div>
+  </div>
+</div>

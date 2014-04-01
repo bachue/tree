@@ -1,0 +1,25 @@
+<div class="modal fade" id="new-tag-dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">New Tag</h4>
+      </div>
+      <div class="modal-body">
+        <form name="new_tag_form">
+            <div class="input-group" data-ng-if="!new_tag_dialog.pushing">
+                <span class="input-group-addon">Tag</span>
+                <input autofocus type="text" class="form-control" name="tag_name" data-ng-model="new_tag_dialog.tag_name" data-required data-ng-maxlength="20" data-uniq-tag data-ng-keypress="keypress_to_create_tag($event)" />
+            </div>
+            <div class="progress progress-striped active" data-ng-if="new_tag_dialog.pushing">
+                <div class="progress-bar widest" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">Tag pushing...</span></div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-ng-click="add_tag()" data-ng-disabled="new_tag_dialog.pushing || new_tag_form.$invalid">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>

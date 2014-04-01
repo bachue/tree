@@ -1,6 +1,6 @@
-define(['controllers/tag', 'highlight', 'essage', 'factories/projects'], function(tag_controller, hljs, essage) {
-    return tag_controller.controller('Doc', function($scope, $state, $sce, $timeout, Projects) {
-        if (!$scope.current.tag_name) return;
+define(['controllers/tag', 'highlight', 'factories/projects', 'factories/loading_indicator', 'factories/notice', 'factories/commit_mode'], function(tag_controller, hljs) {
+    return tag_controller.controller('Doc', function($scope, $state, $sce, $timeout, Projects, LoadingIndicator, Notice, CommitMode) {
+        if (!$scope.current.project || !$scope.current.tag_name) return;
 
         if (!$state.params.document_path && $scope.current.document_path)
             return $state.go('application.project.tag.doc', {document_path: $scope.current.document_path}, {location: 'replace'});
@@ -13,17 +13,25 @@ define(['controllers/tag', 'highlight', 'essage', 'factories/projects'], functio
             $state.go('application.project.tag.edit', {document_path: $scope.current.document_path});
         };
 
-        $scope.current.loading += 1;
+        $scope.open_commit_dialog_to_remove = function() {
+            CommitMode.switch_to_delete_mode();
+            $('#code-commit-dialog').modal('show');
+        };
+
+        LoadingIndicator.load();
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;
+            $scope.select_tree($scope.current.document_path);
 
             Projects.get($scope.current.project.id).
                 tag($scope.current.tag_name).
                 get($scope.current.document_path).
                 then(function(doc) {
                     if(!_.isUndefined(doc['doc'])) {
-                        $scope.current.document = $sce.trustAsHtml(doc['doc']);
-                        handle();
+                        var dom = $('<div />').append(doc['doc']);
+                        handle(dom);
+                        doc = $sce.trustAsHtml(dom.html());
+                        $scope.current.document = doc;
                     }
                 }, function(error) {
                     if ($scope.current.tag_name != 'HEAD') {
@@ -36,61 +44,42 @@ define(['controllers/tag', 'highlight', 'essage', 'factories/projects'], functio
                             new: true, type: error.data.type
                         }, {location: 'replace'});
                     else if (error.status === 404 && error.data.not_found === true)
-                        essage.show({
-                            message: "You're forbidden to create file " + $scope.current.document_path,
-                            status: 'warning'
-                        }, 5000);
-                }).finally(function() {
-                    $scope.current.loading -= 1;
-                });
+                        Notice.warning("Sorry, You're forbidden to create file " + $scope.current.document_path);
+                }).finally(LoadingIndicator.loaded);
         } else {
             Projects.get($scope.current.project.id).
                 tag($scope.current.tag_name).
                 suggest().
                 then(function(result) {
                     $state.go('application.project.tag.doc', {document_path: result['suggest']}, {location: 'replace'});
-                    $scope.select_tree(result['suggest']);
-                }).finally(function() {
-                    $scope.current.loading -= 1;
-                });
+                }).finally(LoadingIndicator.loaded);
         }
 
-        function handle() {
-            $timeout(function() {
-                $('#current_document pre code').each(function(i, e) {
-                    $(e).addClass($(e).parent('pre').attr('lang'));
-                    hljs.highlightBlock(e);
-                });
+        function handle(dom) {
+            $('pre code', dom).each(function(i, e) {
+                var lang = $(e).parent('pre').attr('lang');
+                hljs.highlightBlock(e);
+            });
 
-                $('#current_document a[href]').each(function(i, e) { // Important for ui-router
-                    var href = $(e).attr('href');
-                    if (href.indexOf('javascript:') !== 0) {
-                        if (href.indexOf('://') === -1 && href.indexOf('/') !== 0) {
-                            $(e).attr('href', 'javascript:void(0)');
-                            $(e).click(function() {
-                                $state.go('application.project.tag.doc', {document_path: expand_path(href)});
-                                $scope.select_tree(expand_path(href));
-                            });
-                        }
-                        else
-                            $(e).attr('href', 'javascript:open("' + href + '")');
-                    }
-                });
+            $('a[href]', dom).each(function(i, e) { // Important for ui-router
+                var href = $(e).attr('href');
+                if (href.indexOf('javascript:') === -1 && href.indexOf('://') !== -1)
+                    $(e).attr('href', 'javascript:open("' + href + '")');
+            });
 
-                $('#current_document img, #current_document audio, #current_document video').each(function(i, e) {
-                    var src = $(e).attr('src');
-                    if (src.indexOf('://') === -1 && src.indexOf('/') !== 0) {
-                        var url = '/' + $scope.current.project.name;
-                        url += '/' + $scope.current.tag_name;
-                        url += '/' + expand_path(src);
-                        $(e).attr('src', url);
-                    }
-                });
-
-                function expand_path(path) {
-                    return $scope.current.document_path.split('/').slice(0, -1).concat(path).join('/');
+            $('img,audio,video', dom).each(function(i, e) {
+                var src = $(e).attr('src');
+                if (src.indexOf('://') === -1 && src.indexOf('/') !== 0) {
+                    var url = '/' + $scope.current.project.name;
+                    url += '/' + $scope.current.tag_name;
+                    url += '/' + expand_path(src);
+                    $(e).attr('src', url);
                 }
             });
+
+            function expand_path(path) {
+                return $scope.current.document_path.split('/').slice(0, -1).concat(path).join('/');
+            }
         }
     });
 });

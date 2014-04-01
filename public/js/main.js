@@ -65,10 +65,14 @@ require.config({
     shim: shim
 });
 
-require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants', 'ace', 'bootbox',
+require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants',
          'controllers/application', 'controllers/project', 'controllers/tag', 'controllers/edit', 'controllers/doc',
-         'directives/application', 'directives/doc', 'directives/editor',
-         'filters/application', 'factories/projects', 'factories/keys'], function(angular, app, domReady, $) {
+         'filters/application', 'directives/doc', 'directives/editor',
+         'directives/modals/new_project_dialog', 'directives/modals/new_tag_dialog',
+         'directives/modals/project_search_dialog', 'directives/modals/project_help_dialog',
+         'directives/modals/code_commit_dialog', 'directives/modals/tag_diff_dialog',
+         'directives/modals/history_dialog', 'directives/modals/key_config_dialog'],
+         function(angular, app, domReady, $) {
     app.config(function($stateProvider, $urlRouterProvider, $locationProvider, RestangularProvider) {
         $stateProvider.
            state('application', {
@@ -90,7 +94,7 @@ require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_c
             controller: 'Tag',
             templateUrl: '/templates/tag.html'
         }).state('application.project.tag.edit', {
-            url: '/edit/*document_path?new&type',
+            url: '/edit/*document_path?new&type&last_commit',
             controller: 'Edit',
             templateUrl: '/templates/edit.html'
         }).state('application.project.tag.doc', {
