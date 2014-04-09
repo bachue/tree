@@ -1,4 +1,4 @@
-define(['directives', 'factories/modal'], function(directives) {
+define(['directives', 'directives/modals', 'factories/modal'], function(directives) {
     directives.directive('projectHelpDialog', function(Modal) {
         return {
             restrict: 'E',

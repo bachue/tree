@@ -1,4 +1,4 @@
-define(['directives', 'underscore', 'factories/projects', 'factories/modal'], function(directives, _) {
+define(['directives', 'underscore', 'directives/modals', 'factories/projects', 'factories/modal'], function(directives, _) {
     directives.directive('newProjectDialog', function(Modal) {
         return {
             restrict: 'E',

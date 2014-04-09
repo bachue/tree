@@ -10,13 +10,19 @@
                     <div data-ng-if="!new_project_dialog.cloning">
                         <div class="input-group new-project-dialog-text-input">
                             <span class="input-group-addon">Project</span>
-                            <input type="text" autofocus class="form-control" name="project_name" data-uniq-project data-ng-model="new_project_dialog.name" data-required data-ng-maxlength="30" placeholder="e.g. Bifrost" data-ng-pattern="/^[\w\s\-]+$/" />
+                            <span data-validation-state>
+                                <input type="text" autofocus class="form-control" name="project_name" data-uniq-project data-ng-model="new_project_dialog.name" data-required data-ng-maxlength="30" placeholder="e.g. Bifrost" data-ng-pattern="/^[\w\s\-]+$/" />
+                            </span>
                             <span class="input-group-addon">Branch</span>
-                            <input type="text" class="form-control" name="branch_name" data-ng-model="new_project_dialog.branch" data-required data-ng-maxlength="30" placeholder="e.g. master" />
+                            <span data-validation-state>
+                                <input type="text" class="form-control" name="branch_name" data-ng-class="{'has-error': new_project_form.branch_name.$invalid, 'has-success': !new_project_form.branch_name.$invalid}" data-ng-model="new_project_dialog.branch" data-required data-ng-maxlength="30" placeholder="e.g. master" />
+                            </span>
                         </div>
                         <div class="input-group new-project-dialog-text-input">
                             <span class="input-group-addon">Git</span>
-                            <input type="text" class="form-control" name="git_url" data-ng-model="new_project_dialog.url" data-required placeholder="e.g. https://mozy@gerrit.dechocorp.com:29418/bifrost.git" data-ng-maxlength="255" data-ng-pattern="/^((?:http|https|ssh):\/\/[^\/:.]+\.[^\/:]+(:\d+)?\/\w+|([^@:]+(:[^@]+)?@)?[^\/:.]+\.[^\/:]+(:\w+)?)/" />
+                            <span data-validation-state>
+                                <input type="text" class="form-control" name="git_url" data-ng-model="new_project_dialog.url" data-required placeholder="e.g. https://mozy@gerrit.dechocorp.com:29418/bifrost.git" data-ng-maxlength="255" data-ng-pattern="/^((?:http|https|ssh):\/\/[^\/:.]+\.[^\/:]+(:\d+)?\/\w+|([^@:]+(:[^@]+)?@)?[^\/:.]+\.[^\/:]+(:\w+)?)/" />
+                            </span>
                             <span class="input-group-btn"><button class="btn btn-primary" type="button" data-ng-click="create_new_repo()">New Repo</span>
                         </div>
                     </div>

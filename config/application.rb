@@ -1,7 +1,9 @@
 require 'active_record'
+require 'active_support/all'
 require 'yaml'
 require 'erb'
 require 'pathname'
+require 'fileutils'
 
 class Application
   class << self
@@ -31,16 +33,19 @@ class Application
       end
   end
 
-  ROOT = Pathname File.expand_path(File.dirname(__FILE__) + '/../') unless defined?(ROOT)
-  RACK_ENV = ENV['RACK_ENV'] || 'development' unless defined?(RACK_ENV)
-  REPO = ROOT.join 'repos'
-  REPO_SVR = if RACK_ENV == 'production' then Pathname('/home/git')
-             else                             ROOT.join('tmp')
+  ROOT = Pathname File.expand_path(File.dirname(__FILE__) + '/../')
+  RACK_ENV = ActiveSupport::StringInquirer.new(ENV['RACK_ENV'] || 'development')
+  REPO = if RACK_ENV.production? then FileUtils.mkdir_p('/repos') && Pathname('/repos')
+         else                         ROOT.join 'repos'
+         end
+  REPO_SVR = if RACK_ENV.production? then Pathname '/home/git'
+             else                         ROOT.join 'tmp'
              end
 
   REDIS_CONFIG = load_config 'redis.yml'
+  REDIS_SESSION_EXPIRES = 1.hour
 
-  require 'pry' if RACK_ENV != 'production'
+  require 'pry' unless RACK_ENV.production?
 
   ActiveRecord::Base.configurations = load_config 'database.yml'
 

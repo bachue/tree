@@ -7,8 +7,7 @@
       </div>
       <div class="modal-body">
         <form name="new_tag_form">
-            <div class="input-group" data-ng-if="!new_tag_dialog.pushing">
-                <span class="input-group-addon">Tag</span>
+            <div data-ng-if="!new_tag_dialog.pushing" data-validation-state>
                 <input autofocus type="text" class="form-control" name="tag_name" data-ng-model="new_tag_dialog.tag_name" data-required data-ng-maxlength="20" data-uniq-tag data-ng-keypress="keypress_to_create_tag($event)" />
             </div>
             <div class="progress progress-striped active" data-ng-if="new_tag_dialog.pushing">

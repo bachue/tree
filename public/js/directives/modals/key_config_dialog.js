@@ -1,4 +1,4 @@
-define(['directives', 'jquery', 'factories/keys', 'factories/modal'], function(directives, $) {
+define(['directives', 'jquery', 'directives/modals', 'factories/keys', 'factories/modal'], function(directives, $) {
     directives.directive('keyConfigDialog', function(Modal) {
         return {
             restrict: 'E',

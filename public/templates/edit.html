@@ -6,10 +6,10 @@
         <button type="button" class="btn btn-sm btn-cancel" data-ng-click="cancel_and_back_to_doc()">Cancel</button>
     </div>
 </div>
-<pre data-ng-if="!doc_type" id="editor" data-auto-save-settings data-auto-save-value></pre>
+<pre data-ng-if="!doc_type" id="editor" data-focus data-auto-save-settings data-auto-save-value></pre>
 <table data-ng-if="doc_type" data-ng-class="current_preview_mode()">
     <tr>
-        <td class="editor_part"><pre data-ng-if="doc_type" id="editor" data-auto-save-settings data-auto-save-value></pre></td>
+        <td class="editor_part"><pre data-ng-if="doc_type" id="editor" data-focus data-auto-save-settings data-auto-save-value></pre></td>
         <td class="preview_part"><div data-ng-bind-html="preview" id="document_preview"></div></td>
     </tr>
 </table>

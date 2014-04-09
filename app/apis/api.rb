@@ -120,7 +120,7 @@ class API < Grape::API
             if is_server_provided_repo
               Git.new_repo server_provided_repo_path
               Git.clone "file://#{server_provided_repo_path}", project.path, nil
-              Git.initial_commit project.path, project.branch
+              Git.initial_commit project.path, branch: project.branch, author: author
               Git.add_hook_for_server_check server_provided_repo_path, project.name, project.branch,
                 log: Application::ROOT.join('log', 'git.log'), host: Rack::Request.new(env).base_url
             else
@@ -290,7 +290,7 @@ class API < Grape::API
       begin
         project.lock_as_writer do
           project.add_to_index params[:path], params[:content], params[:base],
-                             "#{params[:message]}\r\n\r\n#{params[:description]}"
+                             "#{params[:message]}\r\n\r\n#{params[:description]}", author: author
         end
       rescue Git::CommitError => e
         status 400
@@ -310,7 +310,7 @@ class API < Grape::API
       project = load_project id: params[:id]
 
       project.lock_as_writer do
-        project.remove_from_index params[:path], "#{params[:message]}\r\n\r\n#{params[:description]}"
+        project.remove_from_index params[:path], "#{params[:message]}\r\n\r\n#{params[:description]}", author: author
       end
       true
     end

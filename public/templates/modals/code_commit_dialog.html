@@ -7,14 +7,17 @@
       </div>
       <div class="modal-body">
         <form name="code_commit_form">
-            <div class="input-group widest" data-ng-if="!code_commit_dialog.pushing">
-                <input data-ng-model="code_commit_dialog.message" data-required type="text" class="form-control" placeholder="{{placeholder()}}" />
-                <textarea class="form-control" data-ng-model="code_commit_dialog.description" rows="5" placeholder="Add an optional extended description ..."></textarea>
+            <div data-ng-if="!code_commit_dialog.pushing">
+                <div data-validation-state>
+                  <input data-ng-model="code_commit_dialog.message" data-required type="text" class="form-control" placeholder="{{placeholder()}}" name="message"/>
+                </div>
+                <textarea class="form-control" name="description" data-ng-model="code_commit_dialog.description" rows="5" placeholder="Add an optional extended description ..."></textarea>
             </div>
             <div class="loading-bar progress progress-striped active" data-ng-if="show_loading_bar()">
                 <div class="progress-bar widest" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"><span class="sr-only">Commit pushing...</span></div>
             </div>
-            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!code_commit_dialog.pushing && code_commit_dialog.diff" data-ng-init="diff = code_commit_dialog"></div>
+            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!code_commit_dialog.pushing && !!code_commit_dialog.diff" data-ng-init="diff = code_commit_dialog; notice_if_none = 'You haven\'t changed anything!'"></div>
+            <!-- !!: looks like data-ng-if regard an empty array as false, but I need it to be true -->
         </form>
       </div>
       <div class="modal-footer">

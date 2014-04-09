@@ -88,7 +88,7 @@ end
 
 desc 'clean all environment, this command cannot run in production mode'
 task :clean do
-  fail 'This command cannot run in production mode.' if Application::RACK_ENV == 'production'
+  fail 'This command cannot run in production mode.' if Application::RACK_ENV.production?
   Rake::Task['db:drop'].invoke
   Rake::Task['db:setup'].invoke
   FileUtils.rm_rf Dir['repos/*']

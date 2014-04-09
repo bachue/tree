@@ -317,10 +317,6 @@ textarea {
     width: 100%;
 }
 
-input.ng-invalid, textarea.ng-invalid {
-    color: red;
-}
-
 .loading-bar {
     margin-top: 15px;
     margin-bottom: 0;
@@ -510,6 +506,10 @@ input.ng-invalid, textarea.ng-invalid {
 
 .diff-panel .panel-heading .deletion {
     color: red;
+}
+
+.diff-panel .panel-heading .tag {
+    margin: 0 4px;
 }
 
 .diff-panel .panel-body {

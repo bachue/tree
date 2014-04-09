@@ -1,4 +1,4 @@
-define(['directives', 'jquery', 'underscore', 'factories/projects', 'factories/modal'], function(directives, $, _) {
+define(['directives', 'jquery', 'underscore', 'directives/modals', 'factories/projects', 'factories/modal'], function(directives, $, _) {
     directives.directive('newTagDialog', function(Modal) {
         return {
             restrict: 'E',

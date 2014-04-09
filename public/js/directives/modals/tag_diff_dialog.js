@@ -1,4 +1,4 @@
-define(['directives', 'jquery', 'factories/projects', 'factories/modal'], function(directives, $) {
+define(['directives', 'jquery', 'directives/modals', 'factories/projects', 'factories/modal'], function(directives, $) {
     directives.directive('tagDiffDialog', function($timeout, Modal) {
         return {
             restrict: 'E',

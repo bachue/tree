@@ -59,11 +59,11 @@ Stderr: #{errput}
       Rugged::Repository.init_at(target, :bare)
     end
 
-    def initial_commit target, branch = 'master'
+    def initial_commit target, branch: 'master', author: nil
       repo = get_repo target
       # TODO: use add_to_index here
       builder = Rugged::Tree::Builder.new
-      create_commit repo, builder.write(repo), 'initial commit', branch: branch
+      create_commit repo, builder.write(repo), 'initial commit', branch: branch, author: author
       push repo, branches: 'master'
     end
 
@@ -125,7 +125,7 @@ Stderr: #{errput}
       last_commit(repo, branch: branch, tag: tag).oid
     end
 
-    def add_to_index target, file_path, file_content, based_on, message, branch = 'master'
+    def add_to_index target, file_path, file_content, based_on, message, branch: 'master', author: author
       pull target, branch
 
       repo = get_repo target
@@ -141,7 +141,7 @@ Stderr: #{errput}
         index = repo.index
         index.add path: file_path, oid: oid, mode: 0100644
         if based_on
-          commit_id = create_commit repo, index.write_tree(repo), message, based_on: based_on, update_ref: temp_ref_name, branch: branch
+          commit_id = create_commit repo, index.write_tree(repo), message, based_on: based_on, update_ref: temp_ref_name, branch: branch, author: author
           temp_commit = repo.lookup commit_id
           current_commit = repo.branches[branch].target
           base_commit = repo.lookup based_on
@@ -154,7 +154,7 @@ Stderr: #{errput}
           end
         end
 
-        create_commit repo, index.write_tree(repo), message, branch: branch
+        create_commit repo, index.write_tree(repo), message, branch: branch, author: author
         push repo, branches: branch
       ensure
         clear_all target
@@ -172,7 +172,7 @@ Stderr: #{errput}
       diff_between repo, based_on, tree
     end
 
-    def remove_from_index target, file_path, message, branch = 'master'
+    def remove_from_index target, file_path, message, branch: 'master', author: author
       pull target, branch
 
       repo = get_repo target
@@ -180,7 +180,7 @@ Stderr: #{errput}
       index = repo.index
       begin
         index.remove file_path
-        create_commit repo, index.write_tree(repo), message, branch: branch
+        create_commit repo, index.write_tree(repo), message, branch: branch, author: author
         push repo, branches: branch
       rescue Rugged::IndexError
         # If file is not existed, do nothing
@@ -229,10 +229,12 @@ done
       commits.reverse! if reverse
 
       groups = (0...commits.size).to_a.map {|i| [commits[i], commits[i + 1] || commits[i].parents.first] }
+      tag_hash = oid_tag_hash repo
       groups.map do |new, old|
         {
           message: new.message,
           author: new.author,
+          tags: tag_hash[new.oid].try(:map, &:name),
           diff: diff_between(repo, old, new, only: file_path)
         }
       end
@@ -281,6 +283,17 @@ done
         end
       end
 
+      def oid_tag_hash repo
+        repo.tags.inject({}) do |hash, tag|
+          if (hash[tag.target_id])
+            hash[tag.target_id] << tag
+          else
+            hash[tag.target_id] = [tag]
+          end
+          hash
+        end
+      end
+
       def last_commit repo, branch: 'master', tag: 'HEAD'
         if tag != 'HEAD'
           repo.tags.detect {|t| t.name == tag }.target
@@ -324,7 +337,7 @@ done
         target.is_a?(Rugged::Repository) ? target : Rugged::Repository.new(target)
       end
 
-      def create_commit repo, tree, message, based_on: nil, update_ref: 'HEAD', author: author, branch: 'master'
+      def create_commit repo, tree, message, based_on: nil, update_ref: 'HEAD', author: nil, branch: 'master'
         based_on ||= repo.branches[branch].target_id unless repo.empty?
         Rugged::Commit.create repo, tree: tree,
                                     message: message,
@@ -340,10 +353,6 @@ done
                                           publickey: "#{ENV['HOME']}/.ssh/id_rsa.pub",
                                           privatekey: "#{ENV['HOME']}/.ssh/id_rsa"
         } # No passphrase for now
-      end
-
-      def author # TODO: To remove it
-        {name: 'Rong Zhou', email: 'rongz@mozy.com'}
       end
   end
 end

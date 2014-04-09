@@ -11,7 +11,7 @@ module Middleware
     def initialize app
       @app = app
       super app, 'Application' do |username, password|
-        key = "session:#{username}:#{Digest::SHA512.hexdigest(password)}"
+        key = "session:#{username}:#{Digest::SHA512.hexdigest(username + password)}"
         user_id = redis.get key
 
         if user_id && user = User.find_by(id: user_id)
@@ -22,6 +22,7 @@ module Middleware
           @name, @email = user.name, user.email
           Application.current_user = user
           redis.set key, user.id
+          redis.expire key, Application::REDIS_SESSION_EXPIRES
           true
         end
       end

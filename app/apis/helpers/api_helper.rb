@@ -17,4 +17,8 @@ module APIHelper
     error! 'Need for authentication', 401 unless user
     user
   end
+
+  def author
+    {name: Application.current_user.name, email: Application.current_user.email}
+  end
 end

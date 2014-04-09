@@ -1,4 +1,4 @@
-define(['directives', 'factories/projects', 'factories/modal'], function(directives) {
+define(['directives', 'jquery', 'directives/modals', 'factories/projects', 'factories/modal'], function(directives, $) {
     directives.directive('historyDialog', function($timeout, Modal) {
         return {
             restrict: 'E',
@@ -17,6 +17,9 @@ define(['directives', 'factories/projects', 'factories/modal'], function(directi
                     });
                 });
 
+                scope.$on('TagSwitched', function() {
+                    element.modal('hide');
+                });
             },
             controller: function($scope, Projects) {
                 $scope.get_history_info = function() {

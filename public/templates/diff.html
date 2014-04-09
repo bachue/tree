@@ -1,6 +1,6 @@
 <div class="diff-panel">
-    <div data-ng-if="(diff.diff | withoutBinary).length == 0">
-        <strong>They're the same!</strong>
+    <div data-ng-if="(diff.diff | withoutBinary).length == 0" class="text-center">
+        <strong data-ng-bind="notice_if_none"></strong>
     </div>
     <div class="panel panel-default" data-ng-repeat="patch in diff.diff | withoutBinary">
         <div class="panel-heading">
@@ -11,6 +11,10 @@
                 <span data-ng-bind="diff.author.name"></span>&nbsp;&lt;<span data-ng-bind="diff.author.email"></span>&gt;
             </div>
             <div class="clearfix"></div>
+            <div data-ng-if="diff.tags">
+                <span class="glyphicon glyphicon-tags"></span>
+                <button type="button" class="btn btn-default btn-xs tag" data-ng-repeat="tag in diff.tags" data-ng-bind="tag" data-ng-click="set_current_tag(tag)"></button>
+            </div>
             <div class="pull-left" data-ng-if="diff.author">
                 <span data-ng-bind="diff.author.time | timeFormat"></span>
             </div>

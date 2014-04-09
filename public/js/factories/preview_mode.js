@@ -3,7 +3,9 @@ define(['factories'], function(factories) {
         var current = {};
         return {
             set: function(mode) {
-                if (mode.match(/without/i))
+                if (!mode)
+                    return;
+                else if (mode.match(/without/i))
                     current.mode = 'without_preview';
                 else if (mode.match(/with/i))
                     current.mode = 'with_preview';

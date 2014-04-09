@@ -8,8 +8,8 @@
       </div>
       <div class="modal-body">
         <form name="tag_diff_form">
-            <div class="input-group widest" data-ng-if="!tag_diff_dialog.processing && !tag_diff_dialog.diff">
-                <input list="project_tags" data-ng-model="tag_diff_dialog.tag" data-required type="text" class="form-control" placeholder="Which tag?" data-existed-tag data-ng-keypress="keypress_to_diff_tags($event)" />
+            <div data-ng-if="!tag_diff_dialog.processing && !tag_diff_dialog.diff" data-validation-state>
+                <input list="project_tags" name="tag_name" data-ng-model="tag_diff_dialog.tag" data-required type="text" class="form-control" placeholder="Which tag?" data-existed-tag data-ng-keypress="keypress_to_diff_tags($event)" />
                 <datalist id="project_tags">
                     <option data-ng-value="tag" data-ng-repeat="tag in existed_tags_without_current()" />
                 </datalist>
@@ -19,7 +19,8 @@
                     <span class="sr-only">Querying...</span>
                 </div>
             </div>
-            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!tag_diff_dialog.processing && !!tag_diff_dialog.diff" data-ng-init="diff = tag_diff_dialog"></div>
+            <div data-ng-include src="'/templates/diff.html'" data-ng-if="!tag_diff_dialog.processing && !!tag_diff_dialog.diff" data-ng-init="diff = tag_diff_dialog; notice_if_none = 'They\'re the same!'"></div>
+            <!-- !!: looks like data-ng-if regard an empty array as false, but I need it to be true -->
         </form>
       </div>
       <div class="modal-footer" data-ng-if="!tag_diff_dialog.processing && !tag_diff_dialog.diff">

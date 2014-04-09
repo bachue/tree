@@ -53,12 +53,12 @@ class Project < ActiveRecord::Base
     Git.tag path, :add, tag_name, branch: branch
   end
 
-  def add_to_index file, content, base, message
-    Git.add_to_index path, file, content, base, message, branch
+  def add_to_index file, content, base, message, author: nil
+    Git.add_to_index path, file, content, base, message, branch: branch, author: author
   end
 
-  def remove_from_index file, message
-    Git.remove_from_index path, file, message, branch
+  def remove_from_index file, message, author: nil
+    Git.remove_from_index path, file, message, branch: branch, author: author
   end
 
   def grep text, tag_name

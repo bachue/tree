@@ -26,8 +26,12 @@
             <tr data-ng-if="key_config_dialog.new">
                 <td class="text-left">
                     <form name="new_key_form">
-                        <input type="text" class="form-control" placeholder="Title" data-ng-model="key_config_dialog.new.name" data-required data-ng-maxlength="250" data-uniq-key-name>
-                        <textarea placeholder="Key" class="form-control" data-required data-ng-model="key_config_dialog.new.public_key"></textarea>
+                        <div data-validation-state>
+                            <input type="text" name="name" class="form-control" placeholder="Title" data-ng-model="key_config_dialog.new.name" data-required data-ng-maxlength="250" data-uniq-key-name>
+                        </div>
+                        <div data-validation-state>
+                            <textarea placeholder="Key" name="key" class="form-control" data-required data-ng-model="key_config_dialog.new.public_key"></textarea>
+                        </div>
                     </form>
                 </td>
                 <td class="text-center btn-col">

@@ -1,4 +1,12 @@
 define(['directives', 'jquery', 'ace'], function(directives, $) {
+    directives.directive('focus', function() {
+        return function(scope) {
+            scope.$on('aceEditorInitilized', function(e, editor) {
+                editor.focus();
+            });
+        };
+    });
+
     directives.directive('autoSaveSettings', function() {
         return function(scope, element) {
             if (window.localStorage) {

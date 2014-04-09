@@ -3,7 +3,9 @@ define(['factories'], function(factories) {
         var current = {};
         return {
             set: function(mode) {
-                if (mode.match(/full/i))
+                if (!mode)
+                    return;
+                else if (mode.match(/full/i))
                     current.mode = 'full-mode';
                 else if (mode.match(/side/i))
                     current.mode = 'sidebar-mode';
