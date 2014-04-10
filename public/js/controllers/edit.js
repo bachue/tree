@@ -1,5 +1,5 @@
-define(['controllers/tag', 'jquery', 'bootbox', 'ace', 'factories/projects', 'factories/preview', 'factories/loading_indicator', 'factories/preview_mode', 'factories/notice', 'factories/commit_mode'], function(tag_controller, $, bootbox) {
-    return tag_controller.controller('Edit', function($scope, $state, $timeout, Projects, PreviewFactory, LoadingIndicator, PreviewMode, Notice, CommitMode) {
+define(['controllers/tag', 'jquery', 'bootbox', 'ace', 'factories/projects', 'factories/preview', 'factories/loading_indicator', 'factories/preview_mode', 'factories/notice', 'factories/commit_mode', 'factories/comments_pre_handler'], function(tag_controller, $, bootbox) {
+    return tag_controller.controller('Edit', function($scope, $state, $timeout, Projects, PreviewFactory, LoadingIndicator, PreviewMode, Notice, CommitMode, CommentsPreHandler) {
         if (!$scope.current.project || !$scope.current.tag_name) return;
 
         if (!$state.params.document_path && $scope.current.document_path)
@@ -60,6 +60,7 @@ define(['controllers/tag', 'jquery', 'bootbox', 'ace', 'factories/projects', 'fa
                     $scope.doc_type = doc['type'];
                     renderer = PreviewFactory.renderer(doc['type'], {
                         before: function(content, type) {
+                            content = CommentsPreHandler.render(content);
                             if (type === 'markdown')
                                 return content.replace(/\[\[([^\]]+)\]\]/g, '[$1]($1)');
                             else
@@ -82,7 +83,10 @@ define(['controllers/tag', 'jquery', 'bootbox', 'ace', 'factories/projects', 'fa
                     $scope.$broadcast('aceEditorInitilized', editor, doc['raw']);
 
                     if (renderer) {
-                        var update_preview = function() { $scope.preview = renderer(editor); };
+                        var update_preview = function() {
+                            $scope.preview = renderer(editor);
+                            $timeout(function() { $scope.$broadcast('renderComments'); });
+                        };
                         editor.getSession().on('change', function() { $timeout(update_preview); });
                         update_preview();
                     }

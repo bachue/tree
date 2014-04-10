@@ -67,7 +67,7 @@ require.config({
 
 require(['angular', 'app', 'domReady', 'jquery', 'bootstrap', 'restangular', '_constants',
          'controllers/application', 'controllers/project', 'controllers/tag', 'controllers/edit', 'controllers/doc',
-         'filters/application', 'directives/doc', 'directives/editor',
+         'filters/application', 'directives/doc', 'directives/editor', 'directives/comments',
          'directives/modals/new_project_dialog', 'directives/modals/new_tag_dialog',
          'directives/modals/project_search_dialog', 'directives/modals/project_help_dialog',
          'directives/modals/code_commit_dialog', 'directives/modals/tag_diff_dialog',

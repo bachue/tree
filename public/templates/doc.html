@@ -4,7 +4,7 @@
         <button type="button" data-ng-click="edit_doc()" class="btn btn-sm btn-primary edit-btn">Edit</button>
         <button type="button" data-ng-click="open_commit_dialog_to_remove()" class="btn btn-sm btn-danger remove-btn">Delete</button>
     </div>
-    <div data-auto-anchors data-ng-bind-html="current.document"></div>
+    <div data-auto-anchors data-ng-bind-html="current.document" data-comment-render></div>
 </div>
 <div id="current_document" data-ng-if="!has_document()">
     <h3>To edit wiki for this project, please:</h3>

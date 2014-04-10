@@ -37,14 +37,6 @@ define(['factories', 'jquery', 'marked', 'textile'], function(factories, $, mark
                         if(callbacks.after) dom = callbacks.after(dom, type);
                         return $sce.trustAsHtml($('<div />').append(dom).html());
                     };
-                case 'html':
-                    return function(editor) {
-                        var html = editor.getValue();
-                        if (callbacks.before) html = callbacks.before(html, type);
-                        var dom = $(html);
-                        if(callbacks.after) dom = callbacks.after(dom, type);
-                        return $sce.trustAsHtml($('<div />').append(dom).html());
-                    };
                 }
             }
         };

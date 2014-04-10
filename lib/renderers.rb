@@ -1,11 +1,13 @@
 require 'github/markdown'
 require 'nokogiri'
 require 'redcloth'
+require 'lib/comments_pre_handler'
 
 class Renderers
   class << self
     def register renderer
       @renderers ||= []
+      renderer.singleton_class.prepend CommentsPreHandler
       @renderers << renderer
     end
 
@@ -39,26 +41,6 @@ class MarkDownRenderer
   end
 end
 
-class HTMLRender
-  def self.ext
-    %w[html htm]
-  end
-
-  def self.render content
-    # TODO: Remove iframe, frameset, frame, script, link, style, object, param, dialog, canvas ...
-    html = Nokogiri::HTML content
-    if body = html.css('body')
-      body[0].inner_html
-    else
-      content
-    end
-  end
-
-  def self.name
-    'html'
-  end
-end
-
 class TextileRenderer
   def self.ext
     'textile'
@@ -74,5 +56,4 @@ class TextileRenderer
 end
 
 Renderers.register MarkDownRenderer
-Renderers.register HTMLRender
 Renderers.register TextileRenderer

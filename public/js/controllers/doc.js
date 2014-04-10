@@ -32,6 +32,7 @@ define(['controllers/tag', 'highlight', 'factories/projects', 'factories/loading
                         handle(dom);
                         doc = $sce.trustAsHtml(dom.html());
                         $scope.current.document = doc;
+                        $timeout(function() { $scope.$broadcast('renderComments'); });
                     }
                 }, function(error) {
                     if ($scope.current.tag_name != 'HEAD') {
