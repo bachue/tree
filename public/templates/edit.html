@@ -1,13 +1,28 @@
 <div>
     <div class="text-right">
-        <button type="button" data-ng-click="enable_preview()" class="btn btn-sm btn-default" data-ng-if="preview_disabled()">Enable preview</button>
-        <button type="button" data-ng-click="disable_preview()" class="btn btn-sm btn-default" data-ng-if="preview_enabled()">Disable preview</button>
         <button type="button" data-toggle="modal" data-target="#code-commit-dialog" class="btn btn-sm btn-primary">Commit</button>
         <button type="button" class="btn btn-sm btn-cancel" data-ng-click="cancel_and_back_to_doc()">Cancel</button>
     </div>
 </div>
 <pre data-ng-if="!doc_type" id="editor" data-focus data-auto-save-settings data-auto-save-value></pre>
 <table data-ng-if="doc_type" data-ng-class="current_preview_mode()">
+    <tr>
+        <th><div class="pull-right">
+            <a href="javascript:void(0)" data-ng-click="enable_preview()" class="fake-link fa fa-eye" data-ng-if="preview_disabled()"></a>
+            <a href="javascript:void(0)" data-ng-click="disable_preview()" class="fake-link fa fa-eye-slash" data-ng-if="preview_enabled()"></a>
+            &nbsp;&nbsp;
+            <div class="dropdown" style="display: inline-block">
+                <a href="javascript:void(0)" class="fake-link fa fa-code" id="supported_languages_list" data-toggle="dropdown"></a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="supported_languages_list">
+                    <li role="presentation" data-ng-repeat="(text, lang) in supported_languages">
+                        <a role="menuitem" tabindex="-1" href="javascript:void(0)" data-ng-bind="text" data-ng-click="insert_code_section(lang)"></a>
+                    </li>
+                </ul>
+            </div>
+            &nbsp;&nbsp;
+            <a href="javascript:void(0)" class="fake-link fa fa-comments-o" data-ng-click="insert_comment_section()"></a>
+        </div></th>
+    </tr>
     <tr>
         <td class="editor_part"><pre data-ng-if="doc_type" id="editor" data-focus data-auto-save-settings data-auto-save-value></pre></td>
         <td class="preview_part"><div data-comment-render data-ng-bind-html="preview" id="document_preview"></div></td>

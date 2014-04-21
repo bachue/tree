@@ -1,1 +1,1 @@
-define("ace/snippets/cobol",["require","exports","module"],function(e,t,n){t.snippetText="",t.scope="cobol"})
+define(function(require,exports,module){"use strict";exports.snippetText=require("../requirejs/text!./cobol.snippets");exports.scope="cobol"});

@@ -43,6 +43,7 @@ var shim = {
 
 require.config({
     waitSeconds: 0,
+    baseUrl: '/js/',
     paths: {
         domReady: 'vendor/domReady.min',
         jquery: 'vendor/jquery.min',
@@ -56,7 +57,7 @@ require.config({
         highlight: 'vendor/highlight.min',
         marked: 'vendor/marked.min',
         textile: 'vendor/textile.min',
-        ace: 'vendor/ace/ace',
+        ace: 'vendor/ace',
         bootbox: 'vendor/bootbox.min',
         essage: 'vendor/essage.min',
         strftime: 'vendor/strftime.min',

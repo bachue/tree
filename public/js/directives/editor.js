@@ -1,4 +1,4 @@
-define(['directives', 'jquery', 'ace'], function(directives, $) {
+define(['directives', 'jquery', 'ace/ace'], function(directives, $, ace) {
     directives.directive('focus', function() {
         return function(scope) {
             scope.$on('aceEditorInitilized', function(e, editor) {

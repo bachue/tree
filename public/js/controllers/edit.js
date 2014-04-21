@@ -1,4 +1,4 @@
-define(['controllers/tag', 'jquery', 'bootbox', 'ace', 'factories/projects', 'factories/preview', 'factories/loading_indicator', 'factories/preview_mode', 'factories/notice', 'factories/commit_mode', 'factories/comments_pre_handler'], function(tag_controller, $, bootbox) {
+define(['controllers/tag', 'jquery', 'bootbox', 'ace/ace', 'jquery_cookie', 'factories/projects', 'factories/preview', 'factories/loading_indicator', 'factories/preview_mode', 'factories/notice', 'factories/commit_mode', 'factories/comments_pre_handler'], function(tag_controller, $, bootbox, ace) {
     return tag_controller.controller('Edit', function($scope, $state, $timeout, Projects, PreviewFactory, LoadingIndicator, PreviewMode, Notice, CommitMode, CommentsPreHandler) {
         if (!$scope.current.project || !$scope.current.tag_name) return;
 
@@ -7,6 +7,49 @@ define(['controllers/tag', 'jquery', 'bootbox', 'ace', 'factories/projects', 'fa
 
         if ($state.params.tag_name !== 'HEAD')
             return $state.go('application.project.tag.doc', {document_path: null}, {location: 'replace'});
+
+        $scope.supported_languages = {
+            'Ruby': 'ruby', 'Html/XML': 'xml', 'CSS': 'css', 'Javascript': 'js', 'JSON': 'json', 'YAML': 'yml', 'Python': 'py', 'C/C++': 'cpp', 'Java': 'java', 'SQL': 'sql', 'Bash': 'bash', 'Apache Config': 'apache', 'Nginx Config': 'nginx'
+        };
+
+        $scope.insert_code_section = function(lang) {
+            var editor = ace.edit('editor'), position = editor.getCursorPosition(), prefix = '', newLine = false;
+
+            editor.getSelection().selectLineStart();
+            if (editor.getSelectedText().match(/^\s*$/))
+                prefix = editor.getSelectedText();
+            else
+                newLine = true;
+
+            editor.getSelection().clearSelection();
+            editor.getSelection().moveCursorToPosition(position);
+            if (newLine) {
+                editor.getSession().insert(position, "\n");
+                position = editor.getCursorPosition();
+            }
+            editor.getSession().insert(position, '```' + lang + "\n" + prefix + "\n" + prefix + '```');
+            editor.getSelection().moveCursorToPosition({row: position.row + 1, column: prefix.length});
+            editor.focus();
+        };
+
+        $scope.insert_comment_section = function() {
+            var editor = ace.edit('editor'), range = editor.getSelectionRange(), content = editor.getValue(), uid, name = $.cookie('current_user.name');
+            for (uid = 1; content.match('<' + uid + '>'); ++uid);
+
+            editor.getSelection().clearSelection();
+            editor.getSelection().moveCursorToPosition(range.start);
+            editor.getSession().insert(range.start, '[');
+
+            range.end.column++;
+            editor.getSelection().moveCursorToPosition(range.end);
+            editor.getSession().insert(range.end, ']<' + uid + '>');
+            editor.getSelection().moveCursorFileEnd();
+            if (!content.match(/\n{2}$/))
+                editor.getSession().insert(editor.getCursorPosition(), "\n");
+            editor.getSession().insert(editor.getCursorPosition(), '<' + uid + '>:\n' + (name ? name + ': ' : '') + 'comment');
+            editor.getSelection().selectAWord();
+            editor.focus();
+        };
 
         $scope.enable_preview = function() {
             PreviewMode.enable_preview_mode();

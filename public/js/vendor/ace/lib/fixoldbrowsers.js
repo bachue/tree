@@ -1,0 +1,1 @@
+define(function(require,exports,module){"use strict";require("./regexp");require("./es5-shim")});

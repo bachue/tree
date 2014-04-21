@@ -23,8 +23,8 @@ define(['directives', 'jquery', 'underscore', 'bootstrap'], function(directives,
                         $('.popover:has(.panel-comments)').each(function(i, popover) {
                             if ($(popover).position().top < 0) {
                                 $(popover).css('top', 0);
-                                var top = $(dom).position().top;
-                                $(popover).find('.arrow').css('top', top + 70 + $(dom).height()/2 + 'px');
+                                var arrow = $(popover).find('.arrow'), offset = {top: $(dom).offset().top, left: arrow.offset().left};
+                                while (!_.isEqual(arrow.offset(), offset)) arrow.offset(offset); // to walkaround jQuery bug
                             }
                         });
                     });

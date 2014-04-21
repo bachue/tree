@@ -1,0 +1,1 @@
+"use strict";define(function(require,exports,module){module.exports={x:{operator:{ch:"d",count:1},motion:{ch:"l",count:1}},X:{operator:{ch:"d",count:1},motion:{ch:"h",count:1}},D:{operator:{ch:"d",count:1},motion:{ch:"$",count:1}},C:{operator:{ch:"c",count:1},motion:{ch:"$",count:1}},s:{operator:{ch:"c",count:1},motion:{ch:"l",count:1}},S:{operator:{ch:"c",count:1},param:"c"}}});

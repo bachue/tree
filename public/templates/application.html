@@ -33,7 +33,7 @@
                         </li>
                     </ul>
                 </li>
-                <li data-ng-if="current.project && current.tag_name"><a title="Search in current project" href="javascript:void(0)" class="glyphicon glyphicon-search" data-toggle="modal" data-target="#project-search-dialog"></a></li>
+                <li data-ng-if="current.project && current.tag_name"><a title="Search in current project" href="javascript:void(0)" class="fa fa-search" data-toggle="modal" data-target="#project-search-dialog"></a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right text-left">
                 <li class="dropdown" data-ng-if="current.project">
@@ -44,15 +44,15 @@
                         </li>
                     </ul>
                 </li>
-                <li><a title="Add new project" href="javascript:void(0)" class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#new-project-dialog"></a></li>
+                <li><a title="Add new project" href="javascript:void(0)" class="fa fa-plus" data-toggle="modal" data-target="#new-project-dialog"></a></li>
                 <li data-ng-if="is_full_mode()">
-                    <a title="Set Split Mode" href="javascript:void(0)" class="glyphicon glyphicon-list" data-ng-click="set_split_mode()"></a>
+                    <a title="Set Split Mode" href="javascript:void(0)" class="fa fa-compress" style="-webkit-transform: rotate(45deg);" data-ng-click="set_split_mode()"></a>
                 </li>
                 <li data-ng-if="!is_full_mode()">
-                    <a title="Set Full Mode" href="javascript:void(0)" class="glyphicon glyphicon-align-justify" data-ng-click="set_full_mode()"></a>
+                    <a title="Set Full Mode" href="javascript:void(0)" class="fa fa-arrows-h" data-ng-click="set_full_mode()"></a>
                 </li>
-                <li><a title="Configuration" href="javascript:void(0)" class="glyphicon glyphicon-cog" data-toggle="modal" data-target="#key-config-dialog"></a></li>
-                <li><a title="Help" href="javascript:void(0)" class="glyphicon glyphicon-question-sign" data-toggle="modal" data-target="#project-help-dialog"  data-ng-if="current.project"></a></li>
+                <li><a title="Keys Management" href="javascript:void(0)" class="fa fa-key" data-toggle="modal" data-target="#key-config-dialog"></a></li>
+                <li><a title="Help" href="javascript:void(0)" class="fa fa-question" data-toggle="modal" data-target="#project-help-dialog"  data-ng-if="current.project"></a></li>
             </ul>
             <h3 data-ng-if="loading()" class="display: inline-block;"><img src="/img/loading.gif" alt="loading" height="20" /></h3>
         </div><!-- /.nav-collapse -->

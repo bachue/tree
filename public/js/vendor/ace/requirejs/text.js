@@ -1,0 +1,1 @@
+(function(){var globalRequire=typeof require!="undefined"&&require;define(function(require,exports,module){"use strict";exports.load=function(name,req,onLoad,config){if(globalRequire&&globalRequire.nodeRequire)onLoad(globalRequire.nodeRequire("fs").readFileSync(req.toUrl(name),"utf8"));else require("../lib/net").get(req.toUrl(name),onLoad)}})})();

@@ -1,4 +1,4 @@
-define(['directives', 'directives/modals', 'ace', 'factories/projects', 'factories/modal', 'factories/loading_indicator', 'factories/commit_mode'], function(directives) {
+define(['directives', 'ace/ace', 'directives/modals', 'factories/projects', 'factories/modal', 'factories/loading_indicator', 'factories/commit_mode'], function(directives, ace) {
     directives.directive('codeCommitDialog', function(Modal, LoadingIndicator, CommitMode) {
         return {
             restrict: 'E',

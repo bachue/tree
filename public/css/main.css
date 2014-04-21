@@ -322,6 +322,24 @@ textarea {
     margin-bottom: 0;
 }
 
+.rotate_45 {
+    transform:rotate(45deg);
+    -ms-transform:rotate(45deg);
+    -moz-transform:rotate(45deg);
+    -webkit-transform:rotate(45deg);
+    -o-transform:rotate(45deg);
+}
+
+.fake-link {
+    color: #777;
+    text-decoration: none solid rgb(119, 119, 119);
+}
+
+.fake-link:hover {
+    color: black;
+    text-decoration: none solid rgb(119, 119, 119);
+}
+
 /*
  * New Project dialog
  */
@@ -483,8 +501,11 @@ textarea {
     padding: 10px;
 }
 
+#editor {
+    margin: 0 0 10px;
+}
+
 .with_preview #editor {
-    margin: 10px;
     position: absolute;
     top: 0;
     bottom: 0;
