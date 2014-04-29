@@ -6,8 +6,8 @@ GIT
       rack (>= 0.9.1)
 
 GIT
-  remote: http://github.com/bachue/rugged.git
-  revision: bba3f25cfb96c96ec55961fecaca033a8bdf4bb7
+  remote: http://github.com/libgit2/rugged.git
+  revision: de19d5fb25fc83c6b88fab0ef5cd1e09c829e0a8
   branch: development
   submodules: true
   specs:

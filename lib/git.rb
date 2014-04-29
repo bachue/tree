@@ -51,7 +51,7 @@ Stderr: #{errput}
       Rugged::Repository.clone_at source, target,
         **extra,
         ignore_cert_errors: true,
-        credentials: credentials
+        credentials: ssh_credentials
     end
 
     def new_repo target
@@ -108,7 +108,7 @@ Stderr: #{errput}
 
       remote = repo.remotes.detect {|r| r.name == 'origin' }
       # TODO: Add credentials to ls when it's available
-      remote = remote.ls.detect {|ref| ref[:name] == 'HEAD' }[:oid]
+      remote = remote.ls(credentials: ssh_credentials).detect {|ref| ref[:name] == 'HEAD' }[:oid]
 
       local = repo.branches['master'].target_id
       remote != local
@@ -315,7 +315,7 @@ done
         repo.push 'origin', [
           *Array(branches).map {|branch| "refs/heads/#{branch}" },
           *Array(tags).map     {|tag|    "refs/tags/#{tag}"}
-        ], credentials: credentials
+        ], credentials: ssh_credentials
       end
 
       def clear_all target
@@ -347,7 +347,7 @@ done
                                     committer: author
       end
 
-      def credentials # TODO: Need to wait for HTTPS authorization
+      def ssh_credentials # TODO: Need to wait for HTTPS authorization
         ->(url, username, _) {
           Rugged::Credentials::SshKey.new username: username,
                                           publickey: "#{ENV['HOME']}/.ssh/id_rsa.pub",

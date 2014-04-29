@@ -17,7 +17,7 @@ gem 'unicorn'
 gem 'sidekiq-unique-jobs'
 gem 'hiredis'
 gem 'sinatra'
-gem 'rugged', git: 'http://github.com/bachue/rugged.git', branch: 'development', submodules: true
+gem 'rugged', git: 'http://github.com/libgit2/rugged.git', branch: 'development', submodules: true
 gem 'god', require: nil
 gem 'pry'
 gem 'bcrypt'
