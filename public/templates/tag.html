@@ -1,6 +1,6 @@
 <div class="row" data-ng-class="current_screen_mode()">
     <div class="sidebar-col col-xs-6 col-sm-3" role="navigation">
-        <div class="sidebar">
+        <div class="sidebar" data-ng-if="current.project.directory.length">
             <abn-tree
                       data-tree-data="current.project.directory"
                       data-icon-leaf="glyphicon glyphicon-file"

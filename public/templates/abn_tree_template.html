@@ -1,4 +1,3 @@
-
 <ul class="nav nav-list nav-pills nav-stacked abn-tree">
   <li ng-repeat="row in tree_rows | filter:{visible:true} track by $index" ng-animate="'abn-tree-animate'" ng-class="row.branch.selected ? ' active' : ''" class="abn-tree-row level-{{row.level}}">
     <a ng-click="user_clicks_branch(row.branch)">

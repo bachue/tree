@@ -27,7 +27,8 @@ define(['directives', 'jquery', 'directives/modals', 'factories/projects', 'fact
                 };
                 // This helper selects all tags from current project, but without currect tag
                 $scope.existed_tags_without_current = function() {
-                    return _.without(['HEAD'].concat($scope.current.project.tags), $scope.current.tag_name);
+                    if ($scope.current.project)
+                        return _.without(['HEAD'].concat($scope.current.project.tags), $scope.current.tag_name);
                 };
 
                 $scope.do_diff_between_tags = function() {

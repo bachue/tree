@@ -9,6 +9,8 @@ define(['controllers/application', 'underscore'], function(application_controlle
             });
         }
 
+        if (!$scope.projects[0]) return;
+
         if (!$scope.current.project)
             return $state.go('application.project', {project_name: $scope.projects[0].name}, {location: 'replace'});
 
