@@ -76,6 +76,6 @@ task :start do
 end
 
 task :restart do
-  queue 'bundle exec god restart'
-  queue 'service nginx restart'
+  queue 'bundle exec god quit'
+  invoke :start
 end
