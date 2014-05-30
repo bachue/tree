@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem 'rake'
 gem 'sqlite3'
@@ -23,6 +23,7 @@ gem 'pry'
 gem 'bcrypt'
 gem 'protected_attributes'
 gem 'sshkey'
+gem 'net-ldap'
 
 group :development, :test do
   gem 'pry-doc'
