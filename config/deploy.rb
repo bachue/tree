@@ -23,6 +23,7 @@ task :initialize => :environment do
     invoke :'git:clone'
     invoke :create_shared_paths
     invoke :'deploy:link_shared_paths'
+    invoke :permission_control
     invoke :'bundle:install'
     invoke :db_migrate
     invoke :create_basic_folders
@@ -36,6 +37,7 @@ task :deploy => :environment do
   deploy do
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
+    invoke :permission_control
     invoke :'bundle:install'
     invoke :db_migrate
     to :launch do
@@ -61,6 +63,10 @@ end
 
 task :db_migrate do
   queue 'RACK_ENV=production bundle exec rake db:migrate'
+end
+
+task :permission_control do
+  queue "chmod 777 #{deploy_to}/current/db"
 end
 
 task :start do
