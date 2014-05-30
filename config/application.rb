@@ -4,6 +4,7 @@ require 'yaml'
 require 'erb'
 require 'pathname'
 require 'fileutils'
+require 'git'
 
 class Application
   class << self
@@ -30,6 +31,13 @@ class Application
 
       def load_config path
         YAML.load ERB.new(File.read(ROOT.join('config', *path))).result
+      end
+
+      def setup_rugged
+        if RACK_ENV.production?
+          Rugged::Settings['search_path_global'] = '/home/git'
+          Rugged::Settings['search_path_xdg'] = '/home/git/.config/git'
+        end
       end
   end
 

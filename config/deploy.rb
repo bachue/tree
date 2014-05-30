@@ -43,7 +43,7 @@ task :deploy => :environment do
 end
 
 task :rbenv_switch_version do
-  queue "rbenv shell 2.1.2"
+  queue "rbenv shell 2.1.1"
 end
 
 task :create_shared_paths do
