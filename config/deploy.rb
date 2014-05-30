@@ -9,7 +9,7 @@ set :deploy_to, '/var/www/tree'
 
 set :repository, 'ssh://rongz@gerrit.dechocorp.com:29418/tree'
 
-set :shared_paths, ['log', 'db/production.sqlite3', 'tmp']
+set :shared_paths, ['log', 'db/production.sqlite3', 'tmp', 'config/ldap.yml']
 
 task :environment do
   invoke :'rbenv:load'
@@ -51,6 +51,7 @@ end
 task :create_shared_paths do
   queue "mkdir -p '#{deploy_to}/#{shared_path}/log'"
   queue "mkdir -p '#{deploy_to}/#{shared_path}/db'"
+  queue "mkdir -p '#{deploy_to}/#{shared_path}/config'"
   queue "touch '#{deploy_to}/#{shared_path}/db/production.sqlite3'"
   queue "mkdir -p '#{deploy_to}/#{shared_path}/tmp'"
 end

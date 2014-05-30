@@ -17,8 +17,6 @@ module Middleware
 
         if user_id && user = User.find_by(id: user_id)
           login user
-        elsif user = User.find_by(name: username) and user.authenticate(password)
-          login user, set_cache: key
         elsif defined? Application::LDAP_CONFIG
           require 'net-ldap'
           user = nil
@@ -27,10 +25,13 @@ module Middleware
                       :filter => Net::LDAP::Filter.eq("objectClass", "*") & Net::LDAP::Filter.eq('samaccountname', username),
                       :attributes => ['dn', 'mail']) do |entry|
             if auth(entry.dn, password).bind
-              user = User.new(name: username, email: entry.mail.first)
+              user = User.find_by(name: username) || User.create!(name: username, email: entry.mail.first)
               break
             end
           end
+          login user, set_cache: key if user
+        else
+          user = User.find_by(name: username, email: password)
           login user, set_cache: key if user
         end
       end

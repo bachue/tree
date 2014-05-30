@@ -37,7 +37,6 @@ GEM
     axiom-types (0.0.5)
       descendants_tracker (~> 0.0.1)
       ice_nine (~> 0.9)
-    bcrypt (3.1.7)
     builder (3.1.4)
     byebug (2.5.0)
       columnize (~> 0.3.6)
@@ -153,7 +152,6 @@ PLATFORMS
 DEPENDENCIES
   RedCloth
   activerecord
-  bcrypt
   builder (~> 3.1.0)
   escape
   foreman

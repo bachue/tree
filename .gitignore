@@ -8,3 +8,4 @@ tmp/*
 *.rdb
 .bundle/*
 config/ldap.yml
+.rake_tasks
