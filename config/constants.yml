@@ -2,4 +2,4 @@
 
 NEW_REPO_PREFIX: 'ssh://zhour6@0.0.0.0:Projects/tree/tmp/'
 production:
-  NEW_REPO_PREFIX: 'ssh://git@tree.mozy.com:'
+  NEW_REPO_PREFIX: 'ssh://git@10.135.10.121:'

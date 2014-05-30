@@ -11,6 +11,8 @@ set :repository, 'ssh://rongz@gerrit.dechocorp.com:29418/tree'
 
 set :shared_paths, ['log', 'db/production.sqlite3', 'tmp', 'config/ldap.yml']
 
+set :keep_releases, 1
+
 task :environment do
   invoke :'rbenv:load'
   invoke :rbenv_switch_version
@@ -21,11 +23,11 @@ task :initialize => :environment do
     invoke :'git:clone'
     invoke :create_shared_paths
     invoke :'deploy:link_shared_paths'
-    invoke :permission_control
     invoke :'bundle:install'
     invoke :db_migrate
     invoke :create_basic_folders
     to :launch do
+      invoke :permission_control
       invoke :start
     end
   end
@@ -35,10 +37,10 @@ task :deploy => :environment do
   deploy do
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
-    invoke :permission_control
     invoke :'bundle:install'
     invoke :db_migrate
     to :launch do
+      invoke :permission_control
       invoke :restart
     end
   end
