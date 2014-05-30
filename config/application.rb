@@ -4,7 +4,7 @@ require 'yaml'
 require 'erb'
 require 'pathname'
 require 'fileutils'
-require 'git'
+require 'rugged'
 
 class Application
   class << self
