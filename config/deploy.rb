@@ -28,6 +28,7 @@ task :initialize => :environment do
     invoke :create_basic_folders
     to :launch do
       invoke :permission_control
+      invoke :regenerate_ssh_auth
       invoke :start
     end
   end
@@ -41,6 +42,7 @@ task :deploy => :environment do
     invoke :db_migrate
     to :launch do
       invoke :permission_control
+      invoke :regenerate_ssh_auth
       invoke :restart
     end
   end
@@ -78,4 +80,8 @@ end
 task :restart do
   queue 'bundle exec god quit'
   invoke :start
+end
+
+task :regenerate_ssh_auth do
+  queue "ruby '#{deploy_to}/current/scripts/generate-ssh-authenticate.rb' /opt/auth.rb"
 end
