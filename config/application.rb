@@ -62,6 +62,7 @@ class Application
   ActiveRecord::Base.establish_connection(DBCONFIG)
 
   load_constants
+  setup_rugged
 
   I18n.enforce_available_locales = false
 end

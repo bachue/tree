@@ -11,6 +11,8 @@ set :repository, 'ssh://rongz@gerrit.dechocorp.com:29418/tree'
 
 set :shared_paths, ['log', 'db/production.sqlite3', 'tmp']
 
+set :keep_releases, 1
+
 task :environment do
   invoke :'rbenv:load'
   invoke :rbenv_switch_version
