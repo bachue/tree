@@ -1,0 +1,6 @@
+host: localhost
+port: 80
+auth:
+    username: username
+    password: password
+base: dc=account,dc=mozy,dc=com

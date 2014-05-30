@@ -33,6 +33,10 @@ class Application
         YAML.load ERB.new(File.read(ROOT.join('config', *path))).result
       end
 
+      def load_exist? path
+        ROOT.join('config', *path).exist?
+      end
+
       def setup_rugged
         if RACK_ENV.production?
           Rugged::Settings['search_path_global'] = '/home/git'
@@ -52,6 +56,10 @@ class Application
 
   REDIS_CONFIG = load_config 'redis.yml'
   REDIS_SESSION_EXPIRES = 1.hour
+
+  if RACK_ENV.production? && load_exist?('ldap.yml')
+    LDAP_CONFIG = load_config 'ldap.yml'
+  end
 
   require 'pry' unless RACK_ENV.production?
 

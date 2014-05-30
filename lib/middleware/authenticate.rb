@@ -11,19 +11,27 @@ module Middleware
     def initialize app
       @app = app
       super app, 'Application' do |username, password|
+        next false if username.blank? || password.blank?
         key = "session:#{username}:#{Digest::SHA512.hexdigest(username + password)}"
         user_id = redis.get key
 
         if user_id && user = User.find_by(id: user_id)
-          @name, @email = user.name, user.email
-          Application.current_user = user
-          true
+          login user
         elsif user = User.find_by(name: username) and user.authenticate(password)
-          @name, @email = user.name, user.email
-          Application.current_user = user
-          redis.set key, user.id
-          redis.expire key, Application::REDIS_SESSION_EXPIRES
-          true
+          login user, set_cache: key
+        elsif defined? Application::LDAP_CONFIG
+          require 'net-ldap'
+          user = nil
+          conn = auth Application::LDAP_CONFIG['auth']['username'], Application::LDAP_CONFIG['auth']['password']
+          conn.search(:base => Application::LDAP_CONFIG['base'],
+                      :filter => Net::LDAP::Filter.eq("objectClass", "*") & Net::LDAP::Filter.eq('samaccountname', username),
+                      :attributes => ['dn', 'mail']) do |entry|
+            if auth(entry.dn, password).bind
+              user = User.new(name: username, email: entry.mail.first)
+              break
+            end
+          end
+          login user, set_cache: key if user
         end
       end
     end
@@ -40,10 +48,25 @@ module Middleware
       [status, headers, body]
     end
 
-    private def redis
-      @redis ||= begin
-        Redis.new Application::REDIS_CONFIG
+    private
+      def redis
+        @redis ||= begin
+          Redis.new Application::REDIS_CONFIG
+        end
       end
-    end
+
+      def login user, set_cache: false
+        @name, @email = user.name, user.email
+        Application.current_user = user
+        unless set_cache
+          redis.set set_cache, user.id
+          redis.expire set_cache, Application::REDIS_SESSION_EXPIRES
+        end
+        true
+      end
+
+      def auth username, password
+        Net::LDAP.new({:host => Application::LDAP_CONFIG['host'], :port => Application::LDAP_CONFIG['port'], :auth => {:method => :simple, :username => username, :password => password}})
+      end
   end
 end
