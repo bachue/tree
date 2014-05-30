@@ -59,7 +59,7 @@ module Middleware
       def login user, set_cache: false
         @name, @email = user.name, user.email
         Application.current_user = user
-        unless set_cache
+        if set_cache
           redis.set set_cache, user.id
           redis.expire set_cache, Application::REDIS_SESSION_EXPIRES
         end
