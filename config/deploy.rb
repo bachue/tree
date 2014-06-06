@@ -49,40 +49,41 @@ task :deploy => :environment do
 end
 
 task :rbenv_switch_version do
-  queue "rbenv shell 2.1.1"
+  queue! "rbenv shell 2.1.1"
 end
 
 task :create_shared_paths do
-  queue "mkdir -p '#{deploy_to}/#{shared_path}/log'"
-  queue "mkdir -p '#{deploy_to}/#{shared_path}/db'"
-  queue "mkdir -p '#{deploy_to}/#{shared_path}/config'"
-  queue "touch '#{deploy_to}/#{shared_path}/db/production.sqlite3'"
-  queue "mkdir -p '#{deploy_to}/#{shared_path}/tmp'"
+  queue! "mkdir -p '#{deploy_to}/#{shared_path}/log'"
+  queue! "mkdir -p '#{deploy_to}/#{shared_path}/db'"
+  queue! "mkdir -p '#{deploy_to}/#{shared_path}/config'"
+  queue! "touch '#{deploy_to}/#{shared_path}/db/production.sqlite3'"
+  queue! "mkdir -p '#{deploy_to}/#{shared_path}/tmp'"
 end
 
 task :create_basic_folders do
-  queue 'mkdir -p /repos && chown git.git /repos'
+  queue! 'mkdir -p /repos && chown git.git /repos'
 end
 
 task :db_migrate do
-  queue 'RACK_ENV=production bundle exec rake db:migrate'
+  queue! 'RACK_ENV=production bundle exec rake db:migrate'
 end
 
 task :permission_control do
-  queue "chmod 777 #{deploy_to}/current/db"
+  queue! "chmod 777 #{deploy_to}/current/db"
 end
 
 task :start do
-  queue 'bundle exec god -c tree.god'
-  queue 'service nginx restart'
+  queue! 'bundle exec god -c tree.god'
+  queue! 'service nginx restart'
 end
 
 task :restart do
-  queue 'bundle exec god quit'
+  queue! 'bundle exec god quit || echo'
+  queue! "[ -f '#{deploy_to}/current/tmp/unicorn.pid' ] && kill `cat '#{deploy_to}/current/tmp/unicorn.pid'`"
   invoke :start
 end
 
 task :regenerate_ssh_auth do
-  queue "ruby '#{deploy_to}/current/scripts/generate-ssh-authenticate.rb' /opt/auth"
-  queue "chmod 555 /opt/auth"
+  queue! "ruby '#{deploy_to}/current/scripts/generate-ssh-authenticate.rb' /opt/auth"
+  queue! "chmod 555 /opt/auth"
 end
