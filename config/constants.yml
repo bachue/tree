@@ -1,5 +1,5 @@
 # This is a list of constants which can be shared with both frontend & backend
 
-NEW_REPO_PREFIX: 'ssh://zhour6@0.0.0.0:Projects/tree/tmp/'
+NEW_REPO_PREFIX: 'zhour6@0.0.0.0:Projects/tree/tmp/'
 production:
-  NEW_REPO_PREFIX: 'ssh://git@10.135.10.121:'
+  NEW_REPO_PREFIX: 'git@10.135.10.121:'

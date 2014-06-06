@@ -48,10 +48,6 @@ define(['controllers', 'factories/projects', 'factories/keys', 'factories/sectio
             });
         };
 
-        $scope.correct_url = function(url) {
-            return url.replace(/^ssh:\/\//, '');
-        };
-
         $scope.projects = projects;
     });
 });
