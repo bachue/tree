@@ -83,5 +83,6 @@ task :restart do
 end
 
 task :regenerate_ssh_auth do
-  queue "ruby '#{deploy_to}/current/scripts/generate-ssh-authenticate.rb' /opt/auth.rb"
+  queue "ruby '#{deploy_to}/current/scripts/generate-ssh-authenticate.rb' /opt/auth"
+  queue "chmod 555 /opt/auth"
 end

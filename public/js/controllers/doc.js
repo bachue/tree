@@ -18,10 +18,6 @@ define(['controllers/tag', 'highlight', 'factories/projects', 'factories/loading
             $('#code-commit-dialog').modal('show');
         };
 
-        $scope.correct_url = function(url) {
-            return url.replace(/^ssh:\/\//, '');
-        };
-
         LoadingIndicator.load();
         if ($state.params.document_path) {
             $scope.current.document_path = $state.params.document_path;
