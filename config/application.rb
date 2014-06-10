@@ -33,7 +33,7 @@ class Application
         YAML.load ERB.new(File.read(ROOT.join('config', *path))).result
       end
 
-      def load_exist? path
+      def config_exist? path
         ROOT.join('config', *path).exist?
       end
 
@@ -57,9 +57,8 @@ class Application
   REDIS_CONFIG = load_config 'redis.yml'
   REDIS_SESSION_EXPIRES = 1.hour
 
-  if RACK_ENV.production? && load_exist?('ldap.yml')
-    LDAP_CONFIG = load_config 'ldap.yml'
-  end
+
+  LDAP_CONFIG = load_config 'ldap.yml' if config_exist?('ldap.yml')
 
   require 'pry' unless RACK_ENV.production?
 

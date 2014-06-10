@@ -57,6 +57,18 @@ class API < Grape::API
     end
   end
 
+  if defined?(Application::LDAP_CONFIG)
+    resource :users do
+      desc 'Return user details'
+      params do
+        requires :username, type: String, desc: 'User Name'
+      end
+      get '/:username' do
+        LDAP.new.details(params[:username]) || error!('Not Found', 404)
+      end
+    end
+  end
+
   resource :projects do
     desc 'Return all projects info'
     get do

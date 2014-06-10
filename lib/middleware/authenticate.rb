@@ -18,17 +18,14 @@ module Middleware
         if user_id && user = User.find_by(id: user_id)
           login user
         elsif defined? Application::LDAP_CONFIG
-          require 'net-ldap'
+          require 'ldap'
+
           user = nil
-          conn = auth Application::LDAP_CONFIG['auth']['username'], Application::LDAP_CONFIG['auth']['password']
-          conn.search(:base => Application::LDAP_CONFIG['base'],
-                      :filter => Net::LDAP::Filter.eq("objectClass", "*") & Net::LDAP::Filter.eq('samaccountname', username),
-                      :attributes => ['dn', 'mail']) do |entry|
-            if auth(entry.dn, password).bind
-              user = User.find_by(name: username) || User.create!(name: username, email: entry.mail.first)
-              break
-            end
+
+          LDAP.new.authenticate(username, password) do |entry|
+            user = User.find_by(name: username) || User.create!(name: username, email: entry.mail.first)
           end
+
           login user, set_cache: key if user
         else
           user = User.find_by(name: username, email: password)

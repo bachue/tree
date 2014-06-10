@@ -57,3 +57,11 @@
   * Delete a document from a project
 - PUT     /api/projects/:id/tags/:tag_name
   * Create a tag in the project
+- GET     /api/keys
+  * Return All keys of current user
+- POST    /api/keys
+  * Add a new key for current user
+- DELETE  /api/keys/:id
+  * Delete a key from current user
+- GET     /api/users/:name
+  * Get user details by name

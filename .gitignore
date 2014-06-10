@@ -2,6 +2,7 @@
 *.sqlite3-journal
 .DS_Store
 *~
+*.bak
 repos/*
 log/*
 tmp/*
