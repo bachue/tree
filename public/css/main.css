@@ -493,12 +493,17 @@ textarea {
 .with_preview, .without_preview {
     width: 100%;
     table-layout: fixed;
+    position: relative;
 }
 
 .with_preview td {
     position: relative;
     width: 50%;
-    padding: 10px;
+}
+
+.with_preview td.preview_part {
+    vertical-align: top;
+    padding: 0 0 10px 10px;
 }
 
 #editor {
@@ -506,7 +511,6 @@ textarea {
 }
 
 .with_preview #editor {
-    position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
