@@ -58,6 +58,8 @@ class API < Grape::API
   end
 
   if defined?(Application::LDAP_CONFIG)
+    require 'ldap'
+
     resource :users do
       desc 'Return user details'
       params do
