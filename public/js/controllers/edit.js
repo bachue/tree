@@ -34,6 +34,12 @@ define(['controllers/tag', 'jquery', 'bootbox', 'ace/ace', 'jquery_cookie', 'fac
 
         $scope.insert_comment_section = function() {
             var editor = ace.edit('editor'), range = editor.getSelectionRange(), content = editor.getValue(), uid, name = $.cookie('current_user.name');
+
+            if (range.isEmpty()) {
+                alert('You must select something then add comment for it');
+                return;
+            }
+
             for (uid = 1; content.match('<' + uid + '>'); ++uid);
 
             editor.getSelection().clearSelection();
